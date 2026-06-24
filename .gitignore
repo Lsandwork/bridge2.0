@@ -9,3 +9,4 @@ apps/admin/.env.local
 *.log
 .vercel
 deploy/ionos/upload/
+.env*
