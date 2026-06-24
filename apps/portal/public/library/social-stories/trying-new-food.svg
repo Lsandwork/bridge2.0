@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Trying new food">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2D6A7E22"/>
+      <stop offset="45%" stop-color="#2D6A7E55"/>
+      <stop offset="100%" stop-color="#2D6A7E"/>
+    </linearGradient>
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.18"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="450" fill="url(#bg)"/>
+  <ellipse cx="400" cy="420" rx="340" ry="60" fill="url(#floor)"/>
+  <circle cx="400" cy="220" r="70" fill="#fff" opacity="0.9"/>
+       <circle cx="370" cy="200" r="18" fill="#2D6A7E" opacity="0.4"/>
+       <circle cx="430" cy="210" r="14" fill="#2D6A7E" opacity="0.35"/>
+       <rect x="360" y="270" width="80" height="12" rx="6" fill="#2D6A7E" opacity="0.45"/>
+  <circle cx="120" cy="90" r="40" fill="#ffffff" opacity="0.12"/>
+  <circle cx="680" cy="100" r="55" fill="#ffffff" opacity="0.1"/>
+</svg>

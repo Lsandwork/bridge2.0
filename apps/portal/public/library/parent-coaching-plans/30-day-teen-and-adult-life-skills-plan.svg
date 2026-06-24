@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="30-day teen and adult life skills plan">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8B691422"/>
+      <stop offset="45%" stop-color="#8B691455"/>
+      <stop offset="100%" stop-color="#8B6914"/>
+    </linearGradient>
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.18"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="450" fill="url(#bg)"/>
+  <ellipse cx="400" cy="420" rx="340" ry="60" fill="url(#floor)"/>
+  <rect x="290" y="140" width="220" height="200" rx="16" fill="#fff" opacity="0.9"/>
+       <rect x="320" y="175" width="140" height="14" rx="7" fill="#8B6914" opacity="0.25"/><rect x="320" y="203" width="130" height="14" rx="7" fill="#8B6914" opacity="0.33"/><rect x="320" y="231" width="120" height="14" rx="7" fill="#8B6914" opacity="0.41000000000000003"/><rect x="320" y="259" width="110" height="14" rx="7" fill="#8B6914" opacity="0.49"/><rect x="320" y="287" width="100" height="14" rx="7" fill="#8B6914" opacity="0.5700000000000001"/>
+  <circle cx="120" cy="90" r="40" fill="#ffffff" opacity="0.12"/>
+  <circle cx="680" cy="100" r="55" fill="#ffffff" opacity="0.1"/>
+</svg>

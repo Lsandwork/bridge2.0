@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Behavior Support course cover">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#5C6B7A" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#5C6B7A"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="450" fill="url(#bg)"/>
+  <rect x="0" y="0" width="800" height="450" fill="#000" opacity="0.12"/>
+  <rect x="280" y="160" width="240" height="160" rx="16" fill="#fff" opacity="0.9"/>
+       <polyline points="310,280 350,220 390,250 430,200 470,240" fill="none" stroke="#ffffff" stroke-width="5" opacity="0.55" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="48" y="380" fill="#ffffff" font-family="system-ui,sans-serif" font-size="28" font-weight="700">Behavior Support</text>
+  <text x="48" y="415" fill="#ffffff" opacity="0.85" font-family="system-ui,sans-serif" font-size="16">11 lessons</text>
+</svg>

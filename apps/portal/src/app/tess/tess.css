@@ -1,0 +1,54 @@
+.tess-page {
+  --tess-lavender: #e8e4f8;
+  --tess-blue: #dbeafe;
+  --tess-cream: #faf8f5;
+  --tess-green: #d1fae5;
+  --tess-accent: #6366f1;
+}
+
+.tess-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #ede9fe, #e0e7ff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.12);
+}
+
+.tess-card {
+  background: white;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.06);
+}
+
+.tess-btn-large {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3.5rem;
+  border-radius: 16px;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 1rem 1.25rem;
+  transition: transform 0.15s ease;
+}
+
+.tess-btn-large:active {
+  transform: scale(0.98);
+}
+
+.tess-low-stim .tess-btn-large {
+  animation: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tess-page * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

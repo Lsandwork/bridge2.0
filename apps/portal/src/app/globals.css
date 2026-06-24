@@ -1,0 +1,189 @@
+@import "tailwindcss";
+
+/* Bridge — purple theme matching mockup */
+:root {
+  color-scheme: light;
+  --background: #f4f3f8;
+  --foreground: #1e1b2e;
+  --card: #ffffff;
+  --text-primary: #1e1b2e;
+  --text-secondary: #5c5670;
+  --text-tertiary: #8b8499;
+  --muted: #5c5670;
+  --primary: #6366f1;
+  --ring: #c7d2fe;
+  --brand: #6366f1;
+  --brand-dark: #4f46e5;
+  --brand-light: #eef2ff;
+  --sidebar: #4c1d95;
+  --sidebar-hover: #5b21b6;
+  --sidebar-text: #e9d5ff;
+  --sidebar-active: #7c3aed;
+  --pathway-accent: #6d5bd0;
+  --pathway-accent-soft: #eeeafd;
+  --charcoal: #1e1b2e;
+  --soft-bg: #f4f3f8;
+  --border: #e5e2ef;
+  --surface-muted: #faf9fc;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-brand: var(--brand);
+  --color-brand-dark: var(--brand-dark);
+  --color-brand-light: var(--brand-light);
+  --color-charcoal: var(--charcoal);
+  --color-muted: var(--muted);
+  --color-soft-bg: var(--soft-bg);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+html {
+  color-scheme: light;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--background);
+  color: var(--text-primary);
+  font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* Larger tap targets on touch devices */
+@media (pointer: coarse) {
+  button,
+  a,
+  label,
+  select,
+  input[type="checkbox"],
+  input[type="radio"] {
+    touch-action: manipulation;
+  }
+}
+
+.card {
+  background: var(--card);
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 2px rgba(76, 29, 149, 0.04), 0 4px 16px rgba(76, 29, 149, 0.06);
+  color: var(--text-primary);
+}
+
+.stat-card {
+  background: var(--card);
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  padding: 1.25rem;
+}
+
+.stat-card .stat-value {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--pathway-accent);
+}
+
+.stat-card .stat-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: var(--pathway-accent);
+  color: #ffffff;
+  font-weight: 700;
+  transition: background 0.15s ease;
+}
+
+.btn-primary:hover {
+  filter: brightness(0.9);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: #ffffff;
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.btn-secondary:hover {
+  background: var(--surface-muted);
+}
+
+.btn-purple {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: var(--sidebar);
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.btn-purple:hover {
+  background: var(--sidebar-hover);
+}
+
+.library-page {
+  background: var(--soft-bg);
+  color: var(--text-primary);
+}
+
+.library-card {
+  background: var(--card);
+  border-radius: 1.25rem;
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 2px rgba(76, 29, 149, 0.04), 0 8px 24px rgba(76, 29, 149, 0.06);
+}
+
+.bg-white,
+.bg-white\/90,
+.library-card,
+.card {
+  color: var(--text-primary);
+}
+
+input,
+select,
+textarea {
+  background-color: #ffffff;
+  border-color: var(--border);
+  color: var(--text-primary);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-tertiary);
+}
+
+/* AAC category colors */
+.aac-food { background: #dcfce7; color: #166534; }
+.aac-bathroom { background: #dbeafe; color: #1e40af; }
+.aac-feelings { background: #fce7f3; color: #9d174d; }
+.aac-help { background: #fef3c7; color: #92400e; }
+.aac-people { background: #e0e7ff; color: #3730a3; }
+.aac-places { background: #ccfbf1; color: #115e59; }
+.aac-activities { background: #ffedd5; color: #9a3412; }
+.aac-default { background: #f3f4f6; color: #374151; }
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}

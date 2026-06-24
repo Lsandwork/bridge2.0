@@ -1,0 +1,18 @@
+[Unit]
+Description=Nuviobridge Next.js application
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/nuviobridge
+EnvironmentFile=/var/www/nuviobridge/.env.production
+ExecStart=/usr/bin/node /var/www/nuviobridge/apps/portal/server.js
+Restart=always
+RestartSec=5
+TimeoutStopSec=20
+KillSignal=SIGINT
+
+[Install]
+WantedBy=multi-user.target

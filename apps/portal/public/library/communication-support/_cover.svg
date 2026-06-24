@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Communication Support course cover">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2D6A7E" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#2D6A7E"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="450" fill="url(#bg)"/>
+  <rect x="0" y="0" width="800" height="450" fill="#000" opacity="0.12"/>
+  <rect x="290" y="150" width="220" height="160" rx="24" fill="#fff" opacity="0.92"/>
+       <rect x="320" y="190" width="70" height="50" rx="8" fill="#ffffff" opacity="0.3"/>
+       <rect x="410" y="190" width="70" height="50" rx="8" fill="#ffffff" opacity="0.3"/>
+       <circle cx="400" cy="270" r="10" fill="#ffffff" opacity="0.5"/>
+  <text x="48" y="380" fill="#ffffff" font-family="system-ui,sans-serif" font-size="28" font-weight="700">Communication Support</text>
+  <text x="48" y="415" fill="#ffffff" opacity="0.85" font-family="system-ui,sans-serif" font-size="16">10 lessons</text>
+</svg>

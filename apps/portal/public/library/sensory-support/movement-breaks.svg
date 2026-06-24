@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Movement breaks">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7A6B5C22"/>
+      <stop offset="45%" stop-color="#7A6B5C55"/>
+      <stop offset="100%" stop-color="#7A6B5C"/>
+    </linearGradient>
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.18"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="450" fill="url(#bg)"/>
+  <ellipse cx="400" cy="420" rx="340" ry="60" fill="url(#floor)"/>
+  <circle cx="320" cy="200" r="40" fill="#fff" opacity="0.5"/>
+       <circle cx="400" cy="180" r="55" fill="#fff" opacity="0.65"/>
+       <circle cx="480" cy="210" r="35" fill="#fff" opacity="0.45"/>
+       <rect x="340" y="260" width="120" height="40" rx="12" fill="#fff" opacity="0.8"/>
+  <circle cx="120" cy="90" r="40" fill="#ffffff" opacity="0.12"/>
+  <circle cx="680" cy="100" r="55" fill="#ffffff" opacity="0.1"/>
+</svg>

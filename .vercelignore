@@ -1,0 +1,9 @@
+node_modules
+**/node_modules
+.git
+.github
+**/.next/cache
+deploy/ionos/upload
+bridge-site-preview.png
+*.log
+.DS_Store

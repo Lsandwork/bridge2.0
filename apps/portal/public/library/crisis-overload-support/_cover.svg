@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Crisis and Overload Support course cover">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8B4513" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#8B4513"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="450" fill="url(#bg)"/>
+  <rect x="0" y="0" width="800" height="450" fill="#000" opacity="0.12"/>
+  <polygon points="400,120 480,280 320,280" fill="#fff" opacity="0.88"/>
+       <rect x="388" y="200" width="24" height="50" rx="4" fill="#ffffff" opacity="0.55"/>
+       <circle cx="400" cy="185" r="10" fill="#ffffff" opacity="0.55"/>
+  <text x="48" y="380" fill="#ffffff" font-family="system-ui,sans-serif" font-size="28" font-weight="700">Crisis and Overload Support</text>
+  <text x="48" y="415" fill="#ffffff" opacity="0.85" font-family="system-ui,sans-serif" font-size="16">8 lessons</text>
+</svg>

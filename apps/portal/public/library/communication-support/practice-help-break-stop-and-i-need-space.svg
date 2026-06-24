@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Practice help, break, stop, and I need space">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2D6A7E22"/>
+      <stop offset="45%" stop-color="#2D6A7E55"/>
+      <stop offset="100%" stop-color="#2D6A7E"/>
+    </linearGradient>
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.18"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="450" fill="url(#bg)"/>
+  <ellipse cx="400" cy="420" rx="340" ry="60" fill="url(#floor)"/>
+  <rect x="290" y="150" width="220" height="160" rx="24" fill="#fff" opacity="0.92"/>
+       <rect x="320" y="190" width="70" height="50" rx="8" fill="#2D6A7E" opacity="0.3"/>
+       <rect x="410" y="190" width="70" height="50" rx="8" fill="#2D6A7E" opacity="0.3"/>
+       <circle cx="400" cy="270" r="10" fill="#2D6A7E" opacity="0.5"/>
+  <circle cx="120" cy="90" r="40" fill="#ffffff" opacity="0.12"/>
+  <circle cx="680" cy="100" r="55" fill="#ffffff" opacity="0.1"/>
+</svg>

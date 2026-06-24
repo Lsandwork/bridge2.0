@@ -1,0 +1,11 @@
+node_modules
+.env
+.env.*
+!.env.example
+apps/portal/.env.local
+apps/admin/.env.local
+.next
+.DS_Store
+*.log
+.vercel
+deploy/ionos/upload/

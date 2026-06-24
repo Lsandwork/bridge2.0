@@ -1,0 +1,402 @@
+/* TessAnimatedAvatar — calm CSS orb companion (prefers-reduced-motion safe) */
+
+.tess-anim-avatar {
+  --tess-av-size: 5rem;
+  --tess-av-float-dur: 6s;
+  --tess-av-glow-dur: 5.5s;
+  --tess-av-wave-dur: 1.6s;
+  --tess-av-pulse-dur: 2.4s;
+  position: relative;
+  width: var(--tess-av-size);
+  height: var(--tess-av-size);
+  flex-shrink: 0;
+}
+
+.tess-anim-avatar--sm {
+  --tess-av-size: 3rem;
+  --tess-av-float-dur: 6.5s;
+  --tess-av-glow-dur: 6s;
+  --tess-av-wave-dur: 1.8s;
+}
+
+.tess-anim-avatar--md {
+  --tess-av-size: 5rem;
+}
+
+.tess-anim-avatar--lg {
+  --tess-av-size: 7.5rem;
+  --tess-av-float-dur: 6s;
+  --tess-av-wave-dur: 1.7s;
+}
+
+.tess-anim-avatar--fullscreen {
+  --tess-av-size: 11rem;
+  --tess-av-float-dur: 9s;
+  --tess-av-glow-dur: 7s;
+  --tess-av-wave-dur: 2.4s;
+  --tess-av-pulse-dur: 3.2s;
+}
+
+.tess-anim-avatar__inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  animation: tess-av-float var(--tess-av-float-dur) ease-in-out infinite;
+}
+
+.tess-anim-avatar__glow {
+  position: absolute;
+  inset: -12%;
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle,
+    rgba(56, 189, 248, 0.35) 0%,
+    rgba(129, 140, 248, 0.22) 40%,
+    rgba(167, 139, 250, 0.08) 65%,
+    transparent 78%
+  );
+  animation: tess-av-glow var(--tess-av-glow-dur) ease-in-out infinite;
+  pointer-events: none;
+}
+
+.tess-anim-avatar__ring {
+  position: absolute;
+  inset: -4%;
+  border-radius: 9999px;
+  border: 1.5px solid rgba(129, 140, 248, 0.25);
+  background: radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.12), transparent 55%);
+  pointer-events: none;
+}
+
+.tess-anim-avatar--listening .tess-anim-avatar__ring {
+  border-color: rgba(56, 189, 248, 0.45);
+  animation: tess-av-ring-listen var(--tess-av-pulse-dur) ease-in-out infinite;
+}
+
+.tess-anim-avatar--speaking .tess-anim-avatar__ring {
+  border-color: rgba(167, 139, 250, 0.5);
+  animation: tess-av-ring-speak calc(var(--tess-av-pulse-dur) * 0.85) ease-in-out infinite;
+}
+
+.tess-anim-avatar--thinking .tess-anim-avatar__ring {
+  border-color: rgba(129, 140, 248, 0.35);
+  animation: tess-av-ring-think 4.5s linear infinite;
+}
+
+.tess-anim-avatar--error .tess-anim-avatar__ring {
+  border-color: rgba(251, 191, 36, 0.45);
+}
+
+.tess-anim-avatar--error .tess-anim-avatar__glow {
+  background: radial-gradient(
+    circle,
+    rgba(251, 191, 36, 0.28) 0%,
+    rgba(248, 113, 113, 0.12) 45%,
+    transparent 72%
+  );
+}
+
+.tess-anim-avatar__portrait {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 1.35rem;
+  overflow: hidden;
+}
+
+.tess-anim-avatar__icon {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: inherit;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 18px rgba(56, 189, 248, 0.35));
+}
+
+.tess-anim-avatar--listening .tess-anim-avatar__portrait {
+  animation: tess-av-portrait-pulse var(--tess-av-pulse-dur) ease-in-out infinite;
+}
+
+.tess-anim-avatar--speaking .tess-anim-avatar__portrait {
+  animation: tess-av-portrait-speak calc(var(--tess-av-pulse-dur) * 0.9) ease-in-out infinite;
+}
+
+.tess-anim-avatar--thinking .tess-anim-avatar__portrait {
+  animation: tess-av-portrait-think 4.5s ease-in-out infinite;
+}
+
+.tess-anim-avatar--error .tess-anim-avatar__icon {
+  filter: drop-shadow(0 6px 16px rgba(251, 191, 36, 0.4));
+}
+
+.tess-anim-avatar__waves {
+  position: absolute;
+  top: 38%;
+  z-index: 3;
+  display: flex;
+  align-items: flex-end;
+  gap: 0.1rem;
+  height: 14%;
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+.tess-anim-avatar__waves--left {
+  left: -6%;
+}
+
+.tess-anim-avatar__waves--right {
+  right: -6%;
+}
+
+.tess-anim-avatar__bar {
+  width: 0.14rem;
+  min-width: 2px;
+  border-radius: 9999px;
+  background: linear-gradient(to top, rgba(56, 189, 248, 0.5), rgba(167, 139, 250, 0.85));
+  animation: tess-av-bar var(--tess-av-wave-dur) ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+.tess-anim-avatar__waves--right .tess-anim-avatar__bar {
+  background: linear-gradient(to top, rgba(167, 139, 250, 0.5), rgba(129, 140, 248, 0.85));
+}
+
+.tess-anim-avatar__bar:nth-child(1) {
+  height: 35%;
+  animation-delay: 0s;
+}
+
+.tess-anim-avatar__bar:nth-child(2) {
+  height: 55%;
+  animation-delay: 0.12s;
+}
+
+.tess-anim-avatar__bar:nth-child(3) {
+  height: 42%;
+  animation-delay: 0.24s;
+}
+
+.tess-anim-avatar__bar:nth-child(4) {
+  height: 28%;
+  animation-delay: 0.36s;
+}
+
+.tess-anim-avatar--speaking .tess-anim-avatar__bar {
+  animation-duration: calc(var(--tess-av-wave-dur) * 0.75);
+}
+
+.tess-anim-avatar__shimmer {
+  position: absolute;
+  inset: -8%;
+  border-radius: 9999px;
+  border: 1px dashed rgba(129, 140, 248, 0.2);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.tess-anim-avatar--listening .tess-anim-avatar__shimmer {
+  opacity: 1;
+  animation: tess-av-shimmer 3.5s ease-in-out infinite;
+}
+
+.tess-anim-avatar__dots {
+  position: absolute;
+  inset: -18%;
+  pointer-events: none;
+}
+
+.tess-anim-avatar__dot {
+  position: absolute;
+  width: 0.3rem;
+  height: 0.3rem;
+  border-radius: 9999px;
+  background: rgba(129, 140, 248, 0.75);
+  animation: tess-av-dot 2.2s ease-in-out infinite;
+}
+
+.tess-anim-avatar__dot:nth-child(1) {
+  top: 8%;
+  left: 50%;
+  animation-delay: 0s;
+}
+
+.tess-anim-avatar__dot:nth-child(2) {
+  top: 50%;
+  right: 4%;
+  animation-delay: 0.35s;
+}
+
+.tess-anim-avatar__dot:nth-child(3) {
+  bottom: 12%;
+  left: 18%;
+  animation-delay: 0.7s;
+}
+
+/* Keyframes */
+@keyframes tess-av-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes tess-av-glow {
+  0%,
+  100% {
+    opacity: 0.65;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.95;
+    transform: scale(1.04);
+  }
+}
+
+@keyframes tess-av-ring-listen {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.03);
+    opacity: 1;
+  }
+}
+
+@keyframes tess-av-ring-speak {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.025);
+  }
+}
+
+@keyframes tess-av-ring-think {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes tess-av-portrait-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+@keyframes tess-av-portrait-speak {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.025);
+  }
+}
+
+@keyframes tess-av-portrait-think {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(0.99);
+    opacity: 0.94;
+  }
+}
+
+@keyframes tess-av-bar {
+  0%,
+  100% {
+    transform: scaleY(0.55);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scaleY(1);
+    opacity: 0.85;
+  }
+}
+
+@keyframes tess-av-shimmer {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.55;
+    transform: scale(1.02);
+  }
+}
+
+@keyframes tess-av-dot {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.05);
+  }
+}
+
+/* Dark mode — slightly deeper glow, same calm motion */
+@media (prefers-color-scheme: dark) {
+  .tess-anim-avatar__icon {
+    filter: drop-shadow(0 8px 22px rgba(99, 102, 241, 0.45));
+  }
+
+  .tess-anim-avatar__ring {
+    border-color: rgba(129, 140, 248, 0.35);
+    background: radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.08), transparent 55%);
+  }
+}
+
+/* Reduced motion — gentle opacity only, no float/wave loops */
+.tess-anim-avatar--reduced .tess-anim-avatar__inner,
+.tess-anim-avatar--reduced .tess-anim-avatar__glow,
+.tess-anim-avatar--reduced .tess-anim-avatar__ring,
+.tess-anim-avatar--reduced .tess-anim-avatar__portrait,
+.tess-anim-avatar--reduced .tess-anim-avatar__bar,
+.tess-anim-avatar--reduced .tess-anim-avatar__shimmer,
+.tess-anim-avatar--reduced .tess-anim-avatar__dot {
+  animation: none !important;
+}
+
+.tess-anim-avatar--reduced.tess-anim-avatar--listening .tess-anim-avatar__ring,
+.tess-anim-avatar--reduced.tess-anim-avatar--speaking .tess-anim-avatar__ring,
+.tess-anim-avatar--reduced.tess-anim-avatar--thinking .tess-anim-avatar__ring {
+  opacity: 1;
+  border-color: rgba(129, 140, 248, 0.5);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tess-anim-avatar__inner,
+  .tess-anim-avatar__glow,
+  .tess-anim-avatar__ring,
+  .tess-anim-avatar__portrait,
+  .tess-anim-avatar__bar,
+  .tess-anim-avatar__shimmer,
+  .tess-anim-avatar__dot {
+    animation: none !important;
+  }
+}

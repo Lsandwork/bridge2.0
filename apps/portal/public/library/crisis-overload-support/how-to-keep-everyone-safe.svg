@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="How to keep everyone safe">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8B451322"/>
+      <stop offset="45%" stop-color="#8B451355"/>
+      <stop offset="100%" stop-color="#8B4513"/>
+    </linearGradient>
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.18"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="450" fill="url(#bg)"/>
+  <ellipse cx="400" cy="420" rx="340" ry="60" fill="url(#floor)"/>
+  <polygon points="400,120 480,280 320,280" fill="#fff" opacity="0.88"/>
+       <rect x="388" y="200" width="24" height="50" rx="4" fill="#8B4513" opacity="0.55"/>
+       <circle cx="400" cy="185" r="10" fill="#8B4513" opacity="0.55"/>
+  <circle cx="120" cy="90" r="40" fill="#ffffff" opacity="0.12"/>
+  <circle cx="680" cy="100" r="55" fill="#ffffff" opacity="0.1"/>
+</svg>

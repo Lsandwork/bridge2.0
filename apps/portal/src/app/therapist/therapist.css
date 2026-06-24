@@ -1,0 +1,166 @@
+.therapist-root {
+  --th-bg: #0f172a;
+  --th-card: #1e293b;
+  --th-text: #f1f5f9;
+  --th-muted: #94a3b8;
+  --th-accent: #14b8a6;
+  --th-accent-soft: #134e4a;
+  --th-warning: #f59e0b;
+  --th-danger: #ef4444;
+  --th-critical: #dc2626;
+  display: flex;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--th-bg);
+  color: var(--th-text);
+}
+
+.th-card {
+  background: var(--th-card);
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.th-stat-value {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--th-accent);
+}
+
+.th-stat-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--th-muted);
+}
+
+.th-alert-critical {
+  border-left: 4px solid var(--th-critical);
+  background: rgba(220, 38, 38, 0.12);
+}
+
+.th-alert-high {
+  border-left: 4px solid var(--th-danger);
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.th-alert-medium {
+  border-left: 4px solid var(--th-warning);
+  background: rgba(245, 158, 11, 0.08);
+}
+
+.th-alert-low {
+  border-left: 4px solid var(--th-accent);
+  background: rgba(20, 184, 166, 0.08);
+}
+
+.th-passport-grid {
+  display: grid;
+  gap: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .th-passport-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.th-bar-track {
+  height: 0.5rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.th-bar-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--th-accent), #2dd4bf);
+}
+
+.th-sidebar {
+  background: #0c1222;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  flex-shrink: 0;
+}
+
+@media (max-width: 1023px) {
+  .th-sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 50;
+    width: min(18rem, 88vw);
+    transform: translateX(-100%);
+    transition: transform 0.2s ease;
+  }
+
+  .th-sidebar.open {
+    transform: translateX(0);
+  }
+
+  .th-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    background: rgba(0, 0, 0, 0.55);
+  }
+
+  .th-main {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+@media (min-width: 1024px) {
+  .therapist-root {
+    flex-direction: row;
+    align-items: stretch;
+  }
+
+  .th-sidebar {
+    position: sticky;
+    top: 0;
+    width: 16rem;
+    height: 100vh;
+    height: 100dvh;
+    overflow-y: auto;
+  }
+
+  .th-main {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+.th-modal-root {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.th-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  border: none;
+  cursor: pointer;
+}
+
+.th-modal-panel {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 32rem);
+  max-height: min(90vh, 40rem);
+  overflow: hidden;
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #1e293b;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.45);
+}
+
+.th-modal-panel--wide {
+  width: min(100%, 48rem);
+}

@@ -1,0 +1,1912 @@
+/* Tess companion — calm CSS animations (respects prefers-reduced-motion) */
+
+.tess-icon {
+  display: block;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.tess-companion-wrap {
+  position: relative;
+  flex-shrink: 0;
+  width: 5.5rem;
+  height: 5.5rem;
+}
+
+.tess-companion {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tess-companion__glow {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(129, 140, 248, 0.35) 0%, transparent 70%);
+  animation: tess-glow-breathe var(--tess-idle-breath-dur, 5600ms) ease-in-out infinite;
+}
+
+.tess-companion__ring {
+  position: absolute;
+  inset: -4px;
+  border-radius: 9999px;
+  border: 2px solid rgba(129, 140, 248, 0.35);
+  opacity: 0;
+  transform: scale(0.92);
+}
+
+.tess-companion--listening .tess-companion__ring {
+  opacity: 1;
+  animation: tess-listen-ring var(--tess-listen-ring-dur, 2600ms) ease-in-out infinite;
+}
+
+.tess-companion__ring--outer {
+  inset: -10px;
+  border-width: 1px;
+  opacity: 0;
+}
+
+.tess-companion--listening .tess-companion__ring--outer {
+  opacity: 0.5;
+  animation: tess-listen-ring-outer calc(var(--tess-listen-ring-dur, 2600ms) * 1.15) ease-in-out infinite;
+}
+
+.tess-companion__robot {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Motion is state-driven only — avoids competing transform loops */
+}
+
+.tess-companion--idle .tess-companion__robot {
+  animation: tess-idle-composed var(--tess-idle-float-dur, 5200ms) ease-in-out infinite;
+}
+
+.tess-companion--idle .tess-companion__head {
+  animation: tess-head-tilt-composed var(--tess-idle-tilt-dur, 7200ms) ease-in-out infinite;
+}
+
+.tess-companion--waving .tess-companion__robot {
+  animation: tess-wave-lean var(--tess-wave-dur, 2800ms) ease-in-out;
+}
+
+.tess-companion--typing .tess-companion__robot {
+  animation: tess-float-attention var(--tess-think-dur, 2000ms) ease-in-out infinite;
+}
+
+.tess-companion--thinking .tess-companion__robot {
+  animation: tess-think-tilt-composed var(--tess-think-dur, 2000ms) ease-in-out infinite;
+}
+
+.tess-companion--speaking .tess-companion__robot {
+  animation: tess-speak-composed var(--tess-speak-body-dur, 2200ms) ease-in-out infinite;
+}
+
+.tess-companion--speaking .tess-companion__face {
+  animation: tess-face-glow-speak var(--tess-speak-face-dur, 1400ms) ease-in-out infinite;
+}
+
+.tess-companion--speaking .tess-companion__arm--right {
+  animation: tess-hand-sway-gentle calc(var(--tess-speak-body-dur, 2200ms) * 1.1) ease-in-out infinite;
+}
+
+.tess-companion--listening .tess-companion__robot {
+  animation: tess-listen-composed var(--tess-listen-ring-dur, 2600ms) ease-in-out infinite;
+}
+
+.tess-companion--listening .tess-companion__waves {
+  opacity: 1;
+}
+
+.tess-companion--comforting .tess-companion__robot {
+  animation: tess-lean-in calc(var(--tess-idle-float-dur, 5200ms) * 0.9) ease-in-out infinite;
+}
+
+.tess-companion--comforting .tess-companion__glow {
+  background: radial-gradient(circle, rgba(167, 139, 250, 0.4) 0%, rgba(251, 191, 36, 0.12) 55%, transparent 72%);
+}
+
+.tess-companion--celebrating .tess-companion__robot {
+  animation: tess-gentle-bounce calc(var(--tess-idle-float-dur, 5200ms) * 0.45) ease-in-out infinite;
+}
+
+.tess-companion--celebrating .tess-companion__arm--right {
+  animation: tess-wave-hand-gentle calc(var(--tess-wave-dur, 2800ms) * 0.65) ease-in-out infinite;
+}
+
+.tess-companion--waving .tess-companion__arm--right {
+  animation: tess-wave-hand-gentle var(--tess-wave-dur, 2800ms) ease-in-out 1;
+  transform-origin: bottom center;
+}
+
+.tess-companion__body-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 0.15rem;
+  margin-top: -0.1rem;
+}
+
+.tess-companion__arm {
+  width: 0.55rem;
+  height: 1rem;
+  border-radius: 0.35rem;
+  background: #cbd5e1;
+  opacity: 0.85;
+}
+
+.tess-companion__arm--right {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: transparent;
+  width: auto;
+  height: auto;
+}
+
+.tess-companion__hand {
+  font-size: 1rem;
+  line-height: 1;
+  display: block;
+  transform-origin: bottom center;
+}
+
+.tess-companion--idle .tess-companion__arm--left {
+  animation: tess-hand-idle 5s ease-in-out infinite;
+}
+
+.tess-companion__antenna {
+  width: 0.25rem;
+  height: 0.625rem;
+  border-radius: 9999px;
+  background: #94a3b8;
+  margin-bottom: -1px;
+}
+
+.tess-companion__antenna-tip {
+  width: 0.5rem;
+  height: 0.5rem;
+  margin: -0.35rem auto 0;
+  border-radius: 9999px;
+  background: #60a5fa;
+  box-shadow: 0 0 8px rgba(96, 165, 250, 0.6);
+}
+
+.tess-companion__head {
+  width: 3.25rem;
+  height: 3rem;
+  border-radius: 1.1rem;
+  background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
+  border: 2px solid #cbd5e1;
+  box-shadow: inset 0 -2px 4px rgba(0, 0, 0, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tess-companion__face {
+  width: 2.35rem;
+  height: 1.85rem;
+  border-radius: 0.75rem;
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  padding: 0.25rem;
+}
+
+.tess-companion__eyes {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.tess-companion__eye {
+  position: relative;
+  width: 0.55rem;
+  height: 0.7rem;
+  border-radius: 0.35rem;
+  background: #38bdf8;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.85);
+  animation: tess-eye-glow 3s ease-in-out infinite;
+  overflow: hidden;
+}
+
+.tess-companion--idle .tess-companion__eye {
+  animation: tess-eye-glow 3s ease-in-out infinite, tess-eye-blink 5.5s ease-in-out infinite;
+}
+
+.tess-companion__eye-shine {
+  position: absolute;
+  top: 0.1rem;
+  left: 0.12rem;
+  width: 0.15rem;
+  height: 0.15rem;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.tess-companion--typing .tess-companion__eye,
+.tess-companion--listening .tess-companion__eye {
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.9);
+  animation: tess-eye-bright var(--tess-listen-ring-dur, 2600ms) ease-in-out infinite;
+}
+
+.tess-companion__mouth {
+  width: 1rem;
+  height: 0.2rem;
+  border-radius: 9999px;
+  background: #38bdf8;
+  opacity: 0.85;
+}
+
+.tess-companion--speaking .tess-companion__mouth {
+  animation: tess-mouth-pulse var(--tess-speak-face-dur, 1400ms) ease-in-out infinite;
+}
+
+.tess-companion__body {
+  width: 2.5rem;
+  height: 1.35rem;
+  margin-top: -0.15rem;
+  border-radius: 0 0 1rem 1rem;
+  background: linear-gradient(180deg, #e2e8f0, #cbd5e1);
+  border: 2px solid #cbd5e1;
+  border-top: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tess-companion__heart {
+  font-size: 0.625rem;
+  line-height: 1;
+  animation: tess-heart-soft 2.5s ease-in-out infinite;
+}
+
+.tess-companion--comforting .tess-companion__heart {
+  animation: tess-heart-warm 2s ease-in-out infinite;
+}
+
+.tess-companion__fx {
+  position: absolute;
+  pointer-events: none;
+}
+
+.tess-companion__dots {
+  top: 0.25rem;
+  left: -0.75rem;
+  display: flex;
+  gap: 0.2rem;
+  opacity: 0;
+}
+
+.tess-companion--typing .tess-companion__dots,
+.tess-companion--thinking .tess-companion__dots {
+  opacity: 1;
+}
+
+.tess-companion__dot {
+  width: 0.3rem;
+  height: 0.3rem;
+  border-radius: 9999px;
+  background: #818cf8;
+  animation: tess-dot-bounce var(--tess-think-dur, 2000ms) ease-in-out infinite;
+}
+
+.tess-companion__dot:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.tess-companion__dot:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.tess-companion__waves {
+  bottom: 0.5rem;
+  left: -0.5rem;
+  display: flex;
+  align-items: flex-end;
+  gap: 0.15rem;
+  opacity: 0;
+}
+
+.tess-companion--speaking .tess-companion__waves {
+  opacity: 1;
+}
+
+.tess-companion__listen-dots {
+  top: 0.5rem;
+  left: -0.85rem;
+  display: flex;
+  gap: 0.25rem;
+}
+
+.tess-companion__listen-dot {
+  width: 0.35rem;
+  height: 0.35rem;
+  border-radius: 9999px;
+  background: #a78bfa;
+  animation: tess-listen-dot var(--tess-listen-ring-dur, 2600ms) ease-in-out infinite;
+}
+
+.tess-companion__listen-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.tess-companion__listen-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+.tess-companion__wave-bubble {
+  top: -0.25rem;
+  right: -0.25rem;
+  font-size: 0.875rem;
+  animation: tess-wave-bubble var(--tess-wave-dur, 2800ms) ease-in-out;
+}
+
+.tess-companion__comfort-heart {
+  top: 0.25rem;
+  left: -0.5rem;
+  font-size: 0.75rem;
+  animation: tess-heart-warm 2.5s ease-in-out infinite;
+}
+
+.tess-companion__sparkle--wave {
+  opacity: 1;
+  animation: tess-sparkle 2s ease-in-out infinite;
+}
+
+.tess-companion__wave {
+  width: 0.2rem;
+  border-radius: 9999px;
+  background: #818cf8;
+  animation: tess-wave var(--tess-speak-wave-dur, 1600ms) ease-in-out infinite;
+}
+
+.tess-companion__wave:nth-child(1) {
+  height: 0.35rem;
+  animation-delay: 0s;
+}
+
+.tess-companion__wave:nth-child(2) {
+  height: 0.55rem;
+  animation-delay: 0.12s;
+}
+
+.tess-companion__wave:nth-child(3) {
+  height: 0.4rem;
+  animation-delay: 0.24s;
+}
+
+.tess-companion__sparkle {
+  top: 0;
+  right: 0;
+  font-size: 0.75rem;
+  opacity: 0;
+}
+
+.tess-companion--celebrating .tess-companion__sparkle {
+  opacity: 1;
+  animation: tess-sparkle 2s ease-in-out infinite;
+}
+
+.tess-companion--idle .tess-companion__sparkle--idle {
+  opacity: 0.6;
+  animation: tess-sparkle-soft 4s ease-in-out infinite;
+}
+
+@keyframes tess-idle-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes tess-idle-breathe {
+  0%,
+  100% {
+    scale: 1;
+  }
+  50% {
+    scale: 1.02;
+  }
+}
+
+/* Composed motion — one transform per element to prevent jitter */
+@keyframes tess-idle-composed {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(calc(var(--tess-float-px, 4px) * -1)) scale(var(--tess-breath-scale, 1.02));
+  }
+}
+
+@keyframes tess-head-tilt-composed {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  35% {
+    transform: rotate(calc(var(--tess-tilt-deg, 1.5deg) * -1));
+  }
+  65% {
+    transform: rotate(var(--tess-tilt-deg, 1.5deg));
+  }
+}
+
+@keyframes tess-speak-composed {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg) scale(1);
+  }
+  50% {
+    transform: translateY(calc(var(--tess-float-px, 4px) * -0.35)) rotate(var(--tess-tilt-deg, 1deg))
+      scale(var(--tess-speak-scale, 1.03));
+  }
+}
+
+@keyframes tess-listen-composed {
+  0%,
+  100% {
+    transform: translateX(0) scale(1);
+  }
+  50% {
+    transform: translateX(-2px) scale(var(--tess-breath-scale, 1.02));
+  }
+}
+
+@keyframes tess-think-tilt-composed {
+  0%,
+  100% {
+    transform: rotate(0deg) translateY(0);
+  }
+  50% {
+    transform: rotate(var(--tess-tilt-deg, 1deg)) translateY(1px);
+  }
+}
+
+@keyframes tess-hand-sway-gentle {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(3deg);
+  }
+}
+
+@keyframes tess-wave-hand-gentle {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  30% {
+    transform: rotate(12deg);
+  }
+  55% {
+    transform: rotate(-4deg);
+  }
+  80% {
+    transform: rotate(8deg);
+  }
+}
+
+@keyframes tess-head-tilt {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  35% {
+    transform: rotate(-2deg);
+  }
+  65% {
+    transform: rotate(1.5deg);
+  }
+}
+
+@keyframes tess-eye-blink {
+  0%,
+  92%,
+  100% {
+    transform: scaleY(1);
+  }
+  95% {
+    transform: scaleY(0.12);
+  }
+}
+
+@keyframes tess-wave-hand {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(18deg);
+  }
+  50% {
+    transform: rotate(-8deg);
+  }
+  75% {
+    transform: rotate(14deg);
+  }
+}
+
+@keyframes tess-wave-lean {
+  0%,
+  100% {
+    transform: rotate(0deg) translateY(0);
+  }
+  40% {
+    transform: rotate(calc(var(--tess-tilt-deg, 1.5deg) * -1.5)) translateY(-2px);
+  }
+}
+
+@keyframes tess-hand-idle {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-1px);
+  }
+}
+
+@keyframes tess-hand-sway {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(6deg);
+  }
+}
+
+@keyframes tess-speak-continuous {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-2px) rotate(0.5deg);
+  }
+  50% {
+    transform: translateY(-3px) rotate(0deg);
+  }
+  75% {
+    transform: translateY(-1px) rotate(-0.5deg);
+  }
+}
+
+@keyframes tess-face-glow-speak {
+  0%,
+  100% {
+    box-shadow: inset 0 0 6px rgba(56, 189, 248, 0.2);
+  }
+  50% {
+    box-shadow: inset 0 0 12px rgba(56, 189, 248, 0.45);
+  }
+}
+
+@keyframes tess-think-tilt {
+  0%,
+  100% {
+    transform: rotate(0deg) translateY(0);
+  }
+  33% {
+    transform: rotate(-2deg) translateY(1px);
+  }
+  66% {
+    transform: rotate(2deg) translateY(0);
+  }
+}
+
+@keyframes tess-listen-forward {
+  0%,
+  100% {
+    transform: translateX(0) scale(1);
+  }
+  50% {
+    transform: translateX(-2px) scale(1.02);
+  }
+}
+
+@keyframes tess-listen-dot {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.92);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.04);
+  }
+}
+
+@keyframes tess-listen-ring-outer {
+  0%,
+  100% {
+    transform: scale(0.94);
+    opacity: 0.22;
+  }
+  50% {
+    transform: scale(1.04);
+    opacity: 0.45;
+  }
+}
+
+@keyframes tess-wave-bubble {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) translateY(4px);
+  }
+  20%,
+  80% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.9) translateY(-2px);
+  }
+}
+
+@keyframes tess-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes tess-float-attention {
+  0%,
+  100% {
+    transform: translateY(1px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-3px) rotate(-1deg);
+  }
+}
+
+@keyframes tess-glow-breathe {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes tess-nod {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  40% {
+    transform: translateY(2px) rotate(1.5deg);
+  }
+  70% {
+    transform: translateY(-1px) rotate(-0.5deg);
+  }
+}
+
+@keyframes tess-speak-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes tess-lean-in {
+  0%,
+  100% {
+    transform: translateX(0) scale(1);
+  }
+  50% {
+    transform: translateX(-3px) scale(1.04);
+  }
+}
+
+@keyframes tess-gentle-bounce {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(calc(var(--tess-float-px, 4px) * -0.75)) scale(var(--tess-breath-scale, 1.02));
+  }
+}
+
+@keyframes tess-eye-glow {
+  0%,
+  100% {
+    opacity: 0.9;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes tess-eye-bright {
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.25);
+  }
+}
+
+@keyframes tess-mouth-pulse {
+  0%,
+  100% {
+    transform: scaleX(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scaleX(1.08);
+    opacity: 0.95;
+  }
+}
+
+@keyframes tess-heart-soft {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+@keyframes tess-heart-warm {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+}
+
+@keyframes tess-dot-bounce {
+  0%,
+  80%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.5;
+  }
+  40% {
+    transform: translateY(-3px);
+    opacity: 1;
+  }
+}
+
+@keyframes tess-wave {
+  0%,
+  100% {
+    transform: scaleY(0.55);
+    opacity: 0.45;
+  }
+  50% {
+    transform: scaleY(0.9);
+    opacity: 0.75;
+  }
+}
+
+@keyframes tess-listen-ring {
+  0%,
+  100% {
+    transform: scale(0.96);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.03);
+    opacity: 0.65;
+  }
+}
+
+@keyframes tess-sparkle {
+  0%,
+  100% {
+    transform: scale(0.9) rotate(0deg);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.1) rotate(12deg);
+    opacity: 1;
+  }
+}
+
+@keyframes tess-sparkle-soft {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.tess-companion--reduced .tess-companion__robot,
+.tess-companion--reduced .tess-companion__glow,
+.tess-companion--reduced .tess-companion__ring,
+.tess-companion--reduced .tess-companion__head,
+.tess-companion--reduced .tess-companion__eye,
+.tess-companion--reduced .tess-companion__face,
+.tess-companion--reduced .tess-companion__mouth,
+.tess-companion--reduced .tess-companion__heart,
+.tess-companion--reduced .tess-companion__hand,
+.tess-companion--reduced .tess-companion__arm,
+.tess-companion--reduced .tess-companion__dot,
+.tess-companion--reduced .tess-companion__wave,
+.tess-companion--reduced .tess-companion__listen-dot,
+.tess-companion--reduced .tess-companion__sparkle,
+.tess-companion--reduced .tess-companion__wave-bubble,
+.tess-companion--reduced .tess-companion__comfort-heart {
+  animation: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tess-companion__robot,
+  .tess-companion__glow,
+  .tess-companion__ring,
+  .tess-companion__head,
+  .tess-companion__eye,
+  .tess-companion__face,
+  .tess-companion__mouth,
+  .tess-companion__heart,
+  .tess-companion__hand,
+  .tess-companion__arm,
+  .tess-companion__dot,
+  .tess-companion__wave,
+  .tess-companion__listen-dot,
+  .tess-companion__sparkle,
+  .tess-companion__wave-bubble,
+  .tess-companion__comfort-heart,
+  .tess-status-card__copy {
+    animation: none !important;
+  }
+}
+
+/* Status card — frameless companion area (no border/card around Tess) */
+.tess-status-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0 0.75rem 0.5rem;
+  padding: 0.5rem 0.25rem;
+  border-radius: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  transition: opacity 0.3s ease;
+}
+
+.tess-status-card--comforting,
+.tess-status-card--celebrating,
+.tess-status-card--waving,
+.tess-status-card--speaking,
+.tess-status-card--listening,
+.tess-status-card--error {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.tess-status-card__copy {
+  flex: 1;
+  min-width: 0;
+  animation: tess-status-fade 0.35s ease-out;
+}
+
+.tess-status-card__companion-btn {
+  flex-shrink: 0;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 9999px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tess-status-card__companion-btn:focus-visible {
+  outline: 2px solid #818cf8;
+  outline-offset: 2px;
+}
+
+@keyframes tess-status-fade {
+  from {
+    opacity: 0.5;
+    transform: translateY(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tess-status-card__spark {
+  font-size: 1rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.tess-status-card__line1 {
+  font-size: 0.8125rem;
+  font-weight: 800;
+  line-height: 1.35;
+  color: #17233c;
+}
+
+.tess-status-card__line2 {
+  margin-top: 0.15rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: #66748a;
+}
+
+/* Chat shell polish */
+.tess-chat-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: linear-gradient(180deg, #f5f3ff 0%, #faf8f5 40%);
+}
+
+.tess-chat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid rgba(167, 139, 250, 0.15);
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.tess-chat-header__profile {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  min-width: 0;
+}
+
+.tess-chat-header__avatar {
+  width: 2.75rem;
+  height: 2.75rem;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #ede9fe, #e0e7ff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.18);
+}
+
+.tess-chat-header__name {
+  font-size: 0.9375rem;
+  font-weight: 800;
+  color: #17233c;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.tess-chat-header__badge {
+  color: #6366f1;
+  font-size: 0.75rem;
+}
+
+.tess-chat-header__sub {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: #66748a;
+}
+
+.tess-mode-toggle {
+  display: flex;
+  border-radius: 9999px;
+  border: 1.5px solid #e8e4dd;
+  background: #fff;
+  padding: 0.2rem;
+}
+
+.tess-mode-toggle__btn {
+  display: inline-flex;
+  min-height: 2rem;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  color: #66748a;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.tess-mode-toggle__btn--active {
+  background: #ede9fe;
+  color: #6366f1;
+}
+
+.tess-quick-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  padding: 0.625rem 0.75rem;
+  border-bottom: 1px solid rgba(167, 139, 250, 0.12);
+  max-height: 9.5rem;
+  overflow-y: auto;
+}
+
+.tess-quick-grid__title {
+  width: 100%;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  color: #66748a;
+  margin-bottom: 0.125rem;
+}
+
+.tess-quick-btn {
+  display: inline-flex;
+  min-height: 2.25rem;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: 9999px;
+  border: 1.5px solid rgba(167, 139, 250, 0.2);
+  background: #fff;
+  padding: 0.35rem 0.65rem;
+  font-size: 0.625rem;
+  font-weight: 800;
+  color: #17233c;
+  transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+}
+
+.tess-quick-btn:active {
+  transform: scale(0.97);
+}
+
+.tess-quick-btn--active {
+  background: #ede9fe;
+  border-color: #a78bfa;
+}
+
+.tess-quick-footer {
+  width: 100%;
+  margin-top: 0.25rem;
+  font-size: 0.5625rem;
+  font-weight: 700;
+  color: #94a3b8;
+  text-align: center;
+}
+
+.tess-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.75rem;
+  space-y: 0.75rem;
+}
+
+.tess-msg-bubble {
+  max-width: 88%;
+  border-radius: 1.25rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  animation: tess-msg-in 0.35s ease-out;
+}
+
+.tess-msg-bubble--assistant {
+  background: #fff;
+  border: 1.5px solid rgba(167, 139, 250, 0.15);
+  color: #17233c;
+  box-shadow: 0 2px 12px rgba(99, 102, 241, 0.06);
+}
+
+.tess-msg-bubble--user {
+  margin-left: auto;
+  background: linear-gradient(135deg, #818cf8, #6366f1);
+  color: #fff;
+}
+
+.tess-msg-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.tess-msg-row--user {
+  justify-content: flex-end;
+}
+
+.tess-msg-avatar {
+  width: 1.75rem;
+  height: 1.75rem;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #ede9fe, #e0e7ff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+@keyframes tess-msg-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tess-input-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 0.75rem;
+  border-top: 1px solid rgba(167, 139, 250, 0.12);
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.tess-input-bar__mic {
+  display: flex;
+  width: 2.75rem;
+  height: 2.75rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: #ede9fe;
+  color: #6366f1;
+  border: none;
+  transition: transform 0.12s ease, box-shadow 0.2s ease;
+}
+
+.tess-input-bar__mic--active {
+  background: #fecaca;
+  color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.25);
+  animation: tess-mic-glow 2s ease-in-out infinite;
+}
+
+.tess-input-bar__field {
+  flex: 1;
+  min-width: 0;
+  min-height: 2.75rem;
+  border-radius: 9999px;
+  border: 1.5px solid #e8e4dd;
+  background: #fff;
+  padding: 0.625rem 1rem;
+  font-size: 0.8125rem;
+  color: #17233c;
+}
+
+.tess-input-bar__field:focus {
+  outline: none;
+  border-color: #a78bfa;
+}
+
+.tess-input-bar__send {
+  display: flex;
+  width: 2.75rem;
+  height: 2.75rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #818cf8, #6366f1);
+  color: #fff;
+  border: none;
+  transition: transform 0.12s ease, opacity 0.12s ease;
+}
+
+.tess-input-bar__send:disabled {
+  opacity: 0.45;
+}
+
+.tess-input-bar__send:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+@keyframes tess-mic-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 0 5px rgba(248, 113, 113, 0.35);
+  }
+}
+
+.tess-speak-toggle {
+  padding: 0.375rem 0.75rem 0.5rem;
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.tess-speak-toggle label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: #66748a;
+  cursor: pointer;
+}
+
+.tess-speak-toggle input {
+  width: 1.125rem;
+  height: 1.125rem;
+  accent-color: #6366f1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tess-msg-bubble,
+  .tess-input-bar__mic--active {
+    animation: none !important;
+  }
+}
+
+/* ── Full Screen Tess Mode ── */
+
+.tess-fullscreen {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: min(75dvh, 36rem);
+  background: linear-gradient(165deg, #f5f3ff 0%, #ede9fe 35%, #faf5ff 70%, #f0fdf4 100%);
+  overflow: hidden;
+}
+
+.tess-fullscreen__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem 0.5rem;
+  z-index: 2;
+}
+
+.tess-fullscreen__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tess-fullscreen__avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.92);
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.12);
+}
+
+.tess-fullscreen__name {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #4338ca;
+  letter-spacing: -0.01em;
+}
+
+.tess-fullscreen__header-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tess-fullscreen__stage {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem 0.75rem;
+  min-height: 0;
+}
+
+.tess-fullscreen__glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(14rem, 62vw);
+  height: min(14rem, 62vw);
+  border-radius: 9999px;
+  transform: translate(-50%, -58%);
+  background: radial-gradient(circle, rgba(167, 139, 250, 0.28) 0%, rgba(129, 140, 248, 0.1) 45%, transparent 72%);
+  animation: tess-glow-breathe 6.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.tess-fullscreen__companion-slot {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 auto;
+  width: 11rem;
+  height: 11rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tess-fullscreen__companion {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tess-fullscreen__companion:focus-visible {
+  outline: 2px solid #818cf8;
+  outline-offset: 4px;
+  border-radius: 9999px;
+}
+
+.tess-fullscreen__caption-slot {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: 20rem;
+  min-height: 4.5rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.tess-fullscreen__toasts {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.75rem;
+  right: 0.75rem;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  pointer-events: none;
+}
+
+.tess-fullscreen__toast {
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+}
+
+.tess-fullscreen__toast--error {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.tess-fullscreen__toast--voice {
+  background: #fffbeb;
+  color: #92400e;
+}
+
+.tess-fullscreen__type-drawer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 1rem 0.75rem;
+  padding: 0.5rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(167, 139, 250, 0.25);
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.08);
+  z-index: 2;
+}
+
+.tess-fullscreen__type-field {
+  flex: 1;
+  min-width: 0;
+  padding: 0.625rem 0.875rem;
+  border: none;
+  border-radius: 0.75rem;
+  background: #f5f3ff;
+  font-size: 0.9375rem;
+  color: #1e1b4b;
+  outline: none;
+}
+
+.tess-fullscreen__type-field:focus {
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.35);
+}
+
+.tess-fullscreen__type-send {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: none;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #fff;
+  cursor: pointer;
+}
+
+.tess-fullscreen__type-send:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.tess-fullscreen__controls {
+  padding: 0.75rem 1rem 1rem;
+  background: linear-gradient(to top, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.75));
+  border-top: 1px solid rgba(167, 139, 250, 0.15);
+  z-index: 2;
+}
+
+.tess-fullscreen__control-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  margin-bottom: 0.75rem;
+}
+
+.tess-fullscreen__action-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.875rem;
+}
+
+.tess-fullscreen__pill-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  min-height: 2.75rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid rgba(167, 139, 250, 0.35);
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.9);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #4338ca;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.tess-fullscreen__pill-btn:active {
+  transform: scale(0.97);
+}
+
+.tess-fullscreen__mic {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4.25rem;
+  height: 4.25rem;
+  border: none;
+  border-radius: 9999px;
+  background: linear-gradient(145deg, #6366f1, #7c3aed);
+  color: #fff;
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.35);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.tess-fullscreen__mic:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+.tess-fullscreen__mic--active {
+  background: linear-gradient(145deg, #ef4444, #dc2626);
+  animation: tess-mic-glow 1.8s ease-in-out infinite;
+}
+
+.tess-fullscreen__mic:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Voice toggle */
+
+.tess-voice-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  min-height: 2.25rem;
+  padding: 0.375rem 0.875rem;
+  border: 1px solid rgba(167, 139, 250, 0.3);
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.88);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #66748a;
+  cursor: pointer;
+}
+
+.tess-voice-toggle--on {
+  color: #4338ca;
+  border-color: rgba(99, 102, 241, 0.4);
+  background: rgba(238, 242, 255, 0.95);
+}
+
+.tess-voice-toggle--compact {
+  min-height: 2rem;
+  padding: 0.25rem 0.625rem;
+  font-size: 0.6875rem;
+}
+
+/* View mode toggle */
+
+.tess-view-toggle {
+  display: inline-flex;
+  padding: 0.1875rem;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(167, 139, 250, 0.25);
+}
+
+.tess-view-toggle--compact .tess-view-toggle__btn {
+  padding: 0.3125rem 0.625rem;
+  font-size: 0.6875rem;
+}
+
+.tess-view-toggle__btn {
+  padding: 0.375rem 0.75rem;
+  border: none;
+  border-radius: 9999px;
+  background: transparent;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #66748a;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.tess-view-toggle__btn--active {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.25);
+}
+
+/* Captions */
+
+.tess-caption {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 20rem;
+  min-height: 4.5rem;
+  padding: 0.25rem 0.75rem;
+  text-align: center;
+}
+
+.tess-caption__copy {
+  animation: tess-status-fade 0.35s ease-out;
+}
+
+.tess-caption__line1 {
+  font-size: 0.8125rem;
+  font-weight: 800;
+  color: #4338ca;
+  line-height: 1.35;
+}
+
+.tess-caption__line2 {
+  margin-top: 0.2rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: #66748a;
+  line-height: 1.4;
+}
+
+.tess-caption--listening .tess-caption__line1 {
+  color: #4338ca;
+}
+
+.tess-caption--comforting .tess-caption__line1 {
+  color: #9a3412;
+}
+
+.tess-caption--celebrating .tess-caption__line1 {
+  color: #166534;
+}
+
+.tess-caption__reply {
+  margin-top: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #475569;
+  line-height: 1.45;
+}
+
+.tess-caption__reply--full {
+  font-size: 0.9375rem;
+  padding: 0.75rem 1rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(167, 139, 250, 0.2);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.08);
+  color: #1e293b;
+  max-height: 8rem;
+  overflow-y: auto;
+}
+
+.tess-caption__reply--snippet {
+  opacity: 0.85;
+  font-size: 0.75rem;
+}
+
+/* Quick help sheet */
+
+.tess-quick-sheet {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.tess-quick-sheet__backdrop {
+  position: absolute;
+  inset: 0;
+  border: none;
+  background: rgba(30, 27, 75, 0.25);
+  cursor: pointer;
+}
+
+.tess-quick-sheet__panel {
+  position: relative;
+  max-height: 70%;
+  overflow-y: auto;
+  padding: 1rem 1rem 1.25rem;
+  border-radius: 1.25rem 1.25rem 0 0;
+  background: #fff;
+  box-shadow: 0 -8px 32px rgba(99, 102, 241, 0.15);
+  animation: tess-sheet-slide 0.28s ease-out;
+}
+
+.tess-quick-sheet__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.tess-quick-sheet__title {
+  font-size: 0.9375rem;
+  font-weight: 800;
+  color: #4338ca;
+}
+
+.tess-quick-sheet__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: none;
+  border-radius: 9999px;
+  background: #f5f3ff;
+  color: #4338ca;
+  cursor: pointer;
+}
+
+.tess-quick-sheet__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.tess-quick-sheet__btn {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.625rem;
+  border: 1px solid rgba(167, 139, 250, 0.25);
+  border-radius: 0.875rem;
+  background: #faf5ff;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: #4338ca;
+  text-align: left;
+  cursor: pointer;
+}
+
+.tess-quick-sheet__btn--active {
+  background: #ede9fe;
+  border-color: #6366f1;
+}
+
+.tess-quick-sheet__btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.tess-quick-sheet__footer {
+  margin-top: 0.75rem;
+  font-size: 0.625rem;
+  font-weight: 600;
+  color: #94a3b8;
+  text-align: center;
+}
+
+@keyframes tess-sheet-slide {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tess-fullscreen__glow,
+  .tess-fullscreen__mic--active,
+  .tess-quick-sheet__panel {
+    animation: none !important;
+  }
+}
+
+/* Fullscreen preset: slightly softer sparkle / hand idle in calm mode */
+.tess-companion--motion-fullscreen.tess-companion--idle .tess-companion__arm--left {
+  animation: tess-hand-idle var(--tess-idle-float-dur, 4200ms) ease-in-out infinite;
+}
+
+.tess-companion--motion-fullscreen.tess-companion--idle .tess-companion__sparkle--idle {
+  animation: tess-sparkle-soft calc(var(--tess-idle-float-dur, 4200ms) * 1.2) ease-in-out infinite;
+}
+
+/* Dance with Tess — emotion-aware support modal */
+.tess-dance-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.tess-dance-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(4px);
+}
+
+.tess-dance-modal__panel {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 22rem);
+  border-radius: 1.25rem;
+  padding: 1.25rem 1.25rem 1rem;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.98), rgba(237, 233, 254, 0.95));
+  border: 1px solid rgba(129, 140, 248, 0.25);
+  box-shadow: 0 16px 48px rgba(99, 102, 241, 0.18);
+}
+
+.tess-dance-modal__panel--safety {
+  border-color: rgba(251, 191, 36, 0.35);
+}
+
+.tess-dance-modal__close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.75rem;
+  border: none;
+  background: transparent;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: #64748b;
+  cursor: pointer;
+}
+
+.tess-dance-modal__title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #1e293b;
+  padding-right: 1.5rem;
+}
+
+.tess-dance-modal__desc {
+  margin-top: 0.5rem;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: #475569;
+}
+
+.tess-dance-modal__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.tess-dance-modal__btn {
+  min-height: 2.75rem;
+  border-radius: 9999px;
+  border: 1.5px solid rgba(129, 140, 248, 0.3);
+  background: #fff;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #334155;
+  cursor: pointer;
+}
+
+.tess-dance-modal__btn--primary {
+  border-color: transparent;
+  background: linear-gradient(135deg, #38bdf8, #818cf8);
+  color: #fff;
+}
+
+.tess-dance-modal__btn--stop {
+  border-color: rgba(248, 113, 113, 0.35);
+  color: #b91c1c;
+}
+
+.tess-dance-hud {
+  position: fixed;
+  left: 50%;
+  bottom: calc(6rem + env(safe-area-inset-bottom, 0px));
+  z-index: 55;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(129, 140, 248, 0.25);
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.12);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #334155;
+}
+
+.tess-dance-hud__stop {
+  border: none;
+  background: rgba(248, 113, 113, 0.12);
+  color: #b91c1c;
+  border-radius: 9999px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  cursor: pointer;
+}
