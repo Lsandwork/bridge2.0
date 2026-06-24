@@ -4,6 +4,8 @@ export async function postAuthJson<T>(url: string, body: Record<string, unknown>
   const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    cache: "no-store",
     body: JSON.stringify(body),
   });
 

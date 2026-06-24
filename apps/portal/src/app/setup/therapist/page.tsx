@@ -1,16 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Copy, Check } from "lucide-react";
 import { SignOutButton } from "@/components/SignOutButton";
+import { useAuth } from "@/components/AuthProvider";
 import "../../landing.css";
 
 type Mode = "choose" | "code" | "new-client";
 
 export default function TherapistSetupPage() {
-  const router = useRouter();
+  const { user, loading: authLoading, refresh: refreshAuth } = useAuth();
   const [mode, setMode] = useState<Mode>("choose");
   const [code, setCode] = useState("");
   const [name, setName] = useState("");
@@ -31,11 +31,17 @@ export default function TherapistSetupPage() {
       const res = await fetch("/api/access-codes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        cache: "no-store",
         body: JSON.stringify({ action: "redeem", code }),
       });
       const data = await res.json();
+      if (res.status === 401) {
+        await refreshAuth();
+        throw new Error("Your sign-in session was not available. Please sign in again.");
+      }
       if (!res.ok) throw new Error(data.error);
-      router.push("/therapist");
+      window.location.assign("/therapist");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Invalid code.");
     } finally {
@@ -51,6 +57,8 @@ export default function TherapistSetupPage() {
       const res = await fetch("/api/access-codes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        cache: "no-store",
         body: JSON.stringify({
           action: "create-client",
           name,
@@ -61,6 +69,10 @@ export default function TherapistSetupPage() {
         }),
       });
       const data = await res.json();
+      if (res.status === 401) {
+        await refreshAuth();
+        throw new Error("Your sign-in session was not available. Please sign in again.");
+      }
       if (!res.ok) throw new Error(data.error);
       setAccessCode(data.accessCode);
       setMode("code");
@@ -89,7 +101,19 @@ export default function TherapistSetupPage() {
         </div>
 
         <article className="landing-mockup p-6">
-          {mode === "choose" ? (
+          {!authLoading && !user ? (
+            <div className="rounded-xl border border-amber-400/30 bg-amber-400/10 p-4">
+              <h1 className="text-xl font-bold text-white">Please sign in again</h1>
+              <p className="mt-2 text-sm leading-relaxed text-slate-300">
+                Your account was created, but this browser does not currently have an active Bridge session.
+              </p>
+              <Link href="/login?next=/setup/therapist" className="landing-btn-primary mt-4 w-full justify-center">
+                Return to sign in
+              </Link>
+            </div>
+          ) : authLoading ? (
+            <p className="py-8 text-center text-sm text-slate-400">Checking your secure session…</p>
+          ) : mode === "choose" ? (
             <>
               <p className="text-xs font-bold uppercase tracking-wider text-teal-300">Therapist setup</p>
               <h1 className="mt-2 text-2xl font-bold text-white">Connect to clients</h1>
@@ -182,7 +206,7 @@ export default function TherapistSetupPage() {
                   {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                 </button>
               </div>
-              <button type="button" onClick={() => router.push("/therapist")} className="landing-btn-primary mt-6 w-full justify-center">
+              <button type="button" onClick={() => window.location.assign("/therapist")} className="landing-btn-primary mt-6 w-full justify-center">
                 Open therapist dashboard
               </button>
             </>

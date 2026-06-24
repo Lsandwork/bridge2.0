@@ -12,7 +12,12 @@ import { getSession } from "@/lib/auth/session";
 
 export async function GET(request: Request) {
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session) {
+    return NextResponse.json(
+      { error: "Your session expired. Please sign in again.", code: "SESSION_EXPIRED" },
+      { status: 401 }
+    );
+  }
 
   const profileId = new URL(request.url).searchParams.get("profileId");
   if (!profileId) {
@@ -25,7 +30,12 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session) {
+    return NextResponse.json(
+      { error: "Your session expired. Please sign in again.", code: "SESSION_EXPIRED" },
+      { status: 401 }
+    );
+  }
 
   try {
     const body = (await request.json()) as {

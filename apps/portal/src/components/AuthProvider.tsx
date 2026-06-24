@@ -26,7 +26,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const refresh = useCallback(async () => {
     try {
-      const res = await fetch("/api/auth/session");
+      const res = await fetch("/api/auth/session", {
+        credentials: "include",
+        cache: "no-store",
+      });
       const data = await res.json();
       setUser(data.user ?? null);
     } catch {
@@ -37,11 +40,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    refresh();
+    void Promise.resolve().then(refresh);
   }, [refresh]);
 
   const signOut = useCallback(async () => {
-    await fetch("/api/auth/logout", { method: "POST" });
+    await fetch("/api/auth/logout", {
+      method: "POST",
+      credentials: "include",
+      cache: "no-store",
+    });
     setUser(null);
     window.location.href = "/";
   }, []);

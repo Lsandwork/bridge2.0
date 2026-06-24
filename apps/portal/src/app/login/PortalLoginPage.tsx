@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Sparkles } from "lucide-react";
 import { postAuthJson } from "@/lib/auth/client";
@@ -18,7 +18,6 @@ type AccountType = "parent" | "therapist";
 
 export default function PortalLoginPage() {
   const { t } = useLanguage();
-  const router = useRouter();
   const searchParams = useSearchParams();
   const next = searchParams.get("next") ?? "";
   const [tab, setTab] = useState<Tab>("signin");
@@ -42,8 +41,7 @@ export default function PortalLoginPage() {
           : next && !data.user?.mustChangePassword
             ? next
             : (data.redirectTo ?? "/dashboard");
-      router.push(dest);
-      router.refresh();
+      window.location.assign(dest);
     } catch (err) {
       setError(err instanceof Error ? err.message : t("auth.loginFailed"));
     } finally {
@@ -66,8 +64,9 @@ export default function PortalLoginPage() {
         password,
         accountType,
       });
-      router.push(data.redirectTo ?? (accountType === "therapist" ? "/setup/therapist" : "/setup/parent"));
-      router.refresh();
+      window.location.assign(
+        data.redirectTo ?? (accountType === "therapist" ? "/setup/therapist" : "/setup/parent")
+      );
     } catch (err) {
       setError(err instanceof Error ? err.message : t("auth.signupFailed"));
     } finally {

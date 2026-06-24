@@ -5,10 +5,12 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Copy, Check } from "lucide-react";
 import { SignOutButton } from "@/components/SignOutButton";
+import { useAuth } from "@/components/AuthProvider";
 import "../../landing.css";
 
 export default function ParentSetupPage() {
   const router = useRouter();
+  const { user, loading: authLoading, refresh: refreshAuth } = useAuth();
   const [step, setStep] = useState<1 | 2>(1);
   const [name, setName] = useState("");
   const [ageGroup, setAgeGroup] = useState<"child" | "teen" | "adult">("child");
@@ -29,6 +31,8 @@ export default function ParentSetupPage() {
       const res = await fetch("/api/access-codes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        cache: "no-store",
         body: JSON.stringify({
           action: "create-profile",
           name,
@@ -37,6 +41,10 @@ export default function ParentSetupPage() {
         }),
       });
       const data = await res.json();
+      if (res.status === 401) {
+        await refreshAuth();
+        throw new Error("Your sign-in session was not available. Please sign in again.");
+      }
       if (!res.ok) throw new Error(data.error);
       setAccessCode(data.accessCode);
       setProfileId(data.profile.id);
@@ -66,7 +74,19 @@ export default function ParentSetupPage() {
         </div>
 
         <article className="landing-mockup p-6">
-          {step === 1 ? (
+          {!authLoading && !user ? (
+            <div className="rounded-xl border border-amber-400/30 bg-amber-400/10 p-4">
+              <h1 className="text-xl font-bold text-white">Please sign in again</h1>
+              <p className="mt-2 text-sm leading-relaxed text-slate-300">
+                Your account was created, but this browser does not currently have an active Bridge session.
+              </p>
+              <Link href="/login?next=/setup/parent" className="landing-btn-primary mt-4 w-full justify-center">
+                Return to sign in
+              </Link>
+            </div>
+          ) : authLoading ? (
+            <p className="py-8 text-center text-sm text-slate-400">Checking your secure session…</p>
+          ) : step === 1 ? (
             <>
               <p className="text-xs font-bold uppercase tracking-wider text-violet-300">Parent setup · Step 1 of 2</p>
               <h1 className="mt-2 text-2xl font-bold text-white">Add your child, teen, or adult</h1>
@@ -142,6 +162,8 @@ export default function ParentSetupPage() {
                       const res = await fetch("/api/access-codes", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
+                        credentials: "include",
+                        cache: "no-store",
                         body: JSON.stringify({
                           action: "add-child-login",
                           profileId,
