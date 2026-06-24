@@ -13,7 +13,7 @@
   "dependencies": {
     "@family-support/core": "^1.0.0",
     "@family-support/data": "^1.0.0",
-    "@google/generative-ai": "^0.24.1",
+    "@google/generative-ai": "0.24.1",
     "lucide-react": "^1.21.0",
     "next": "16.2.9",
     "openai": "^6.44.0",
