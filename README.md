@@ -48,3 +48,5 @@ Quick checklist:
 2. Copy `.env.example` → `.env.local` in portal/admin and `.env` in mobile
 3. Apply `supabase/migrations/` and `supabase/seed/seed.sql`
 4. Deploy the portal per [docs/DEPLOY-bridge.md](docs/DEPLOY-bridge.md).
+
+# bridge2.0
