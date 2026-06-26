@@ -190,3 +190,28 @@ export const defaultCommunicationCategories = [
   "I am overwhelmed",
   "I need help",
 ] as const;
+
+export {
+  type BridgeMemberRole,
+  type BridgeGroup,
+  type BridgeGroupMember,
+  type BridgeAccessCode,
+  type BridgeConversation,
+  type BridgeMessage,
+  type SafetySeverity,
+  type SafetyAlertStatus,
+  type SafetyAlert,
+  type PlatformNotification,
+  type ErrorLogSeverity,
+  type ErrorLogStatus,
+  type ErrorLogEntry,
+  type UserActivityEventType,
+  type UserActivityEvent,
+  type PaymentProcessorId,
+  type PaymentProcessorStatus,
+  type SafetyConcernCategory,
+  NUVIO_CRISIS_RESPONSE,
+  SAFETY_CONCERN_CATEGORIES,
+} from "./platform/types";
+
+export { checkPlatformSafety, mapSeverityToTessRisk, type PlatformSafetyResult } from "./platform/safety";

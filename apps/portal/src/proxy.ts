@@ -13,6 +13,9 @@ const PUBLIC_PREFIXES = ["/library"];
 const PROTECTED_PREFIXES = [
   "/dashboard",
   "/profiles",
+  "/messages",
+  "/safety-alerts",
+  "/admin",
   "/routines",
   "/tasks",
   "/communication",

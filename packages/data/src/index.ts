@@ -299,13 +299,14 @@ export {
   markTherapistMessageRead,
   replyToTherapistMessage,
   logTherapistBehaviorEvent,
+  type ClientProfile,
   type TherapistDashboardSnapshot,
   type AutismPassport,
   type DocumentType,
   type GeneratedDocument,
 } from "./therapist-store";
 
-export { DEMO_ACCOUNT_IDS, DEMO_PROFILE_IDS } from "./demo-accounts";
+export { DEMO_PROFILE_IDS, DEMO_ACCOUNT_EMAILS, DEMO_ACCOUNT_IDS, LEGACY_DEMO_ACCOUNT_IDS, LEGACY_DEMO_PROFILE_IDS, isDemoAccountEmail, isDemoAccountId, isLegacyDemoProfile, shouldSeeLegacyDemoData, shouldSeeInvestorDemoData } from "./demo-accounts";
 
 export {
   resolveProfilesForSessionUser,
@@ -417,3 +418,12 @@ export async function signOut() {
   if (!supabase) return;
   await supabase.auth.signOut();
 }
+
+export * from "./bridge-store";
+export * from "./messaging-store";
+export * from "./safety-alert-store";
+export * from "./platform-notifications";
+export * from "./error-log-store";
+export * from "./platform-diagnostics";
+export * from "./platform-admin";
+export * from "./analytics-store";

@@ -1,10 +1,12 @@
 import { PortalShell } from "@/components/PortalShell";
 import { AuthProvider } from "@/components/AuthProvider";
+import { BridgeAnalytics } from "@/components/BridgeAnalytics";
 import { LanguageProvider } from "@/components/LanguageProvider";
 import { TessAssistantBubble } from "@/components/tess/TessAssistantBubble";
 import { SupportPathwayProvider } from "@/components/SupportPathwayProvider";
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Suspense } from "react";
 import "./globals.css";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
@@ -42,6 +44,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <AuthProvider>
             <SupportPathwayProvider>
               <PortalShell>{children}</PortalShell>
+              <Suspense fallback={null}>
+                <BridgeAnalytics />
+              </Suspense>
               <TessAssistantBubble />
             </SupportPathwayProvider>
           </AuthProvider>

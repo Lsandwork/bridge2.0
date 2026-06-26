@@ -5,7 +5,7 @@ import {
   isDemoAuthEmail,
   isDemoAuthUserId,
 } from "./supabase-auth";
-import { DEMO_PROFILE_IDS } from "./demo-accounts";
+import { LEGACY_DEMO_PROFILE_IDS } from "./demo-accounts";
 import { resolveProfilesForSessionUser } from "./session-profiles";
 import { getEmptyDashboard } from "./local-store";
 
@@ -28,7 +28,7 @@ describe("supabase-auth demo isolation", () => {
       isDemo: true,
     });
     expect(profiles.map((p) => p.name)).toEqual(expect.arrayContaining(["Nathan", "Sam"]));
-    expect(profiles.every((p) => DEMO_PROFILE_IDS.has(p.id))).toBe(true);
+    expect(profiles.every((p) => LEGACY_DEMO_PROFILE_IDS.has(p.id))).toBe(true);
   });
 
   it("returns blank dashboard stats for new profile ids", () => {

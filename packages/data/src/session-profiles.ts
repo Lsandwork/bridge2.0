@@ -1,5 +1,5 @@
 import type { AppRole } from "@family-support/core";
-import { DEMO_ACCOUNT_IDS, DEMO_PROFILE_IDS } from "./demo-accounts";
+import { DEMO_ACCOUNT_IDS, DEMO_PROFILE_IDS, LEGACY_DEMO_PROFILE_IDS, shouldSeeLegacyDemoData } from "./demo-accounts";
 import {
   fetchPersistedChildProfiles,
   isDemoAuthUserId,
@@ -21,7 +21,10 @@ export async function resolveProfilesForSessionUser(
 ): Promise<ChildProfile[]> {
   if (isDemoAuthUserId(session.id)) {
     const linked = getLinkedProfileIds(session.id);
-    const ids = linked.length > 0 ? linked : [...DEMO_PROFILE_IDS];
+    const fallbackIds = shouldSeeLegacyDemoData(session.id)
+      ? [...LEGACY_DEMO_PROFILE_IDS]
+      : [...DEMO_PROFILE_IDS];
+    const ids = linked.length > 0 ? linked : fallbackIds;
     return getLocalChildProfiles().filter((p) => ids.includes(p.id));
   }
 

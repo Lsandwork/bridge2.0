@@ -20,6 +20,8 @@ import {
   LogOut,
   Menu,
   X,
+  Mail,
+  ShieldAlert,
 } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 import { useLanguage } from "@/components/LanguageProvider";
@@ -41,6 +43,8 @@ type NavItem = {
 const mainNav: NavItem[] = [
   { href: "/dashboard", labelKey: "parent.nav.dashboard", icon: LayoutDashboard },
   { href: "/profiles", labelKey: "parent.nav.myChildren", icon: Users },
+  { href: "/messages", labelKey: "parent.nav.messages", icon: Mail },
+  { href: "/safety-alerts", labelKey: "parent.nav.safetyAlerts", icon: ShieldAlert },
   { href: "/routines", labelKey: "parent.nav.routines", icon: Calendar },
   { href: "/tasks", labelKey: "parent.nav.tasks", icon: CheckSquare },
   { href: "/communication", labelKey: "parent.nav.communication", icon: MessageCircle },
@@ -152,7 +156,7 @@ function SidebarContent({
   onNavigate,
 }: {
   pathname: string;
-  user: { name: string; email: string } | null;
+  user: { name: string; email: string; role?: string } | null;
   signOut: () => Promise<void>;
   router: ReturnType<typeof useRouter>;
   onNavigate?: () => void;
@@ -186,7 +190,15 @@ function SidebarContent({
         </div>
       </div>
       <nav className="mt-6 flex-1 overflow-y-auto overscroll-contain" aria-label={t("parent.a11y.navLabel")}>
-        <NavSection titleKey="parent.nav.section.main" items={mainNav} pathname={pathname} onNavigate={onNavigate} />
+        <NavSection
+          titleKey="parent.nav.section.main"
+          items={mainNav.filter((item) => {
+            if (item.href === "/safety-alerts" && user?.role === "child_user") return false;
+            return true;
+          })}
+          pathname={pathname}
+          onNavigate={onNavigate}
+        />
         <NavSection titleKey="parent.nav.section.library" items={contentNav} pathname={pathname} onNavigate={onNavigate} />
         <NavSection titleKey="parent.nav.section.tools" items={toolsNav} pathname={pathname} onNavigate={onNavigate} />
       </nav>
@@ -243,6 +255,10 @@ export function PortalShell({ children }: { children: React.ReactNode }) {
     pathname === "/onboarding/account" ||
     pathname === "/login" ||
     pathname === "/change-password" ||
+    pathname === "/privacy" ||
+    pathname === "/terms" ||
+    pathname === "/safety" ||
+    pathname === "/data-policy" ||
     pathname.startsWith("/my-space") ||
     pathname.startsWith("/setup") ||
     pathname.startsWith("/therapist");

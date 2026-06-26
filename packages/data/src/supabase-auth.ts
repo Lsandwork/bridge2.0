@@ -12,7 +12,7 @@ import {
   createSupabaseUserClient,
   hasSupabaseAuth,
 } from "./supabase-server";
-import { DEMO_ACCOUNT_IDS, DEMO_PROFILE_IDS } from "./demo-accounts";
+import { DEMO_ACCOUNT_IDS, DEMO_PROFILE_IDS, LEGACY_DEMO_PROFILE_IDS, shouldSeeLegacyDemoData, isDemoAccountId } from "./demo-accounts";
 
 export const DEMO_AUTH_EMAILS = new Set([
   "lsand.work@gmail.com",
@@ -56,7 +56,7 @@ export function isDemoAuthEmail(email: string): boolean {
 }
 
 export function isDemoAuthUserId(userId: string): boolean {
-  return DEMO_ACCOUNT_IDS.has(userId);
+  return isDemoAccountId(userId);
 }
 
 export function toBridgeAuthUser(user: PublicAuthUser): BridgeAuthUser {
@@ -451,7 +451,8 @@ export async function fetchPersistedChildProfiles(
 ): Promise<ChildProfile[]> {
   if (isDemoAuthUserId(authUserId)) {
     const { getLocalChildProfiles } = await import("./local-store");
-    return getLocalChildProfiles().filter((p) => DEMO_PROFILE_IDS.has(p.id));
+    const allowed = shouldSeeLegacyDemoData(authUserId) ? LEGACY_DEMO_PROFILE_IDS : DEMO_PROFILE_IDS;
+    return getLocalChildProfiles().filter((p) => allowed.has(p.id));
   }
 
   const admin = createSupabaseAdminClient();
@@ -515,7 +516,10 @@ export async function userCanAccessPersistedProfile(
   childProfileId: string
 ): Promise<boolean> {
   if (role === "admin" || role === "super_admin") return true;
-  if (isDemoAuthUserId(authUserId)) return DEMO_PROFILE_IDS.has(childProfileId);
+  if (isDemoAuthUserId(authUserId)) {
+    const allowed = shouldSeeLegacyDemoData(authUserId) ? LEGACY_DEMO_PROFILE_IDS : DEMO_PROFILE_IDS;
+    return allowed.has(childProfileId);
+  }
   const profiles = await fetchPersistedChildProfiles(authUserId, role);
   return profiles.some((p) => p.id === childProfileId);
 }

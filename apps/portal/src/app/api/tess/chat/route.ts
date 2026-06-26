@@ -1,14 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
   checkTessSafety,
+  checkPlatformSafety,
   extractLocation,
   extractUserNeeds,
   isRecommendationRequest,
-  TESS_CRISIS_RESPONSE,
+  NUVIO_CRISIS_RESPONSE,
   TESS_SAFETY_FALLBACK,
 } from "@family-support/core";
 import {
   addTessMessage,
+  createSafetyAlertFromMessage,
   createTessConversation,
   createTessSafetyFlag,
   createTessSuggestion,
@@ -43,6 +45,7 @@ export async function POST(req: NextRequest) {
     }
 
     const safety = checkTessSafety(message);
+    const platformSafety = checkPlatformSafety(message);
     let conv = conversationId ? getTessConversation(conversationId) : null;
     if (!conv) {
       conv = createTessConversation({
@@ -65,19 +68,34 @@ export async function POST(req: NextRequest) {
       transcript: message,
     });
 
-    if (safety.flagged && (safety.riskLevel === "urgent" || safety.riskLevel === "high")) {
+    if (platformSafety.flagged && platformSafety.notifyAdults) {
+      createSafetyAlertFromMessage({
+        userId: session.userId,
+        message,
+        childProfileId,
+        source: "nuvio_chat",
+      });
+    }
+
+    if (
+      safety.flagged &&
+      (safety.riskLevel === "urgent" ||
+        safety.riskLevel === "high" ||
+        platformSafety.severity === "critical" ||
+        platformSafety.severity === "high")
+    ) {
       createTessSafetyFlag({
         conversationId: conv.id,
         userId: session.userId,
         childProfileId,
-        flagType: safety.flagType ?? "safety",
+        flagType: platformSafety.concernCategory ?? safety.flagType ?? "safety",
         riskLevel: safety.riskLevel,
-        description: safety.description ?? "Safety concern",
+        description: platformSafety.description || safety.description || "Safety concern",
       });
       const crisisMsg = addTessMessage({
         conversationId: conv.id,
         role: "assistant",
-        content: TESS_CRISIS_RESPONSE,
+        content: NUVIO_CRISIS_RESPONSE,
         tokensInput: 0,
         tokensOutput: 0,
         safetyStatus: safety.riskLevel,
@@ -85,7 +103,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({
         conversationId: conv.id,
         message: crisisMsg,
-        safety,
+        safety: platformSafety.flagged ? platformSafety : safety,
         suggestedActions: [{ type: "emergency_card", label: "Open emergency card" }],
       });
     }

@@ -169,7 +169,7 @@ export function LandingPage() {
         <section className="landing-safety">
           <ShieldCheck size={34} />
           <div><span>Responsible by design</span><h2>Supportive technology with clear boundaries.</h2><p>Bridge does not diagnose, prescribe treatment, or replace licensed professionals, emergency services, or a person’s existing clinical care.</p></div>
-          <Link href="/onboarding">Read and continue <ArrowRight size={15} /></Link>
+          <Link href="/safety">Read safety notice <ArrowRight size={15} /></Link>
         </section>
 
         <section className="landing-close">
@@ -182,7 +182,15 @@ export function LandingPage() {
 
       <footer className="landing-footer landing-footer--complete">
         <div><span className="landing-logo-name">Bridge</span><p>Support that meets people where they are.</p></div>
-        <div><Link href="/pricing">Coverage & pricing</Link><Link href="/login">Sign in</Link><Link href="/onboarding">Get started</Link></div>
+        <div>
+          <Link href="/pricing">Coverage & pricing</Link>
+          <Link href="/privacy">Privacy</Link>
+          <Link href="/terms">Terms</Link>
+          <Link href="/safety">Safety</Link>
+          <Link href="/data-policy">Data policy</Link>
+          <Link href="/login">Sign in</Link>
+          <Link href="/onboarding">Get started</Link>
+        </div>
         <small>Bridge is supportive technology and does not provide diagnosis, treatment, or emergency services.</small>
       </footer>
     </div>
