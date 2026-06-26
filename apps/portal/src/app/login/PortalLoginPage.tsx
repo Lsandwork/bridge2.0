@@ -270,6 +270,14 @@ export default function PortalLoginPage() {
           <Link href="/" className="mt-4 block text-center text-sm text-slate-500 hover:text-slate-300">
             ← Back to home
           </Link>
+          {tab === "signin" ? (
+            <p className="mt-3 text-center text-sm text-slate-400">
+              New to Bridge?{" "}
+              <Link href="/onboarding" className="font-semibold text-violet-300 hover:text-violet-200">
+                Build your Bridge
+              </Link>
+            </p>
+          ) : null}
         </section>
       </main>
     </div>

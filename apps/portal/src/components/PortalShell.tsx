@@ -240,6 +240,7 @@ export function PortalShell({ children }: { children: React.ReactNode }) {
   const hideNav =
     pathname === "/" ||
     pathname === "/onboarding" ||
+    pathname === "/onboarding/account" ||
     pathname === "/login" ||
     pathname === "/change-password" ||
     pathname.startsWith("/my-space") ||

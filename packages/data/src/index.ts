@@ -25,6 +25,7 @@ import {
   getLocalChildProfiles,
   getLocalCommunicationCards,
   getLocalDashboard,
+  getEmptyDashboard,
   getLocalExercises,
   getLocalGoals,
   getLocalLibrary,
@@ -38,6 +39,10 @@ import {
   updateLocalAiSuggestion,
 } from "./local-store";
 
+import {
+  getDashboardSnapshotForProfile,
+} from "./supabase-auth";
+import { DEMO_PROFILE_IDS } from "./demo-accounts";
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? process.env.EXPO_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey =
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
@@ -53,36 +58,31 @@ export const supabase = hasSupabaseConfig
 
 export type DashboardSnapshot = ReturnType<typeof getLocalDashboard>;
 
-export async function getDashboardSnapshot(childProfileId = "cp1"): Promise<DashboardSnapshot> {
-  if (!supabase) return getLocalDashboard(childProfileId);
+export async function getDashboardSnapshot(
+  childProfileId: string,
+  options?: { childName?: string; allowEmpty?: boolean; authUserId?: string }
+): Promise<DashboardSnapshot> {
+  const childName = options?.childName ?? "Child";
+  const isDemoProfile = DEMO_PROFILE_IDS.has(childProfileId);
+
+  if (!isDemoProfile) {
+    return getDashboardSnapshotForProfile(childProfileId, childName);
+  }
 
   const local = getLocalDashboard(childProfileId);
-  try {
-    const [routines, completions, emotions, sensory, cards, rewards, tasks] = await Promise.all([
-      supabase.from("routines").select("id", { count: "exact", head: true }).eq("active", true),
-      supabase.from("task_completions").select("id", { count: "exact", head: true }).gte("completed_at", new Date().toISOString().slice(0, 10)),
-      supabase.from("emotions").select("id", { count: "exact", head: true }),
-      supabase.from("sensory_logs").select("id", { count: "exact", head: true }),
-      supabase.from("communication_cards").select("id", { count: "exact", head: true }),
-      supabase.from("rewards").select("id", { count: "exact", head: true }),
-      supabase.from("tasks").select("status"),
-    ]);
-    const completed = (tasks.data ?? []).filter((t) => t.status === "completed").length;
-    const total = (tasks.data ?? []).length || 1;
-    return {
-      ...local,
-      routinesDue: routines.count ?? local.routinesDue,
-      tasksCompletedToday: completions.count ?? local.tasksCompletedToday,
-      tasksSkipped: (tasks.data ?? []).filter((t) => t.status === "skipped").length,
-      emotionCheckIns: emotions.count ?? local.emotionCheckIns,
-      sensoryLogs: sensory.count ?? local.sensoryLogs,
-      communicationCards: cards.count ?? local.communicationCards,
-      rewardsAvailable: rewards.count ?? local.rewardsAvailable,
-      completionRate: Math.round((completed / total) * 100),
-    };
-  } catch {
-    return local;
+  const hasActivity =
+    local.tasksCompletedPct > 0 ||
+    local.routinesCompletedPct > 0 ||
+    local.checkInsCount > 0 ||
+    local.newSkillsCount > 0 ||
+    local.weekChart.some((d) => d.tasks > 0 || d.routines > 0 || d.checkIns > 0) ||
+    local.emotionBreakdown.length > 0;
+
+  if (options?.allowEmpty && !hasActivity) {
+    return getEmptyDashboard(childProfileId, childName);
   }
+
+  return local;
 }
 
 export async function getParentLibrary() {
@@ -121,10 +121,7 @@ export async function getCommunicationCategories() {
 }
 
 export async function getChildProfiles() {
-  if (!supabase) return getLocalChildProfiles();
-  const { data } = await supabase.from("child_profiles").select("*");
-  const rows = data ?? [];
-  return rows.length > 0 ? rows : getLocalChildProfiles();
+  return [];
 }
 
 export async function getRoutines(childProfileId?: string) {
@@ -307,6 +304,36 @@ export {
   type DocumentType,
   type GeneratedDocument,
 } from "./therapist-store";
+
+export { DEMO_ACCOUNT_IDS, DEMO_PROFILE_IDS } from "./demo-accounts";
+
+export {
+  resolveProfilesForSessionUser,
+  userCanAccessProfile,
+  type SessionProfileUser,
+} from "./session-profiles";
+
+export {
+  bridgeUserFromSupabaseUser,
+  createPersistedAccessCode,
+  createPersistedChildProfile,
+  demoLogin,
+  demoSessionUser,
+  DEMO_AUTH_EMAILS,
+  fetchPersistedChildProfiles,
+  getPersistedAccessCodeForProfile,
+  isDemoAuthEmail,
+  isDemoAuthUserId,
+  markPersistedSetupComplete,
+  redeemPersistedAccessCode,
+  resolveSupabaseSession,
+  supabaseSignIn,
+  supabaseSignOut,
+  supabaseSignUp,
+  type BridgeAuthUser,
+} from "./supabase-auth";
+
+export { hasSupabaseAuth } from "./supabase-server";
 
 export {
   filterProfilesForAuthUser,

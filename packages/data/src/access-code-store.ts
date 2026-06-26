@@ -144,6 +144,7 @@ export function markSetupComplete(userId: string): void {
 
 export function needsAccountSetup(user: PublicAuthUser): boolean {
   if (user.role === "admin" || user.role === "super_admin" || user.role === "child_user") return false;
+  if (typeof user.onboardingComplete === "boolean") return !user.onboardingComplete;
   const setup = getUserSetup(user.id);
   if (!setup) return user.role === "parent_guardian" || user.role === "caregiver_therapist_teacher";
   return !setup.setupComplete;

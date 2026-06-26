@@ -10,7 +10,9 @@ export type DemoAuthUser = {
   mustChangePassword: boolean;
 };
 
-export type PublicAuthUser = Omit<DemoAuthUser, "password">;
+export type PublicAuthUser = Omit<DemoAuthUser, "password"> & {
+  onboardingComplete?: boolean;
+};
 
 const demoUsers: DemoAuthUser[] = [
   {

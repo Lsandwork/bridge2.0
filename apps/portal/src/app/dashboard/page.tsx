@@ -29,13 +29,15 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [snapshot, setSnapshot] = useState<Snapshot | null>(null);
-  const [profileId, setProfileId] = useState("cp1");
+  const [profileId, setProfileId] = useState<string | null>(null);
   const [profiles, setProfiles] = useState<{ id: string; name: string }[]>([]);
+  const [profilesLoaded, setProfilesLoaded] = useState(false);
   const [aiSummary, setAiSummary] = useState<string | null>(null);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
 
   const load = useCallback(() => {
+    if (!profileId) return;
     setLoading(true);
     fetch(`/api/dashboard?profileId=${profileId}`)
       .then((res) => res.json())
@@ -49,22 +51,32 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (authLoading) return;
-    if (user?.role === "caregiver_therapist_teacher") {
+    if (!user) return;
+    if (user.role === "caregiver_therapist_teacher") {
       router.replace("/therapist");
     }
   }, [authLoading, user, router]);
 
   useEffect(() => {
+    if (authLoading || !user) return;
     fetch("/api/profiles")
       .then((r) => r.json())
-      .then((data) => setProfiles(Array.isArray(data) ? data : []));
-  }, []);
+      .then((data) => {
+        const list = Array.isArray(data) ? data : [];
+        setProfiles(list);
+        if (list.length > 0) {
+          setProfileId((current) => current ?? list[0].id);
+        }
+      })
+      .finally(() => setProfilesLoaded(true));
+  }, [authLoading, user]);
 
   useEffect(() => {
     load();
   }, [load]);
 
   const generateSummary = async () => {
+    if (!profileId) return;
     setAiLoading(true);
     setAiError(null);
     try {
@@ -84,7 +96,7 @@ export default function DashboardPage() {
   };
 
   const approveSummary = async () => {
-    if (!aiSummary) return;
+    if (!aiSummary || !profileId) return;
     const res = await fetch("/api/ai/summary", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -98,13 +110,37 @@ export default function DashboardPage() {
   };
 
   if (pathway.id !== "autism") return <PathwayDashboard pathway={pathway} />;
+  if (authLoading || !profilesLoaded) return <LoadingBlock label={t("parent.dashboard.loading")} />;
+
+  if (!profiles.length) {
+    return (
+      <main className="mx-auto flex w-full max-w-6xl flex-col gap-5 p-6">
+        <EmptyBlock message={t("parent.dashboard.noProfile")} />
+        <div className="flex flex-wrap gap-3">
+          <Link href="/profiles" className="btn-primary px-4 py-2 text-sm">
+            {t("parent.dashboard.createProfile")}
+          </Link>
+          <Link href="/onboarding" className="btn-secondary px-4 py-2 text-sm">
+            {t("parent.dashboard.restartOnboarding")}
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
   if (loading) return <LoadingBlock label={t("parent.dashboard.loading")} />;
   if (error) return <ErrorBlock message={error} />;
-  if (!snapshot) return <EmptyBlock message={t("parent.dashboard.noData")} />;
+  if (!snapshot || !profileId) return <EmptyBlock message={t("parent.dashboard.noData")} />;
+
+  const hasActivity =
+    snapshot.tasksCompletedPct > 0 ||
+    snapshot.routinesCompletedPct > 0 ||
+    snapshot.checkInsCount > 0 ||
+    snapshot.newSkillsCount > 0;
 
   const stats = [
-    { label: t("parent.dashboard.tasksCompleted"), value: `${snapshot.tasksCompletedPct}%` },
-    { label: t("parent.dashboard.routinesCompleted"), value: `${snapshot.routinesCompletedPct}%` },
+    { label: t("parent.dashboard.tasksCompleted"), value: hasActivity ? `${snapshot.tasksCompletedPct}%` : "0%" },
+    { label: t("parent.dashboard.routinesCompleted"), value: hasActivity ? `${snapshot.routinesCompletedPct}%` : "0%" },
     { label: t("parent.dashboard.checkIns"), value: String(snapshot.checkInsCount) },
     { label: t("parent.dashboard.newSkills"), value: String(snapshot.newSkillsCount) },
   ];
@@ -118,16 +154,24 @@ export default function DashboardPage() {
           </h2>
           <p className="mt-1 max-w-2xl text-sm text-[var(--text-secondary)]">{t("common.safetyDisclaimer")}</p>
         </div>
-        <select
-          className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm font-semibold"
-          value={profileId}
-          onChange={(e) => setProfileId(e.target.value)}
-        >
-          {profiles.map((p) => (
-            <option key={p.id} value={p.id}>{p.name}</option>
-          ))}
-        </select>
+        {profiles.length > 1 ? (
+          <select
+            className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm font-semibold"
+            value={profileId}
+            onChange={(e) => setProfileId(e.target.value)}
+          >
+            {profiles.map((p) => (
+              <option key={p.id} value={p.id}>{p.name}</option>
+            ))}
+          </select>
+        ) : null}
       </section>
+
+      {!hasActivity ? (
+        <p className="rounded-xl border border-dashed border-[var(--border)] bg-[var(--surface-muted)] px-4 py-3 text-sm text-[var(--text-secondary)]">
+          {t("parent.dashboard.emptyState")}
+        </p>
+      ) : null}
 
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((s) => (
@@ -144,7 +188,11 @@ export default function DashboardPage() {
             {t("parent.dashboard.weekAtGlance", { name: snapshot.childName })}
           </h3>
           <div className="mt-4">
-            <WeekBarChart data={snapshot.weekChart} />
+            {snapshot.weekChart.some((d) => d.tasks > 0 || d.routines > 0 || d.checkIns > 0) ? (
+              <WeekBarChart data={snapshot.weekChart} />
+            ) : (
+              <p className="text-sm text-[var(--text-secondary)]">{t("parent.dashboard.noProgressYet")}</p>
+            )}
           </div>
         </article>
         <article className="card p-6">

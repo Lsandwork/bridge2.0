@@ -6,7 +6,7 @@ import {
   SESSION_COOKIE,
 } from "@/lib/auth/session-cookie";
 
-const PUBLIC_EXACT = new Set(["/", "/login", "/change-password", "/pricing", "/onboarding"]);
+const PUBLIC_EXACT = new Set(["/", "/login", "/change-password", "/pricing", "/onboarding", "/onboarding/account"]);
 
 const PUBLIC_PREFIXES = ["/library"];
 

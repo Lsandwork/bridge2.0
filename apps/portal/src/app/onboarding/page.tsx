@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight, Check, ShieldCheck } from "lucide-react";
 import { useSupportPathway } from "@/components/SupportPathwayProvider";
+import { writeOnboardingIntake } from "@/lib/onboarding/intake";
 import { supportPathways, type SupportPathwayId } from "@/lib/support-pathways";
 import "../landing.css";
 import "./onboarding.css";
@@ -36,7 +37,12 @@ export default function OnboardingPage({
   const finish = () => {
     selectPathway(selected);
     window.localStorage.setItem("bridge-setup-role", role);
-    router.push(role === "professional" ? "/setup/therapist" : "/setup/parent");
+    writeOnboardingIntake({
+      pathwayId: selected,
+      setupRole: role,
+      safetyAcceptedAt: new Date().toISOString(),
+    });
+    router.push("/onboarding/account");
   };
 
   return (

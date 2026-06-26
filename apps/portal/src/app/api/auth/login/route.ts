@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
-import { authenticateDemoUser, homePathForAuthUser, logUserActivity, notifySpectrumAuthEvent } from "@family-support/data";
-import { setSessionCookie } from "@/lib/auth/session";
+import {
+  homePathForAuthUser,
+  logUserActivity,
+  notifySpectrumAuthEvent,
+  supabaseSignIn,
+} from "@family-support/data";
+import { bridgeAuthUserToSessionUser, setAuthSession } from "@/lib/auth/session";
 
 export async function POST(request: Request) {
   try {
@@ -12,27 +17,24 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Email and password are required." }, { status: 400 });
     }
 
-    const user = authenticateDemoUser(email, password);
-    if (!user) {
-      return NextResponse.json({ error: "Invalid email or password." }, { status: 401 });
-    }
-
+    const { user, tokens } = await supabaseSignIn(email, password);
     logUserActivity(user.id, user.email, "login");
 
     if (user.role === "child_user") {
-      notifySpectrumAuthEvent(user, "login");
+      notifySpectrumAuthEvent(bridgeAuthUserToSessionUser(user), "login");
     }
 
+    const sessionUser = bridgeAuthUserToSessionUser(user);
     const response = NextResponse.json({
-      user,
-      redirectTo: homePathForAuthUser(user),
+      user: sessionUser,
+      redirectTo: homePathForAuthUser(sessionUser),
     });
-    setSessionCookie(response, user);
+    setAuthSession(response, sessionUser, tokens.accessToken ? tokens : undefined);
     return response;
   } catch (error) {
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Login failed." },
-      { status: 500 }
+      { status: error instanceof Error && error.message.includes("Invalid") ? 401 : 500 }
     );
   }
 }

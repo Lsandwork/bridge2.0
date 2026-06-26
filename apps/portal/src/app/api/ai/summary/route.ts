@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { geminiWeeklySummary } from "@/lib/gemini";
-import { createLocalReport, getDashboardSnapshot, getChildProfiles } from "@family-support/data";
+import {
+  createLocalReport,
+  getDashboardSnapshot,
+  resolveChildProfilesForSession,
+  userCanAccessProfile,
+} from "@family-support/data";
+import { getSession } from "@/lib/auth/session";
 
 function publicAiError(error: unknown): string {
   const msg = error instanceof Error ? error.message : "Summary generation failed";
@@ -12,10 +18,23 @@ function publicAiError(error: unknown): string {
 
 export async function POST(req: NextRequest) {
   try {
-    const { profileId = "cp1", save = false } = await req.json();
-    const snapshot = await getDashboardSnapshot(profileId);
-    const profiles = await getChildProfiles();
+    const session = await getSession();
+    if (!session) {
+      return NextResponse.json({ error: "Sign in required." }, { status: 401 });
+    }
+
+    const { profileId, save = false } = await req.json();
+    if (!profileId || !(await userCanAccessProfile(session, profileId))) {
+      return NextResponse.json({ error: "Profile not found." }, { status: 403 });
+    }
+
+    const profiles = await resolveChildProfilesForSession(session);
     const profile = profiles.find((p) => p.id === profileId);
+    const snapshot = await getDashboardSnapshot(profileId, {
+      childName: profile?.name,
+      allowEmpty: true,
+      authUserId: session.id,
+    });
 
     const text = await geminiWeeklySummary({
       childName: profile?.name ?? "Child",

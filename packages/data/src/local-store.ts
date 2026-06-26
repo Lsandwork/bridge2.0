@@ -494,18 +494,24 @@ const store: {
 
 export function getLocalDashboard(childProfileId = "cp1") {
   const today = new Date().toISOString().slice(0, 10);
+  const profile = store.childProfiles.find((p) => p.id === childProfileId);
   const profileTasks = store.tasks.filter((t) => t.childProfileId === childProfileId);
   const completed = profileTasks.filter((t) => t.status === "completed").length;
   const profileRoutines = store.routines.filter((r) => r.childProfileId === childProfileId && r.active);
   const profileCheckIns = store.checkIns.filter((c) => c.childProfileId === childProfileId);
   const newSkills = store.goals.filter((g) => g.childProfileId === childProfileId && g.current >= 3).length;
+  const completedRoutines =
+    profileRoutines.length > 0 && profileTasks.some((t) => t.status === "completed")
+      ? Math.min(profileRoutines.length, completed)
+      : 0;
 
   return {
     safetyDisclaimer: SAFETY_DISCLAIMER,
     childProfileId,
-    childName: store.childProfiles.find((p) => p.id === childProfileId)?.name ?? "Child",
+    childName: profile?.name ?? "Child",
     tasksCompletedPct: profileTasks.length ? Math.round((completed / profileTasks.length) * 100) : 0,
-    routinesCompletedPct: 92,
+    routinesCompletedPct:
+      profileRoutines.length > 0 ? Math.round((completedRoutines / profileRoutines.length) * 100) : 0,
     checkInsCount: profileCheckIns.length,
     newSkillsCount: newSkills,
     routinesDue: profileRoutines.length,
@@ -521,13 +527,50 @@ export function getLocalDashboard(childProfileId = "cp1") {
   };
 }
 
+export function getEmptyDashboard(childProfileId: string, childName: string) {
+  const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  return {
+    safetyDisclaimer: SAFETY_DISCLAIMER,
+    childProfileId,
+    childName,
+    tasksCompletedPct: 0,
+    routinesCompletedPct: 0,
+    checkInsCount: 0,
+    newSkillsCount: 0,
+    routinesDue: 0,
+    tasksCompletedToday: 0,
+    tasksSkipped: 0,
+    emotionCheckIns: 0,
+    sensoryLogs: 0,
+    communicationCards: 0,
+    rewardsAvailable: 0,
+    completionRate: 0,
+    weekChart: days.map((label) => ({ label, tasks: 0, routines: 0, checkIns: 0 })),
+    emotionBreakdown: [] as { label: string; count: number; color: string }[],
+  };
+}
+
 function getLocalWeekChart(childProfileId: string) {
   const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   return days.map((label, i) => ({
     label,
-    tasks: store.tasks.filter((t) => t.childProfileId === childProfileId && t.status === "completed" && t.dueAt.slice(0, 10) === daysAgo(6 - i).slice(0, 10)).length + (i < 4 ? 1 : 0),
-    routines: i < 5 ? 1 : 0,
-    checkIns: store.checkIns.filter((c) => c.childProfileId === childProfileId && c.createdAt.slice(0, 10) === daysAgo(6 - i).slice(0, 10)).length,
+    tasks: store.tasks.filter(
+      (t) =>
+        t.childProfileId === childProfileId &&
+        t.status === "completed" &&
+        t.dueAt.slice(0, 10) === daysAgo(6 - i).slice(0, 10)
+    ).length,
+    routines: store.tasks.filter(
+      (t) =>
+        t.childProfileId === childProfileId &&
+        t.status === "completed" &&
+        t.dueAt.slice(0, 10) === daysAgo(6 - i).slice(0, 10)
+    ).length > 0
+      ? 1
+      : 0,
+    checkIns: store.checkIns.filter(
+      (c) => c.childProfileId === childProfileId && c.createdAt.slice(0, 10) === daysAgo(6 - i).slice(0, 10)
+    ).length,
   }));
 }
 

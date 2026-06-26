@@ -1,9 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { geminiChat, geminiQuickAction } from "@/lib/gemini";
-import { createLocalAiSuggestion, getChildProfiles } from "@family-support/data";
+import {
+  createLocalAiSuggestion,
+  resolveChildProfilesForSession,
+  userCanAccessProfile,
+} from "@family-support/data";
+import { getSession } from "@/lib/auth/session";
 
 export async function POST(req: NextRequest) {
   try {
+    const session = await getSession();
+    if (!session) {
+      return NextResponse.json({ error: "Sign in required." }, { status: 401 });
+    }
+
     const body = await req.json();
     const { message, action, profileId, prompt } = body as {
       message?: string;
@@ -12,8 +22,12 @@ export async function POST(req: NextRequest) {
       prompt?: string;
     };
 
-    const profiles = await getChildProfiles();
-    const profile = profiles.find((p) => p.id === (profileId ?? "cp1"));
+    if (!profileId || !(await userCanAccessProfile(session, profileId))) {
+      return NextResponse.json({ error: "Profile not found." }, { status: 403 });
+    }
+
+    const profiles = await resolveChildProfilesForSession(session);
+    const profile = profiles.find((p) => p.id === profileId);
     const context = profile
       ? { childName: profile.name, ageGroup: profile.ageGroup, supportNotes: profile.supportNotes }
       : undefined;
@@ -28,7 +42,7 @@ export async function POST(req: NextRequest) {
     }
 
     const suggestion = createLocalAiSuggestion({
-      childProfileId: profileId ?? "cp1",
+      childProfileId: profileId,
       type: action ? `AI ${action}` : "AI assistant",
       details: text,
     });

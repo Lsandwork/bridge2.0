@@ -16,7 +16,7 @@ import { TessChat } from "@/components/tess/TessChat";
 import { TessIcon } from "@/components/tess/TessIcon";
 import "./tess-bubble.css";
 
-const PUBLIC_ROUTES = new Set(["/", "/login", "/onboarding"]);
+const PUBLIC_ROUTES = new Set(["/", "/login", "/onboarding", "/onboarding/account"]);
 const PUBLIC_PREFIXES = ["/setup"];
 
 function isPublicRoute(pathname: string) {

@@ -1,12 +1,19 @@
 import { NextResponse } from "next/server";
 import { changeDemoUserPassword, logUserActivity } from "@family-support/data";
-import { getSession, homePathForRole, setSessionCookie } from "@/lib/auth/session";
+import { bridgeAuthUserToSessionUser, getSession, homePathForRole, setAuthSession } from "@/lib/auth/session";
 
 export async function POST(request: Request) {
   try {
     const session = await getSession();
     if (!session) {
       return NextResponse.json({ error: "Not signed in." }, { status: 401 });
+    }
+
+    if (!session.isDemo) {
+      return NextResponse.json(
+        { error: "Use your account provider or Bridge account settings to change your password." },
+        { status: 400 }
+      );
     }
 
     const body = (await request.json()) as {
@@ -29,11 +36,15 @@ export async function POST(request: Request) {
 
     const user = changeDemoUserPassword(session.email, currentPassword, newPassword);
     logUserActivity(user.id, user.email, "password_change");
+    const sessionUser = bridgeAuthUserToSessionUser({
+      ...user,
+      isDemo: true,
+    });
     const response = NextResponse.json({
-      user,
+      user: sessionUser,
       redirectTo: homePathForRole(user.role),
     });
-    setSessionCookie(response, user);
+    setAuthSession(response, sessionUser);
     return response;
   } catch (error) {
     return NextResponse.json(

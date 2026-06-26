@@ -3,9 +3,9 @@ import {
   createUserSetup,
   homePathForAuthUser,
   logUserActivity,
-  registerDemoUser,
+  supabaseSignUp,
 } from "@family-support/data";
-import { setSessionCookie } from "@/lib/auth/session";
+import { bridgeAuthUserToSessionUser, setAuthSession } from "@/lib/auth/session";
 
 export async function POST(request: Request) {
   try {
@@ -29,15 +29,21 @@ export async function POST(request: Request) {
     }
 
     const role = accountType === "therapist" ? "caregiver_therapist_teacher" : "parent_guardian";
-    const user = registerDemoUser({ email, password, name, role });
+    const { user, tokens } = await supabaseSignUp({
+      email,
+      password,
+      name,
+      role,
+    });
     createUserSetup(user.id, accountType);
     logUserActivity(user.id, user.email, "signup");
 
+    const sessionUser = bridgeAuthUserToSessionUser(user);
     const response = NextResponse.json({
-      user,
-      redirectTo: homePathForAuthUser(user),
+      user: sessionUser,
+      redirectTo: homePathForAuthUser(sessionUser),
     });
-    setSessionCookie(response, user);
+    setAuthSession(response, sessionUser, tokens);
     return response;
   } catch (error) {
     return NextResponse.json(

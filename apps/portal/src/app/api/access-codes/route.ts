@@ -1,11 +1,15 @@
 import { NextResponse } from "next/server";
 import {
   createChildLoginAccount,
-  createLocalChildProfile,
+  createPersistedAccessCode,
+  createPersistedChildProfile,
   generateAccessCode,
   getAccessCodeForProfile,
+  getPersistedAccessCodeForProfile,
   linkUserToProfile,
   markSetupComplete,
+  markPersistedSetupComplete,
+  redeemPersistedAccessCode,
   redeemAccessCode,
 } from "@family-support/data";
 import { getSession } from "@/lib/auth/session";
@@ -24,7 +28,9 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "profileId is required." }, { status: 400 });
   }
 
-  const code = getAccessCodeForProfile(profileId);
+  const code = session.isDemo
+    ? getAccessCodeForProfile(profileId)
+    : await getPersistedAccessCodeForProfile(profileId);
   return NextResponse.json({ profileId, code });
 }
 
@@ -63,9 +69,15 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: "Only parents and therapists can redeem codes." }, { status: 403 });
       }
       if (!body.code) return NextResponse.json({ error: "Access code is required." }, { status: 400 });
-      const profileId = redeemAccessCode(body.code, session.id, relationship);
-      markSetupComplete(session.id);
-      return NextResponse.json({ profileId, code: getAccessCodeForProfile(profileId) });
+      const profileId = session.isDemo
+        ? redeemAccessCode(body.code, session.id, relationship)
+        : await redeemPersistedAccessCode(body.code, session.id, relationship);
+      if (session.isDemo) markSetupComplete(session.id);
+      else await markPersistedSetupComplete(session.id);
+      const code = session.isDemo
+        ? getAccessCodeForProfile(profileId)
+        : await getPersistedAccessCodeForProfile(profileId);
+      return NextResponse.json({ profileId, code });
     }
 
     if (body.action === "create-profile") {
@@ -73,24 +85,16 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: "Name and age group are required." }, { status: 400 });
       }
 
-      const profile = createLocalChildProfile({
-        name: body.name,
+      const profile = await createPersistedChildProfile(session.id, session.role, {
+        profileName: body.name,
         ageGroup: body.ageGroup,
-        mode: body.ageGroup,
         supportNotes: body.supportNotes ?? "",
+        setupRole: session.role === "caregiver_therapist_teacher" ? "professional" : "family",
       });
 
-      const relationship =
-        session.role === "caregiver_therapist_teacher"
-          ? "therapist"
-          : session.role === "parent_guardian"
-            ? "parent"
-            : null;
-      if (relationship) {
-        linkUserToProfile(session.id, profile.id, relationship);
-      }
-
-      const code = generateAccessCode(profile.id, session.id);
+      const code = session.isDemo
+        ? generateAccessCode(profile.id, session.id)
+        : await createPersistedAccessCode(profile.id, session.id);
 
       if (body.childLoginEmail && body.childLoginPassword && body.childLoginName) {
         const childUser = createChildLoginAccount({
@@ -102,7 +106,8 @@ export async function POST(request: Request) {
         linkUserToProfile(childUser.id, profile.id, "self");
       }
 
-      markSetupComplete(session.id);
+      if (session.isDemo) markSetupComplete(session.id);
+      else await markPersistedSetupComplete(session.id);
 
       return NextResponse.json({
         profile,
@@ -127,16 +132,17 @@ export async function POST(request: Request) {
         .filter(Boolean)
         .join("\n");
 
-      const profile = createLocalChildProfile({
-        name: body.name,
+      const profile = await createPersistedChildProfile(session.id, session.role, {
+        profileName: body.name,
         ageGroup: body.ageGroup,
-        mode: body.ageGroup,
         supportNotes: notes,
+        setupRole: "professional",
       });
 
       linkUserToProfile(session.id, profile.id, "therapist");
       const code = generateAccessCode(profile.id, session.id);
-      markSetupComplete(session.id);
+      if (session.isDemo) markSetupComplete(session.id);
+      else await markPersistedSetupComplete(session.id);
 
       return NextResponse.json({
         profile,
