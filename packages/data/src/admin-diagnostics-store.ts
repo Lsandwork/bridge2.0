@@ -1,5 +1,6 @@
 import type { AccessTier } from "@family-support/core";
 import { listDemoAuthUsers, type PublicAuthUser } from "./auth-store";
+import { recordProductionActivity } from "./production-admin-store";
 
 export type AccessPlan = "free" | "monthly" | "annual";
 
@@ -55,7 +56,7 @@ export type AdminUserDiagnostics = PublicAuthUser & {
 const accounts = new Map<string, UserAccountRecord>();
 const activityLog: UserActivityEvent[] = [];
 const courseAccessByUser = new Map<string, CourseAccessGrant[]>();
-const siteIssues: SiteDiagnosticIssue[] = [
+const demoSiteIssues: SiteDiagnosticIssue[] = [
   {
     id: "issue-1",
     severity: "warning",
@@ -84,6 +85,7 @@ const siteIssues: SiteDiagnosticIssue[] = [
     at: new Date(Date.now() - 1800000).toISOString(),
   },
 ];
+const siteIssues: SiteDiagnosticIssue[] = process.env.NODE_ENV === "production" ? [] : [...demoSiteIssues];
 
 function nowIso() {
   return new Date().toISOString();
@@ -140,6 +142,12 @@ export function logUserActivity(
   };
   activityLog.unshift(event);
   if (activityLog.length > 500) activityLog.length = 500;
+  void recordProductionActivity({
+    userId,
+    email,
+    eventType: action,
+    detail: detail ?? null,
+  });
   return event;
 }
 

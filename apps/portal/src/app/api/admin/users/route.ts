@@ -12,7 +12,7 @@ export async function GET(request: Request) {
 
   if (view === "all") {
     return NextResponse.json(
-      searchAdminUsers({
+      await searchAdminUsers({
         email: searchParams.get("email") ?? undefined,
         role: searchParams.get("role") ?? undefined,
         status: searchParams.get("status") ?? undefined,
@@ -20,5 +20,5 @@ export async function GET(request: Request) {
     );
   }
 
-  return NextResponse.json(getAdminNewSignups({ includeDemo }));
+  return NextResponse.json(await getAdminNewSignups({ includeDemo }));
 }

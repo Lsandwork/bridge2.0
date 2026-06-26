@@ -21,6 +21,12 @@ import { getAdminPlatformOverview, getPaymentProcessorStatuses, getPlatformDiagn
 import { getAdminPricingState, resetPricingOverrides, updatePayerPlan, updatePricingPlan } from "./pricing-store";
 import { getPlatformActivity } from "./safety-alert-store";
 import { listSafetyAlertsForUser } from "./safety-alert-store";
+import {
+  getProductionActivity,
+  listProductionAdminUsers,
+  listProductionBridgeGroups,
+  listProductionErrorLogs,
+} from "./production-admin-store";
 
 const userStatus = new Map<string, "active" | "suspended" | "disabled">();
 
@@ -28,12 +34,17 @@ export function isAdminRole(role: AppRole | string): boolean {
   return role === "admin" || role === "super_admin";
 }
 
-export function searchAdminUsers(options?: {
+export async function searchAdminUsers(options?: {
   email?: string;
   name?: string;
   role?: string;
   status?: string;
 }) {
+  const productionUsers = await listProductionAdminUsers(options);
+  if (productionUsers) {
+    return productionUsers;
+  }
+
   let users = listAllUsersForAdmin();
   if (options?.email) {
     const q = options.email.toLowerCase();
@@ -97,7 +108,7 @@ export function adminSetCredits(userId: string, balance: number, actorEmail: str
 
 export { resetPricingOverrides, updatePayerPlan, updatePricingPlan };
 
-export function getAdminSection(section: string, params: URLSearchParams) {
+export async function getAdminSection(section: string, params: URLSearchParams) {
   switch (section) {
     case "overview":
       return getAdminPlatformOverview();
@@ -108,11 +119,13 @@ export function getAdminSection(section: string, params: URLSearchParams) {
         role: params.get("role") ?? undefined,
         status: params.get("status") ?? undefined,
       });
-    case "bridge-groups":
-      return {
+    case "bridge-groups": {
+      const productionBridgeGroups = await listProductionBridgeGroups({ includeDemo: params.get("includeDemo") === "true" });
+      return productionBridgeGroups ?? {
         groups: listBridgeGroups({ includeDemo: true }),
         overview: getAdminBridgeOverview(),
       };
+    }
     case "access-codes": {
       const groupId = params.get("bridgeGroupId");
       return groupId ? listBridgeAccessCodes(groupId) : [];
@@ -120,14 +133,27 @@ export function getAdminSection(section: string, params: URLSearchParams) {
     case "safety-alerts":
       return listSafetyAlertsForUser("u-admin", { includeDemo: true });
     case "activity":
-      return getPlatformActivity({
+      return (await getProductionActivity({
+        limit: Number(params.get("limit") ?? 100),
+        email: params.get("email") ?? undefined,
+        eventType: params.get("eventType") ?? undefined,
+        bridgeGroupId: params.get("bridgeGroupId") ?? undefined,
+        includeDemo: params.get("includeDemo") === "true",
+      })) ?? getPlatformActivity({
         limit: Number(params.get("limit") ?? 100),
         email: params.get("email") ?? undefined,
         eventType: params.get("eventType") ?? undefined,
         bridgeGroupId: params.get("bridgeGroupId") ?? undefined,
       });
     case "error-logs":
-      return listErrorLogs({
+      return (await listProductionErrorLogs({
+        severity: params.get("severity") ?? undefined,
+        status: params.get("status") ?? undefined,
+        route: params.get("route") ?? undefined,
+        query: params.get("q") ?? undefined,
+        limit: Number(params.get("limit") ?? 50),
+        offset: Number(params.get("offset") ?? 0),
+      })) ?? listErrorLogs({
         severity: (params.get("severity") as never) ?? undefined,
         status: (params.get("status") as never) ?? undefined,
         route: params.get("route") ?? undefined,
@@ -142,7 +168,7 @@ export function getAdminSection(section: string, params: URLSearchParams) {
     case "pricing":
       return getAdminPricingState();
     case "demo-accounts":
-      return searchAdminUsers().filter((u) =>
+      return (await searchAdminUsers()).filter((u) =>
         ["caregiver@demo.com", "casemanager@demo.com", "user@demo.com", "erika@test.com", "nathan@test.com"].includes(
           u.email.toLowerCase()
         )

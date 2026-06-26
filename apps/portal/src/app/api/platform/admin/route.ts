@@ -10,7 +10,7 @@ export async function GET(request: Request) {
 
   const { searchParams } = new URL(request.url);
   const section = searchParams.get("section") ?? "overview";
-  const data = getAdminSection(section, searchParams);
+  const data = await getAdminSection(section, searchParams);
   if (data === null) {
     return NextResponse.json({ error: "Unknown section" }, { status: 400 });
   }

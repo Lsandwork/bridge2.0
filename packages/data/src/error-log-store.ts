@@ -1,6 +1,6 @@
 import type { ErrorLogEntry, ErrorLogSeverity, ErrorLogStatus } from "@family-support/core";
 
-const logs: ErrorLogEntry[] = [
+const demoSeedLogs: ErrorLogEntry[] = [
   {
     id: "err-1",
     severity: "critical",
@@ -32,6 +32,8 @@ const logs: ErrorLogEntry[] = [
     resolvedAt: null,
   },
 ];
+
+const logs: ErrorLogEntry[] = process.env.NODE_ENV === "production" ? [] : [...demoSeedLogs];
 
 function now() {
   return new Date().toISOString();

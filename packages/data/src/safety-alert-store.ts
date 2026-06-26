@@ -9,6 +9,7 @@ import {
 } from "./bridge-store";
 import { getDemoAuthUserById } from "./auth-store";
 import { createPlatformNotification } from "./platform-notifications";
+import { recordProductionActivity } from "./production-admin-store";
 
 const alerts = new Map<string, SafetyAlert>();
 const alertEvents: Array<{ alertId: string; eventType: string; note?: string; at: string }> = [];
@@ -40,6 +41,13 @@ export function logPlatformActivity(input: {
   };
   activityLog.unshift(event);
   if (activityLog.length > 5000) activityLog.length = 5000;
+  void recordProductionActivity({
+    userId: event.userId,
+    email: event.email,
+    bridgeGroupId: event.bridgeGroupId,
+    eventType: event.eventType,
+    detail: event.detail,
+  });
   return event;
 }
 

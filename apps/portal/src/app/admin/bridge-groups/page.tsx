@@ -1,4 +1,5 @@
 import { AdminSectionPage } from "@/components/admin/AdminSectionPage";
+import { AdminEmptyState } from "@/components/admin/AdminUi";
 
 export default function AdminBridgeGroupsPage() {
   return (
@@ -9,6 +10,14 @@ export default function AdminBridgeGroupsPage() {
       render={(data) => {
         const payload = data as { groups?: Array<{ id: string; displayName: string; status: string; isDemo: boolean }> };
         const groups = payload?.groups ?? [];
+        if (groups.length === 0) {
+          return (
+            <AdminEmptyState
+              title="No Bridge Groups yet"
+              description="Real Bridge Groups will appear here once users invite caregivers, therapists, case managers, or support team members."
+            />
+          );
+        }
         return (
           <div className="space-y-3">
             {groups.map((g) => (

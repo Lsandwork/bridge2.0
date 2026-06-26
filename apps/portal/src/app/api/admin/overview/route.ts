@@ -8,9 +8,10 @@ export async function GET(request: Request) {
 
   const { searchParams } = new URL(request.url);
   const includeDemo = searchParams.get("includeDemo") === "true";
+  const overview = await getAdminCommandOverview({ includeDemo });
 
   return NextResponse.json({
-    ...getAdminCommandOverview({ includeDemo }),
+    ...overview,
     admin: { name: session.name, email: session.email, role: session.role },
   });
 }

@@ -8,6 +8,13 @@ import { getPaymentProcessorStatuses, getPlatformDiagnostics } from "./platform-
 import { getPlatformActivity, listSafetyAlertsForUser } from "./safety-alert-store";
 import { listHealthReports } from "./health-report-store";
 import { listSupportRequests } from "./support-request-store";
+import {
+  countProductionProfilesSince,
+  getProductionActivity,
+  getProductionErrorCountsBySeverity,
+  getProductionQuickSetupIncompleteCount,
+  listProductionAdminUsers,
+} from "./production-admin-store";
 
 export type AdminEnvironment = "production" | "staging" | "preview" | "development" | "local";
 
@@ -78,10 +85,11 @@ function uniqueActiveUsers(events: UserActivityEvent[], since: Date) {
   return ids.size;
 }
 
-export function getAdminCommandOverview(options?: { includeDemo?: boolean }) {
+export async function getAdminCommandOverview(options?: { includeDemo?: boolean }) {
   const includeDemo = options?.includeDemo ?? false;
-  const users = listDemoAuthUsers().filter((u) => includeDemo || isRealUser(u.email, u.id));
-  const activity = getPlatformActivity({ limit: 5000 });
+  const productionUsers = await listProductionAdminUsers({ includeDemo });
+  const users = productionUsers ?? listDemoAuthUsers().filter((u) => includeDemo || isRealUser(u.email, u.id));
+  const activity = (await getProductionActivity({ limit: 5000, includeDemo })) ?? getPlatformActivity({ limit: 5000 });
   const filteredActivity = includeDemo
     ? activity
     : activity.filter((e) => !e.email || isRealUser(e.email, e.userId ?? ""));
@@ -93,11 +101,15 @@ export function getAdminCommandOverview(options?: { includeDemo?: boolean }) {
   const newUsersToday = signups.filter((e) => new Date(e.createdAt) >= today).length;
   const newUsersThisWeek = signups.filter((e) => new Date(e.createdAt) >= weekAgo).length;
 
-  const newProfilesCreated = filteredActivity.filter(
+  const productionProfilesCreated = await countProductionProfilesSince(weekAgo, includeDemo);
+  const newProfilesCreated = productionProfilesCreated ?? filteredActivity.filter(
     (e) => e.eventType === "profile_created" && new Date(e.createdAt) >= weekAgo
   ).length;
 
-  const quickSetupIncomplete = users.filter((u) => {
+  const productionQuickSetupIncomplete = productionUsers
+    ? await getProductionQuickSetupIncompleteCount(productionUsers)
+    : null;
+  const quickSetupIncomplete = productionQuickSetupIncomplete ?? users.filter((u) => {
     if (u.role === "admin" || u.role === "super_admin" || u.role === "child_user") return false;
     const setup = getUserSetup(u.id);
     return setup ? !setup.setupComplete : u.role === "parent_guardian" || u.role === "caregiver_therapist_teacher";
@@ -117,7 +129,7 @@ export function getAdminCommandOverview(options?: { includeDemo?: boolean }) {
   const paymentsMonth = countActivitySince(filteredActivity, daysAgo(30), "payment_status_changed");
 
   const diagnostics = getPlatformDiagnostics();
-  const errorCounts = getErrorCountsBySeverity();
+  const errorCounts = (await getProductionErrorCountsBySeverity()) ?? getErrorCountsBySeverity();
   const openErrors = (errorCounts.critical ?? 0) + (errorCounts.high ?? 0) + (errorCounts.medium ?? 0);
 
   let healthScore = 100;
@@ -174,8 +186,26 @@ export function getAdminCommandOverview(options?: { includeDemo?: boolean }) {
   };
 }
 
-export function getAdminNewSignups(options?: { includeDemo?: boolean }) {
+export async function getAdminNewSignups(options?: { includeDemo?: boolean }) {
   const includeDemo = options?.includeDemo ?? false;
+  const productionUsers = await listProductionAdminUsers({ includeDemo });
+  if (productionUsers) {
+    return productionUsers
+      .filter((u) => includeDemo || isRealUser(u.email, u.id))
+      .map((u) => ({
+        userId: u.id,
+        email: u.email,
+        name: u.name,
+        role: u.role,
+        signedUpAt: u.createdAt,
+        onboardingComplete: u.onboardingComplete,
+        setupComplete: u.onboardingComplete,
+        isDemo: u.isDemo,
+        hasGoals: false,
+      }))
+      .sort((a, b) => b.signedUpAt.localeCompare(a.signedUpAt));
+  }
+
   const activity = getPlatformActivity({ limit: 5000 }).filter((e) => e.eventType === "signup");
   const users = listDemoAuthUsers();
 
@@ -199,8 +229,8 @@ export function getAdminNewSignups(options?: { includeDemo?: boolean }) {
     .sort((a, b) => b.signedUpAt.localeCompare(a.signedUpAt));
 }
 
-export function getAdminAiBrief() {
-  const overview = getAdminCommandOverview();
+export async function getAdminAiBrief() {
+  const overview = await getAdminCommandOverview();
   const lines: string[] = [];
 
   lines.push(

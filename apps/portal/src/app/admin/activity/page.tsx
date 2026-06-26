@@ -1,4 +1,5 @@
 import { AdminSectionPage } from "@/components/admin/AdminSectionPage";
+import { AdminEmptyState } from "@/components/admin/AdminUi";
 
 export default function AdminActivityPage() {
   return (
@@ -8,6 +9,14 @@ export default function AdminActivityPage() {
       section="activity"
       render={(data) => {
         const events = (data as Array<{ eventType: string; email: string | null; detail: string | null; createdAt: string }>) ?? [];
+        if (!Array.isArray(events) || events.length === 0) {
+          return (
+            <AdminEmptyState
+              title="No user activity yet"
+              description="Real signups, logins, Quick Setup actions, admin changes, and Bridge Group events will appear here as users use Nuvio Bridge."
+            />
+          );
+        }
         return (
           <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
             <table className="min-w-full text-sm">
