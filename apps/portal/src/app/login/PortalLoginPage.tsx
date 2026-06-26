@@ -5,6 +5,8 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Sparkles } from "lucide-react";
 import { postAuthJson } from "@/lib/auth/client";
+import { clearBridgeClientState } from "@/lib/auth/clear-client-state";
+import { resolvePostLoginDestination } from "@/lib/auth/post-login-dest";
 import { useLanguage } from "@/components/LanguageProvider";
 import "../landing.css";
 
@@ -35,12 +37,8 @@ export default function PortalLoginPage() {
     setError("");
     try {
       const data = await postAuthJson<AuthResponse>("/api/auth/login", { email, password });
-      const dest =
-        data.user?.mustChangePassword
-          ? "/change-password"
-          : next && !data.user?.mustChangePassword
-            ? next
-            : (data.redirectTo ?? "/dashboard");
+      clearBridgeClientState();
+      const dest = resolvePostLoginDestination(data.user, data.redirectTo, next);
       window.location.assign(dest);
     } catch (err) {
       setError(err instanceof Error ? err.message : t("auth.loginFailed"));
@@ -64,6 +62,7 @@ export default function PortalLoginPage() {
         password,
         accountType,
       });
+      clearBridgeClientState();
       window.location.assign(
         data.redirectTo ?? (accountType === "therapist" ? "/setup/therapist" : "/setup/parent")
       );

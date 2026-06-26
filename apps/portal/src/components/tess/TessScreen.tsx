@@ -23,7 +23,7 @@ type Props = {
 };
 
 export function TessScreen({
-  childProfileId = "cp1",
+  childProfileId,
   userName = "friend",
   quickActions = [],
   placeholder,

@@ -477,7 +477,7 @@ const store: {
     },
   ],
   users: [
-    { id: "u-admin", email: "lsand.work@gmail.com", name: "Lonnie Admin", role: "admin" },
+    { id: "u-admin", email: "lsand.work@gmail.com", name: "Lonnie Admin", role: "super_admin" },
     { id: "u-parent", email: "erika@test.com", name: "Erika Parent", role: "parent_guardian" },
     { id: "u-therapist", email: "therapist@test.com", name: "Jordan Therapist", role: "caregiver_therapist_teacher" },
     { id: "u-child", email: "nathan@test.com", name: "Nathan", role: "child_user" },
@@ -492,7 +492,49 @@ const store: {
   ],
 };
 
-export function getLocalDashboard(childProfileId = "cp1") {
+const DEMO_PROFILE_SOURCE: Record<string, string> = {
+  "cp-demo-jasper": "cp1",
+};
+
+function resolveDemoSourceProfileId(profileId: string): string {
+  return DEMO_PROFILE_SOURCE[profileId] ?? profileId;
+}
+
+function remapDemoProfileId<T extends { childProfileId: string }>(row: T, requestedId?: string): T {
+  if (requestedId && DEMO_PROFILE_SOURCE[requestedId] === row.childProfileId) {
+    return { ...row, childProfileId: requestedId };
+  }
+  return row;
+}
+
+export function getDemoChildProfiles(): ChildProfile[] {
+  const source = store.childProfiles.find((p) => p.id === "cp1");
+  if (!source) return [];
+  return [
+    {
+      id: "cp-demo-jasper",
+      name: "Jasper",
+      ageGroup: source.ageGroup,
+      mode: source.mode,
+      supportNotes: "Investor demo profile — rich routines, goals, and rewards for presentations.",
+    },
+  ];
+}
+
+export function getLocalDashboard(childProfileId = "cp-demo-jasper") {
+  const sourceId = resolveDemoSourceProfileId(childProfileId);
+  const dashboard = buildLocalDashboard(sourceId);
+  if (childProfileId !== sourceId) {
+    return {
+      ...dashboard,
+      childProfileId,
+      childName: "Jasper",
+    };
+  }
+  return dashboard;
+}
+
+function buildLocalDashboard(childProfileId: string) {
   const today = new Date().toISOString().slice(0, 10);
   const profile = store.childProfiles.find((p) => p.id === childProfileId);
   const profileTasks = store.tasks.filter((t) => t.childProfileId === childProfileId);
@@ -607,6 +649,14 @@ export function getLocalChildProfiles() {
   return store.childProfiles;
 }
 
+function filterByProfileId<T extends { childProfileId: string }>(rows: T[], profileId?: string): T[] {
+  if (!profileId) return rows;
+  const sourceId = resolveDemoSourceProfileId(profileId);
+  return rows
+    .filter((row) => row.childProfileId === sourceId)
+    .map((row) => remapDemoProfileId(row, profileId));
+}
+
 export function createLocalChildProfile(input: Omit<ChildProfile, "id">) {
   const profile = { ...input, id: `cp${Date.now()}` };
   store.childProfiles.push(profile);
@@ -614,13 +664,11 @@ export function createLocalChildProfile(input: Omit<ChildProfile, "id">) {
 }
 
 export function getLocalRoutines(childProfileId?: string) {
-  return childProfileId
-    ? store.routines.filter((r) => r.childProfileId === childProfileId)
-    : store.routines;
+  return childProfileId ? filterByProfileId(store.routines, childProfileId) : store.routines;
 }
 
 export function getLocalTasks(childProfileId?: string) {
-  return childProfileId ? store.tasks.filter((t) => t.childProfileId === childProfileId) : store.tasks;
+  return childProfileId ? filterByProfileId(store.tasks, childProfileId) : store.tasks;
 }
 
 export function createLocalTask(input: Omit<Task, "id">) {
@@ -631,7 +679,7 @@ export function createLocalTask(input: Omit<Task, "id">) {
 
 export function getLocalCommunicationCards(childProfileId?: string) {
   return childProfileId
-    ? store.communicationCards.filter((c) => c.childProfileId === childProfileId)
+    ? filterByProfileId(store.communicationCards, childProfileId)
     : store.communicationCards;
 }
 
@@ -641,12 +689,12 @@ export function createLocalCommunicationCard(input: Omit<CommunicationCard, "id"
   return card;
 }
 
-export function getLocalGoals() {
-  return store.goals;
+export function getLocalGoals(childProfileId?: string) {
+  return childProfileId ? filterByProfileId(store.goals, childProfileId) : store.goals;
 }
 
-export function getLocalRewards() {
-  return store.rewards;
+export function getLocalRewards(childProfileId?: string) {
+  return childProfileId ? filterByProfileId(store.rewards, childProfileId) : store.rewards;
 }
 
 export function getLocalAiSuggestions() {
@@ -669,8 +717,8 @@ export function createLocalExercise(input: Omit<Exercise, "id">) {
   return exercise;
 }
 
-export function getLocalCheckIns() {
-  return store.checkIns;
+export function getLocalCheckIns(childProfileId?: string) {
+  return childProfileId ? filterByProfileId(store.checkIns, childProfileId) : store.checkIns;
 }
 
 export function getLocalAdminStats() {
@@ -699,22 +747,21 @@ export function getLocalSubscriptions() {
 }
 
 export function getPointsBalance(childProfileId: string) {
+  const sourceId = resolveDemoSourceProfileId(childProfileId);
   return store.pointEvents
-    .filter((e) => e.childProfileId === childProfileId)
+    .filter((e) => e.childProfileId === sourceId)
     .reduce((sum, e) => sum + e.amount, 0);
 }
 
 export function getPointEvents(childProfileId?: string) {
   const events = childProfileId
-    ? store.pointEvents.filter((e) => e.childProfileId === childProfileId)
+    ? filterByProfileId(store.pointEvents, childProfileId)
     : store.pointEvents;
   return [...events].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 }
 
 export function getRedemptions(childProfileId?: string) {
-  return childProfileId
-    ? store.redemptions.filter((r) => r.childProfileId === childProfileId)
-    : store.redemptions;
+  return childProfileId ? filterByProfileId(store.redemptions, childProfileId) : store.redemptions;
 }
 
 export function getGameSettings(childProfileId: string) {
@@ -781,11 +828,13 @@ function normalizeGameSettings(settings: ProfileGameSettings): ProfileGameSettin
 }
 
 export function getRewardsForProfile(childProfileId: string) {
-  return store.rewards.filter((r) => r.childProfileId === childProfileId);
+  return filterByProfileId(store.rewards, childProfileId);
 }
 
 export function getRewardsHub(childProfileId: string) {
-  const profile = store.childProfiles.find((p) => p.id === childProfileId);
+  const profile =
+    getDemoChildProfiles().find((p) => p.id === childProfileId) ??
+    store.childProfiles.find((p) => p.id === childProfileId);
   if (!profile) return null;
   return {
     profile,
@@ -1006,8 +1055,10 @@ export function createLocalAiSuggestion(input: Omit<AiSuggestion, "id" | "create
   return suggestion;
 }
 
-export function getLocalCareTeam() {
-  return store.careTeam;
+export function getLocalCareTeam(childProfileId?: string) {
+  if (!childProfileId) return store.careTeam;
+  const sourceId = resolveDemoSourceProfileId(childProfileId);
+  return store.careTeam.filter((member) => member.childProfileIds.includes(sourceId));
 }
 
 export function createLocalCareTeamMember(input: Omit<CareTeamMember, "id">) {
@@ -1017,7 +1068,7 @@ export function createLocalCareTeamMember(input: Omit<CareTeamMember, "id">) {
 }
 
 export function getLocalReports(childProfileId?: string) {
-  return childProfileId ? store.reports.filter((r) => r.childProfileId === childProfileId) : store.reports;
+  return childProfileId ? filterByProfileId(store.reports, childProfileId) : store.reports;
 }
 
 export function createLocalReport(input: Omit<Report, "id" | "createdAt">) {
@@ -1033,7 +1084,7 @@ export function createLocalSocialStory(input: Omit<SocialStory, "id">) {
 }
 
 export function getLocalSocialStories(childProfileId?: string) {
-  return childProfileId ? store.socialStories.filter((s) => s.childProfileId === childProfileId) : store.socialStories;
+  return childProfileId ? filterByProfileId(store.socialStories, childProfileId) : store.socialStories;
 }
 
 export function useCommunicationCard(cardId: string) {

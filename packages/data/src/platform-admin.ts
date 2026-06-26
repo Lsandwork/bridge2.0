@@ -18,6 +18,7 @@ import {
 } from "./bridge-store";
 import { getErrorCountsBySeverity, listErrorLogs, updateErrorLog } from "./error-log-store";
 import { getAdminPlatformOverview, getPaymentProcessorStatuses, getPlatformDiagnostics } from "./platform-diagnostics";
+import { getAdminPricingState, resetPricingOverrides, updatePayerPlan, updatePricingPlan } from "./pricing-store";
 import { getPlatformActivity } from "./safety-alert-store";
 import { listSafetyAlertsForUser } from "./safety-alert-store";
 
@@ -94,6 +95,8 @@ export function adminSetCredits(userId: string, balance: number, actorEmail: str
   return account;
 }
 
+export { resetPricingOverrides, updatePayerPlan, updatePricingPlan };
+
 export function getAdminSection(section: string, params: URLSearchParams) {
   switch (section) {
     case "overview":
@@ -136,6 +139,8 @@ export function getAdminSection(section: string, params: URLSearchParams) {
       return getPlatformDiagnostics();
     case "payments":
       return getPaymentProcessorStatuses();
+    case "pricing":
+      return getAdminPricingState();
     case "demo-accounts":
       return searchAdminUsers().filter((u) =>
         ["caregiver@demo.com", "casemanager@demo.com", "user@demo.com", "erika@test.com", "nathan@test.com"].includes(

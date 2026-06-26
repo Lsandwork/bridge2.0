@@ -34,9 +34,10 @@ export default function MySpaceTessBuilderPage() {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    fetch(`/api/communication?childProfileId=${activeProfile?.id ?? "cp1"}`)
+    if (!activeProfile?.id) return;
+    fetch(`/api/communication?childProfileId=${activeProfile.id}`)
       .then((r) => r.json())
-      .then((data) => setCards(Array.isArray(data) ? data.slice(0, 12) : []));
+      .then((data) => setCards(Array.isArray(data?.cards) ? data.cards.slice(0, 12) : []));
   }, [activeProfile?.id]);
 
   const speak = () => {
@@ -45,13 +46,13 @@ export default function MySpaceTessBuilderPage() {
   };
 
   const savePhrase = async () => {
-    if (!sentence.trim()) return;
+    if (!activeProfile?.id || !sentence.trim()) return;
     await fetch("/api/tess/suggestions", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         action: "create",
-        childProfileId: activeProfile?.id ?? "cp1",
+        childProfileId: activeProfile.id,
         suggestionType: "communication_card",
         title: sentence,
         reason: "Saved from Tess communication builder",

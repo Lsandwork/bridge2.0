@@ -4,10 +4,12 @@ import { TessVoiceMode } from "@/components/tess/TessVoiceMode";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { useProfile } from "@/components/ProfileProvider";
+import { LoadingBlock } from "@/components/StateBlock";
 
 export default function MySpaceTessVoicePage() {
   const { activeProfile } = useProfile();
-  const profileId = activeProfile?.id ?? "cp1";
+  const profileId = activeProfile?.id;
+  if (!profileId) return <LoadingBlock label="Loading profile…" />;
 
   return (
     <div className="ms-page ms-page-pad-bottom mx-auto flex max-w-lg min-h-[min(70dvh,32rem)] flex-col px-2 pb-4 pt-2 md:px-4">

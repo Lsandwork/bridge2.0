@@ -5,10 +5,12 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Sparkles } from "lucide-react";
 import { postAuthJson } from "@/lib/auth/client";
+import { resolvePostLoginDestination } from "@/lib/auth/post-login-dest";
 import "../landing.css";
 
 type ChangePasswordResponse = {
   redirectTo?: string;
+  user?: { mustChangePassword?: boolean; role?: string };
 };
 
 export default function ChangePasswordPage() {
@@ -36,7 +38,7 @@ export default function ChangePasswordPage() {
         newPassword,
         confirmPassword,
       });
-      router.push(data.redirectTo ?? "/dashboard");
+      router.push(resolvePostLoginDestination(data.user, data.redirectTo, ""));
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not update password.");

@@ -30,15 +30,20 @@ export default function CommunicationPage() {
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [sentence, setSentence] = useState<string[]>([]);
-  const [form, setForm] = useState({ phrase: "", category: "Help", childProfileId: "cp1" });
+  const [form, setForm] = useState({ phrase: "", category: "Help", childProfileId: "" });
 
   useEffect(() => {
     Promise.all([
       getCommunicationCategories(),
       fetch("/api/communication").then((r) => r.json()),
-    ]).then(([cats, cardList]) => {
+      fetch("/api/profiles").then((r) => r.json()),
+    ]).then(([cats, payload, profs]) => {
       setCategories(cats);
-      setCards(Array.isArray(cardList) ? cardList : []);
+      const list = Array.isArray(profs) ? profs : [];
+      if (list[0]) {
+        setForm((current) => ({ ...current, childProfileId: current.childProfileId || list[0].id }));
+      }
+      setCards(Array.isArray(payload?.cards) ? payload.cards : Array.isArray(payload) ? payload : []);
       setLoading(false);
     });
   }, []);

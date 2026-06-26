@@ -24,7 +24,8 @@ export default function MySpaceTessPracticePage() {
   const [timer, setTimer] = useState(0);
 
   useEffect(() => {
-    fetch(`/api/exercises?childProfileId=${activeProfile?.id ?? "cp1"}`)
+    if (!activeProfile?.id) return;
+    fetch(`/api/exercises?childProfileId=${activeProfile.id}`)
       .then((r) => r.json())
       .then((data) => {
         const list = Array.isArray(data) ? data : [];
@@ -42,12 +43,13 @@ export default function MySpaceTessPracticePage() {
   const explainSkill = async (ex: Exercise) => {
     setSelected(ex);
     setStepIndex(0);
+    if (!activeProfile?.id) return;
     const res = await fetch("/api/tess/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         message: `Explain this skill in simple steps: ${ex.title}. Goal: ${ex.goal}`,
-        childProfileId: activeProfile?.id ?? "cp1",
+        childProfileId: activeProfile.id,
         mode: "skill_practice",
       }),
     });

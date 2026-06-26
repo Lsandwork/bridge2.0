@@ -24,22 +24,19 @@ export type UserSetupRecord = {
 };
 
 const profileLinks: UserProfileLink[] = [
-  { userId: "u-parent", profileId: "cp1", relationship: "parent", linkedAt: "2026-01-01T00:00:00.000Z" },
-  { userId: "u-parent", profileId: "cp2", relationship: "parent", linkedAt: "2026-01-01T00:00:00.000Z" },
-  { userId: "u-therapist", profileId: "cp1", relationship: "therapist", linkedAt: "2026-01-01T00:00:00.000Z" },
-  { userId: "u-child", profileId: "cp1", relationship: "self", linkedAt: "2026-01-01T00:00:00.000Z" },
+  { userId: "u-demo-caregiver", profileId: "cp-demo-jasper", relationship: "parent", linkedAt: "2026-01-01T00:00:00.000Z" },
+  { userId: "u-demo-casemanager", profileId: "cp-demo-jasper", relationship: "therapist", linkedAt: "2026-01-01T00:00:00.000Z" },
+  { userId: "u-demo-user", profileId: "cp-demo-jasper", relationship: "self", linkedAt: "2026-01-01T00:00:00.000Z" },
 ];
 
 const accessCodes: AccessCodeRecord[] = [
-  { code: "BR-NTHN-7K4M", profileId: "cp1", createdByUserId: "u-parent", createdAt: "2026-01-01T00:00:00.000Z" },
-  { code: "BR-SAM2-9P2Q", profileId: "cp2", createdByUserId: "u-parent", createdAt: "2026-01-01T00:00:00.000Z" },
+  { code: "BR-JSPR-7K4M", profileId: "cp-demo-jasper", createdByUserId: "u-demo-caregiver", createdAt: "2026-01-01T00:00:00.000Z" },
 ];
 
 const setupRecords: UserSetupRecord[] = [
-  { userId: "u-parent", accountType: "parent", setupComplete: true },
-  { userId: "u-therapist", accountType: "therapist", setupComplete: true },
-  { userId: "u-child", accountType: "parent", setupComplete: true },
-  { userId: "u-admin", accountType: "parent", setupComplete: true },
+  { userId: "u-demo-caregiver", accountType: "parent", setupComplete: true },
+  { userId: "u-demo-casemanager", accountType: "therapist", setupComplete: true },
+  { userId: "u-demo-user", accountType: "parent", setupComplete: true },
 ];
 
 const CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -161,6 +158,7 @@ export function homePathForAuthUser(user: PublicAuthUser): string {
   if (needsAccountSetup(user)) return setupPathForRole(user.role);
   if (user.role === "child_user") return "/my-space";
   if (user.role === "caregiver_therapist_teacher") return "/therapist";
+  if (user.role === "admin" || user.role === "super_admin") return "/admin";
   return "/dashboard";
 }
 

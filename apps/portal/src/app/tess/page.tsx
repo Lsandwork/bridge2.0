@@ -16,7 +16,7 @@ type Stats = {
 
 export default function TessDashboardPage() {
   const { t } = useLanguage();
-  const [profileId, setProfileId] = useState("cp1");
+  const [profileId, setProfileId] = useState("");
   const [profiles, setProfiles] = useState<{ id: string; name: string }[]>([]);
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -27,7 +27,9 @@ export default function TessDashboardPage() {
       fetch("/api/tess/suggestions?status=pending").then((r) => r.json()),
       fetch("/api/tess/conversations").then((r) => r.json()),
     ]).then(([profs, pending, convs]) => {
-      setProfiles(Array.isArray(profs) ? profs : []);
+      const list = Array.isArray(profs) ? profs : [];
+      setProfiles(list);
+      if (list[0]) setProfileId((current) => current || list[0].id);
       setStats({
         pendingSuggestions: Array.isArray(pending) ? pending.length : 0,
         recentConversations: Array.isArray(convs) ? convs.length : 0,

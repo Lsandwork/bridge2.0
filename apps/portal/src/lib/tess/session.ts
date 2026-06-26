@@ -17,17 +17,19 @@ function sessionFromCookieHeader(cookieHeader: string | null): TessSession | nul
   return {
     userId: user.id,
     role: user.role,
-    childProfileId: user.role === "child_user" ? "cp1" : "cp1",
   };
 }
 
 export function getTessSession(headers?: Headers): TessSession {
   const fromCookie = sessionFromCookieHeader(headers?.get("cookie") ?? null);
-  if (fromCookie) return fromCookie;
+  if (fromCookie) {
+    const childProfileId = headers?.get("x-bridge-child-profile") ?? undefined;
+    return { ...fromCookie, childProfileId };
+  }
 
   const role = headers?.get("x-bridge-role") ?? "parent_guardian";
-  const childProfileId = headers?.get("x-bridge-child-profile") ?? "cp1";
-  return { userId: "u-parent", role, childProfileId };
+  const childProfileId = headers?.get("x-bridge-child-profile") ?? undefined;
+  return { userId: "anonymous", role, childProfileId };
 }
 
 export function resolveRoleScope(role: string, ageGroup?: string): string {
@@ -40,16 +42,18 @@ export function resolveRoleScope(role: string, ageGroup?: string): string {
 }
 
 export function buildTessChatContext(session: TessSession, conversationId?: string, mode?: string) {
-  const childProfileId = session.childProfileId ?? "cp1";
-  const ctx = buildTessContext(childProfileId, session.role);
-  const settings = getTessSettings({ childProfileId }) ?? getTessSettings({ userId: session.userId });
+  const childProfileId = session.childProfileId;
+  const ctx = childProfileId ? buildTessContext(childProfileId, session.role) : { profile: null, routines: [], tasks: [], checkIns: [], goals: [] };
+  const settings = childProfileId
+    ? getTessSettings({ childProfileId }) ?? getTessSettings({ userId: session.userId })
+    : getTessSettings({ userId: session.userId });
   const roleScope = resolveRoleScope(session.role, ctx.profile?.ageGroup);
   const voiceMode = mode === "voice";
 
   const systemPrompt = buildTessSystemPrompt(roleScope, {
-    simpleLanguage: settings.simpleLanguage,
-    teenAdultRespectful: settings.teenAdultRespectfulMode,
-    lowStimulation: settings.lowStimulation,
+    simpleLanguage: settings?.simpleLanguage,
+    teenAdultRespectful: settings?.teenAdultRespectfulMode,
+    lowStimulation: settings?.lowStimulation,
     voiceMode,
   });
 

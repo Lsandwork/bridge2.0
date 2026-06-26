@@ -11,13 +11,26 @@ import {
   getSocialStories,
   updateLocalGoalProgress,
   useCommunicationCard,
+  userCanAccessProfile,
 } from "@family-support/data";
+import { getSession } from "@/lib/auth/session";
 
 export async function GET(req: NextRequest) {
+  const session = await getSession();
+  if (!session) return NextResponse.json({ error: "Sign in required." }, { status: 401 });
+
   const section = req.nextUrl.searchParams.get("section");
   const profileId = req.nextUrl.searchParams.get("profileId") ?? undefined;
+  if (profileId && !(await userCanAccessProfile(session, profileId))) {
+    return NextResponse.json({ error: "You do not have access to this profile." }, { status: 403 });
+  }
 
-  if (section === "care-team") return NextResponse.json(await getCareTeam());
+  if (section === "care-team") {
+    if (!profileId) {
+      return NextResponse.json({ error: "profileId is required." }, { status: 400 });
+    }
+    return NextResponse.json(await getCareTeam(profileId));
+  }
   if (section === "reports") return NextResponse.json(await getReports(profileId));
   if (section === "social-stories") return NextResponse.json(await getSocialStories(profileId));
   return NextResponse.json({ error: "Unknown section" }, { status: 400 });
@@ -25,8 +38,20 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
+    const session = await getSession();
+    if (!session) return NextResponse.json({ error: "Sign in required." }, { status: 401 });
+
     const body = await req.json();
     const { action } = body;
+    const requestedProfileId = typeof body.childProfileId === "string"
+      ? body.childProfileId
+      : typeof body.profileId === "string"
+        ? body.profileId
+        : null;
+
+    if (requestedProfileId && !(await userCanAccessProfile(session, requestedProfileId))) {
+      return NextResponse.json({ error: "You do not have access to this profile." }, { status: 403 });
+    }
 
     switch (action) {
       case "complete-task":

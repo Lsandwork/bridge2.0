@@ -1,11 +1,11 @@
 import type { AppRole } from "@family-support/core";
-import { DEMO_ACCOUNT_IDS, DEMO_PROFILE_IDS, LEGACY_DEMO_PROFILE_IDS, shouldSeeLegacyDemoData } from "./demo-accounts";
+import { DEMO_PROFILE_IDS, isDemoAccountId } from "./demo-accounts";
 import {
   fetchPersistedChildProfiles,
   isDemoAuthUserId,
   userCanAccessPersistedProfile,
 } from "./supabase-auth";
-import { getLocalChildProfiles, type ChildProfile } from "./local-store";
+import { getDemoChildProfiles, type ChildProfile } from "./local-store";
 import { getLinkedProfileIds } from "./access-code-store";
 
 export type SessionProfileUser = {
@@ -14,18 +14,15 @@ export type SessionProfileUser = {
   isDemo?: boolean;
 };
 
-export { DEMO_ACCOUNT_IDS, DEMO_PROFILE_IDS };
+export { DEMO_PROFILE_IDS };
 
 export async function resolveProfilesForSessionUser(
   session: SessionProfileUser
 ): Promise<ChildProfile[]> {
-  if (isDemoAuthUserId(session.id)) {
+  if (isDemoAuthUserId(session.id) || isDemoAccountId(session.id)) {
     const linked = getLinkedProfileIds(session.id);
-    const fallbackIds = shouldSeeLegacyDemoData(session.id)
-      ? [...LEGACY_DEMO_PROFILE_IDS]
-      : [...DEMO_PROFILE_IDS];
-    const ids = linked.length > 0 ? linked : fallbackIds;
-    return getLocalChildProfiles().filter((p) => ids.includes(p.id));
+    const ids = linked.length > 0 ? linked : [...DEMO_PROFILE_IDS];
+    return getDemoChildProfiles().filter((p) => ids.includes(p.id));
   }
 
   return fetchPersistedChildProfiles(session.id, session.role);
@@ -36,7 +33,13 @@ export async function userCanAccessProfile(
   profileId: string
 ): Promise<boolean> {
   if (session.role === "admin" || session.role === "super_admin") return true;
+  if (isLegacyDemoProfileRequest(session, profileId)) return false;
   return userCanAccessPersistedProfile(session.id, session.role, profileId);
+}
+
+function isLegacyDemoProfileRequest(session: SessionProfileUser, profileId: string): boolean {
+  if (isDemoAuthUserId(session.id)) return false;
+  return profileId === "cp1" || profileId === "cp2";
 }
 
 export async function resolveChildProfilesForSession(

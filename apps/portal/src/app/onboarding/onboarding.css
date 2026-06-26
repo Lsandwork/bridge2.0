@@ -191,3 +191,140 @@
   .bridge-pathway-option { min-height: 6.4rem; display: grid; grid-template-columns: 2.6rem 1fr; column-gap: .8rem; }
   .bridge-pathway-option__icon { grid-row: span 2; margin: 0; }
 }
+
+/* Premium Nuvio Bridge onboarding skin */
+.bridge-onboarding {
+  background:
+    radial-gradient(circle at 14% 10%, rgba(72, 221, 255, 0.16), transparent 30rem),
+    radial-gradient(circle at 86% 20%, rgba(167, 139, 250, 0.18), transparent 34rem),
+    linear-gradient(135deg, #050915, #071322 52%, #040813);
+  color: #f8fbff;
+}
+
+.bridge-onboarding__story {
+  background:
+    radial-gradient(circle at 28% 16%, rgba(72, 221, 255, 0.18), transparent 18rem),
+    radial-gradient(circle at 88% 70%, rgba(72, 214, 191, 0.13), transparent 18rem),
+    rgba(4, 12, 25, 0.72);
+  border-right: 1px solid rgba(207, 231, 255, 0.12);
+}
+
+.bridge-onboarding__story::before {
+  background: rgba(72, 221, 255, .13);
+}
+
+.bridge-onboarding__story::after {
+  border-color: rgba(167, 139, 250, .14);
+}
+
+.bridge-onboarding__brand {
+  color: #ffffff;
+}
+
+.bridge-onboarding__story-copy > span {
+  color: #89f2ff;
+}
+
+.bridge-onboarding__story-copy p,
+.bridge-onboarding__trust small {
+  color: #b9c8df;
+}
+
+.bridge-onboarding__panel {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.bridge-onboarding__top {
+  color: #9fb0c9;
+}
+
+.bridge-onboarding__top button,
+.bridge-onboarding__top a {
+  color: #c6d6ed;
+}
+
+.bridge-onboarding__steps i {
+  background: rgba(207, 231, 255, 0.18);
+}
+
+.bridge-onboarding__steps i.active {
+  background: linear-gradient(90deg, #48ddff, #48d6bf, #a78bfa);
+}
+
+.bridge-onboarding__question > span {
+  color: #7aeaff;
+}
+
+.bridge-onboarding__question p {
+  color: #b2c0d6;
+}
+
+.bridge-pathway-option,
+.bridge-role-option,
+.bridge-agreement,
+.bridge-safety-card {
+  border-color: rgba(207, 231, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+  color: #f8fbff;
+  box-shadow: 0 18px 70px rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(18px);
+}
+
+.bridge-pathway-option:hover,
+.bridge-role-option:hover {
+  box-shadow: 0 20px 80px rgba(72, 221, 255, 0.12);
+}
+
+.bridge-pathway-option.selected {
+  background:
+    radial-gradient(circle at 12% 15%, color-mix(in srgb, var(--option-accent) 24%, transparent), transparent 60%),
+    rgba(255, 255, 255, 0.09);
+}
+
+.bridge-role-option.selected {
+  border-color: #48ddff;
+  background: rgba(72, 221, 255, 0.08);
+}
+
+.bridge-pathway-option small,
+.bridge-role-option small,
+.bridge-safety-card ul,
+.bridge-agreement span {
+  color: #b2c0d6;
+}
+
+.bridge-role-option > span {
+  background: rgba(72, 221, 255, 0.12);
+  color: #8ef2ff;
+}
+
+.bridge-safety-card {
+  background: rgba(72, 214, 191, 0.07);
+}
+
+.bridge-safety-card > svg {
+  color: #72ead8;
+}
+
+.bridge-onboarding__continue {
+  background: linear-gradient(135deg, #58e5ff, #45d5c1 50%, #9ca3ff);
+  color: #03111d;
+  box-shadow: 0 18px 56px rgba(72, 221, 255, 0.22);
+}
+
+.bridge-onboarding input,
+.bridge-onboarding select,
+.bridge-onboarding textarea {
+  border-color: rgba(207, 231, 255, 0.16) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+}
+
+.bridge-onboarding input::placeholder,
+.bridge-onboarding textarea::placeholder {
+  color: #8191aa;
+}
+
+.bridge-onboarding select option {
+  color: #0f172a;
+}

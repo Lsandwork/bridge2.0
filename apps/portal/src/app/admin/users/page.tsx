@@ -61,6 +61,7 @@ export default function AdminUsersPage() {
           <option value="caregiver_therapist_teacher">Therapist/Case Manager</option>
           <option value="child_user">Child/Teen/Adult</option>
           <option value="admin">Admin</option>
+          <option value="super_admin">Super Admin</option>
         </select>
         <button type="button" onClick={load} className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white">
           Search

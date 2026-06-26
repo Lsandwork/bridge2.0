@@ -83,7 +83,7 @@ export function useTessWidgetProfile() {
 
   return {
     profiles,
-    profileId: selectedId ?? "cp1",
+    profileId: selectedId,
     activeProfile,
     setProfileId,
     loading: authLoading || loading,

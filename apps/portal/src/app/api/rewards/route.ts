@@ -4,23 +4,43 @@ import {
   awardParentPoints,
   completeGameSession,
   createLocalReward,
-  fetchAllProfilesRewards,
   fetchRewardsHub,
+  getRewardsForProfile,
+  getPointsBalance,
+  getRedemptions,
+  resolveProfilesForSessionUser,
+  userCanAccessProfile,
   requestRedemption,
   updateLocalGameSettings,
 } from "@family-support/data";
 import { getGame as getGameMeta } from "@family-support/core";
+import { getSession } from "@/lib/auth/session";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const profileId = searchParams.get("profileId");
   try {
+    const session = await getSession();
+    if (!session) return NextResponse.json({ error: "Sign in required." }, { status: 401 });
+
     if (profileId) {
+      if (!(await userCanAccessProfile(session, profileId))) {
+        return NextResponse.json({ error: "You do not have access to this profile." }, { status: 403 });
+      }
       const hub = await fetchRewardsHub(profileId);
       if (!hub) return NextResponse.json({ error: "Profile not found" }, { status: 404 });
       return NextResponse.json(hub);
     }
-    return NextResponse.json({ profiles: await fetchAllProfilesRewards() });
+
+    const profiles = await resolveProfilesForSessionUser(session);
+    return NextResponse.json({
+      profiles: profiles.map((profile) => ({
+        profile,
+        balance: getPointsBalance(profile.id),
+        rewards: getRewardsForProfile(profile.id),
+        pendingRedemptions: getRedemptions(profile.id).filter((r) => r.status === "pending"),
+      })),
+    });
   } catch {
     return NextResponse.json({ error: "Failed to load rewards" }, { status: 500 });
   }
@@ -28,7 +48,15 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
+    const session = await getSession();
+    if (!session) return NextResponse.json({ error: "Sign in required." }, { status: 401 });
+
     const body = await request.json();
+    const requestedProfileId = typeof body.profileId === "string" ? body.profileId : null;
+    if (requestedProfileId && !(await userCanAccessProfile(session, requestedProfileId))) {
+      return NextResponse.json({ error: "You do not have access to this profile." }, { status: 403 });
+    }
+
     switch (body.action) {
       case "game-complete": {
         const game = getGameMeta(body.gameId);

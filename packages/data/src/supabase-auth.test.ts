@@ -1,34 +1,34 @@
 import { describe, expect, it } from "vitest";
 import {
-  DEMO_AUTH_EMAILS,
   demoLogin,
   isDemoAuthEmail,
   isDemoAuthUserId,
 } from "./supabase-auth";
-import { LEGACY_DEMO_PROFILE_IDS } from "./demo-accounts";
+import { DEMO_PROFILE_IDS } from "./demo-accounts";
 import { resolveProfilesForSessionUser } from "./session-profiles";
 import { getEmptyDashboard } from "./local-store";
 
 describe("supabase-auth demo isolation", () => {
-  it("recognizes reserved demo emails", () => {
-    expect(isDemoAuthEmail("erika@test.com")).toBe(true);
+  it("recognizes @demo.com emails only", () => {
+    expect(isDemoAuthEmail("caregiver@demo.com")).toBe(true);
+    expect(isDemoAuthEmail("erika@test.com")).toBe(false);
     expect(isDemoAuthEmail("new.parent@example.com")).toBe(false);
   });
 
-  it("authenticates demo parent without Supabase tokens", () => {
-    const user = demoLogin("erika@test.com", "password123");
+  it("authenticates investor demo parent without Supabase tokens", () => {
+    const user = demoLogin("caregiver@demo.com", "password123");
     expect(user?.isDemo).toBe(true);
     expect(user?.role).toBe("parent_guardian");
   });
 
-  it("keeps demo parent on seeded profiles only", async () => {
+  it("keeps demo accounts on Jasper investor profile only", async () => {
     const profiles = await resolveProfilesForSessionUser({
-      id: "u-parent",
+      id: "u-demo-caregiver",
       role: "parent_guardian",
       isDemo: true,
     });
-    expect(profiles.map((p) => p.name)).toEqual(expect.arrayContaining(["Nathan", "Sam"]));
-    expect(profiles.every((p) => LEGACY_DEMO_PROFILE_IDS.has(p.id))).toBe(true);
+    expect(profiles.map((p) => p.name)).toEqual(["Jasper"]);
+    expect(profiles.every((p) => DEMO_PROFILE_IDS.has(p.id))).toBe(true);
   });
 
   it("returns blank dashboard stats for new profile ids", () => {
@@ -42,6 +42,6 @@ describe("supabase-auth demo isolation", () => {
 
   it("does not treat production user ids as demo", () => {
     expect(isDemoAuthUserId("00000000-0000-4000-8000-000000000001")).toBe(false);
-    expect([...DEMO_AUTH_EMAILS]).toContain("erika@test.com");
+    expect(isDemoAuthUserId("u-demo-caregiver")).toBe(true);
   });
 });

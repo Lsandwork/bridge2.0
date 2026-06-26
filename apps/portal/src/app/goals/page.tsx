@@ -11,7 +11,7 @@ export default function GoalsPage() {
   const [goals, setGoals] = useState<Goal[]>([]);
   const [profiles, setProfiles] = useState<{ id: string; name: string }[]>([]);
   const [loading, setLoading] = useState(true);
-  const [form, setForm] = useState({ title: "", childProfileId: "cp1", target: 5 });
+  const [form, setForm] = useState({ title: "", childProfileId: "", target: 5 });
 
   useEffect(() => {
     Promise.all([
@@ -20,12 +20,15 @@ export default function GoalsPage() {
     ]).then(([data, profs]) => {
       setGoals(data.goals ?? []);
       setProfiles(Array.isArray(profs) ? profs : []);
+      if (Array.isArray(profs) && profs[0]) {
+        setForm((current) => ({ ...current, childProfileId: current.childProfileId || profs[0].id }));
+      }
       setLoading(false);
     });
   }, []);
 
   const addGoal = async () => {
-    if (!form.title.trim()) return;
+    if (!form.title.trim() || !form.childProfileId) return;
     const res = await fetch("/api/bridge", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -69,7 +72,7 @@ export default function GoalsPage() {
               <option key={p.id} value={p.id}>{p.name}</option>
             ))}
           </select>
-          <button type="button" className="btn-primary py-2" onClick={addGoal}>{t("parent.goals.submit")}</button>
+          <button type="button" className="btn-primary py-2" onClick={addGoal} disabled={!form.childProfileId}>{t("parent.goals.submit")}</button>
         </div>
       </section>
 

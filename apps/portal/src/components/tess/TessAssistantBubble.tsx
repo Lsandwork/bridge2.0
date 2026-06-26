@@ -11,6 +11,7 @@ import {
 } from "@family-support/core";
 import { useAuth } from "@/components/AuthProvider";
 import { useLanguage } from "@/components/LanguageProvider";
+import { isAdminRole } from "@family-support/data";
 import { useTessWidgetProfile } from "@/hooks/useTessWidgetProfile";
 import { TessChat } from "@/components/tess/TessChat";
 import { TessIcon } from "@/components/tess/TessIcon";
@@ -61,6 +62,8 @@ export function TessAssistantBubble() {
   const shouldRender =
     !authLoading &&
     Boolean(user) &&
+    !isAdminRole(user?.role ?? "") &&
+    !pathname.startsWith("/admin") &&
     !isPublicRoute(pathname) &&
     !isFullScreenTessRoute(pathname) &&
     !isMySpaceHome;
@@ -129,7 +132,7 @@ export function TessAssistantBubble() {
                 <label className="tess-bubble-profile">
                   <span>{t("tess.bubble.profile")}</span>
                   <select
-                    value={profileId}
+                    value={profileId ?? ""}
                     onChange={(e) => setProfileId(e.target.value)}
                     disabled={profileLoading}
                     aria-label={t("tess.bubble.profile")}
@@ -153,15 +156,19 @@ export function TessAssistantBubble() {
           </div>
 
           <div className="tess-bubble-body">
-            <TessChat
-              key={`${profileId}-${pathname}`}
-              childProfileId={profileId}
-              userName={activeProfile?.name ?? "friend"}
-              quickActions={quickActions}
-              placeholder={t("tess.bubble.placeholder")}
-              defaultInputMode="text"
-              embedded
-            />
+            {profileId ? (
+              <TessChat
+                key={`${profileId}-${pathname}`}
+                childProfileId={profileId}
+                userName={activeProfile?.name ?? "friend"}
+                quickActions={quickActions}
+                placeholder={t("tess.bubble.placeholder")}
+                defaultInputMode="text"
+                embedded
+              />
+            ) : (
+              <p className="p-4 text-sm text-[var(--text-secondary)]">{t("parent.dashboard.noProfile")}</p>
+            )}
           </div>
 
           <div className="tess-bubble-footer">

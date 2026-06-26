@@ -1,4 +1,5 @@
 import type { AppRole } from "@family-support/core";
+import { isDemoAccountEmail } from "./demo-accounts";
 import { linkUserToProfile } from "./access-code-store";
 
 export type DemoAuthUser = {
@@ -16,19 +17,11 @@ export type PublicAuthUser = Omit<DemoAuthUser, "password"> & {
 
 const demoUsers: DemoAuthUser[] = [
   {
-    id: "u-admin",
-    email: "lsand.work@gmail.com",
-    name: "Lonnie Admin",
-    role: "admin",
-    password: "password123",
-    mustChangePassword: true,
-  },
-  {
     id: "u-demo-caregiver",
     email: "caregiver@demo.com",
     name: "Alex Caregiver",
     role: "parent_guardian",
-    password: "DemoBridge1!",
+    password: "password123",
     mustChangePassword: false,
   },
   {
@@ -36,7 +29,7 @@ const demoUsers: DemoAuthUser[] = [
     email: "casemanager@demo.com",
     name: "Sam Case Manager",
     role: "caregiver_therapist_teacher",
-    password: "DemoBridge1!",
+    password: "password123",
     mustChangePassword: false,
   },
   {
@@ -44,38 +37,14 @@ const demoUsers: DemoAuthUser[] = [
     email: "user@demo.com",
     name: "Jasper",
     role: "child_user",
-    password: "DemoBridge1!",
+    password: "password123",
     mustChangePassword: false,
-  },
-  {
-    id: "u-parent",
-    email: "erika@test.com",
-    name: "Erika Parent",
-    role: "parent_guardian",
-    password: "password123",
-    mustChangePassword: true,
-  },
-  {
-    id: "u-therapist",
-    email: "therapist@test.com",
-    name: "Jordan Therapist",
-    role: "caregiver_therapist_teacher",
-    password: "password123",
-    mustChangePassword: true,
-  },
-  {
-    id: "u-child",
-    email: "nathan@test.com",
-    name: "Nathan",
-    role: "child_user",
-    password: "password123",
-    mustChangePassword: true,
   },
 ];
 
 function toPublic(user: DemoAuthUser): PublicAuthUser {
   const { password: _password, ...rest } = user;
-  return rest;
+  return { ...rest, onboardingComplete: true };
 }
 
 export function listDemoAuthUsers(): PublicAuthUser[] {
@@ -83,18 +52,24 @@ export function listDemoAuthUsers(): PublicAuthUser[] {
 }
 
 export function authenticateDemoUser(email: string, password: string): PublicAuthUser | null {
-  const user = demoUsers.find((u) => u.email.toLowerCase() === email.trim().toLowerCase());
+  const normalized = email.trim().toLowerCase();
+  if (!isDemoAccountEmail(normalized)) return null;
+  const user = demoUsers.find((u) => u.email.toLowerCase() === normalized);
   if (!user || user.password !== password) return null;
   return toPublic(user);
 }
 
 export function getDemoAuthUserByEmail(email: string): PublicAuthUser | null {
-  const user = demoUsers.find((u) => u.email.toLowerCase() === email.trim().toLowerCase());
+  const normalized = email.trim().toLowerCase();
+  if (!isDemoAccountEmail(normalized)) return null;
+  const user = demoUsers.find((u) => u.email.toLowerCase() === normalized);
   return user ? toPublic(user) : null;
 }
 
 export function changeDemoUserPassword(email: string, currentPassword: string, newPassword: string): PublicAuthUser {
-  const user = demoUsers.find((u) => u.email.toLowerCase() === email.trim().toLowerCase());
+  const normalized = email.trim().toLowerCase();
+  if (!isDemoAccountEmail(normalized)) throw new Error("Account not found.");
+  const user = demoUsers.find((u) => u.email.toLowerCase() === normalized);
   if (!user) throw new Error("Account not found.");
   if (user.password !== currentPassword) throw new Error("Current password is incorrect.");
   if (newPassword.length < 8) throw new Error("New password must be at least 8 characters.");
@@ -116,14 +91,16 @@ export function registerDemoUser(input: {
   role: "parent_guardian" | "caregiver_therapist_teacher";
 }): PublicAuthUser {
   const email = input.email.trim().toLowerCase();
-  if (!email.includes("@")) throw new Error("Enter a valid email address.");
+  if (!isDemoAccountEmail(email)) {
+    throw new Error("Demo registration is only available for @demo.com emails.");
+  }
   if (input.password.length < 8) throw new Error("Password must be at least 8 characters.");
   if (demoUsers.some((u) => u.email.toLowerCase() === email)) {
     throw new Error("An account with this email already exists. Sign in instead.");
   }
 
   const user: DemoAuthUser = {
-    id: `u-${Date.now()}`,
+    id: `u-demo-${Date.now()}`,
     email,
     name: input.name.trim(),
     role: input.role,
@@ -148,7 +125,7 @@ export function createChildLoginAccount(input: {
   }
 
   const user: DemoAuthUser = {
-    id: `u-child-${Date.now()}`,
+    id: `u-demo-child-${Date.now()}`,
     email,
     name: input.name.trim(),
     role: "child_user",

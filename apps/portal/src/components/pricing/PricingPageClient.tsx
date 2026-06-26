@@ -1,33 +1,90 @@
 "use client";
 
+import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import { ArrowLeft, ArrowRight, ShieldCheck } from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
 import {
   getLocalizedCoverageOptions,
-  getLocalizedMedicalApprovalTypes,
   getLocalizedPayerPlans,
-  getLocalizedPayerTypeOptions,
   getLocalizedPricingFaqs,
   getLocalizedPricingPlans,
   getLocalizedReimbursementBenchmarks,
+  type PayerPlan,
+  type PricingPlan,
 } from "@family-support/core";
 import { PricingPlanCard } from "./PricingPlanCard";
 import { MedicalApprovalForm } from "./MedicalApprovalForm";
+import "@/app/landing.css";
+
+type PricingOverrides = {
+  plans?: PricingPlan[];
+  payerPlans?: PayerPlan[];
+};
+
+function mergePlans(localized: PricingPlan[], overrides: PricingPlan[] | undefined) {
+  if (!overrides?.length) return localized;
+  const byId = new Map(overrides.map((p) => [p.id, p]));
+  return localized.map((plan) => ({ ...plan, ...byId.get(plan.id) }));
+}
+
+function mergePayerPlans(localized: PayerPlan[], overrides: PayerPlan[] | undefined) {
+  if (!overrides?.length) return localized;
+  const byId = new Map(overrides.map((p) => [p.id, p]));
+  return localized.map((plan) => ({ ...plan, ...byId.get(plan.id) }));
+}
 
 export function PricingPageClient() {
   const { t } = useLanguage();
-  const plans = getLocalizedPricingPlans(t);
-  const payerPlans = getLocalizedPayerPlans(t);
+  const [overrides, setOverrides] = useState<PricingOverrides | null>(null);
+
+  useEffect(() => {
+    fetch("/api/pricing")
+      .then((r) => r.json())
+      .then((data) => setOverrides(data))
+      .catch(() => setOverrides(null));
+  }, []);
+
+  const plans = useMemo(
+    () => mergePlans(getLocalizedPricingPlans(t), overrides?.plans),
+    [t, overrides]
+  );
+  const payerPlans = useMemo(
+    () => mergePayerPlans(getLocalizedPayerPlans(t), overrides?.payerPlans),
+    [t, overrides]
+  );
   const coverageOptions = getLocalizedCoverageOptions(t);
   const reimbursementBenchmarks = getLocalizedReimbursementBenchmarks(t);
   const pricingFaqs = getLocalizedPricingFaqs(t);
 
   return (
-    <main className="library-page mx-auto max-w-6xl px-4 py-8 md:px-8">
-      <header className="max-w-3xl">
-        <p className="text-sm font-semibold uppercase tracking-wide text-brand">{t("pricing.eyebrow")}</p>
-        <h1 className="mt-2 text-3xl font-bold text-stone-900 md:text-4xl">{t("pricing.header")}</h1>
-        <p className="mt-3 text-base leading-relaxed text-stone-600">{t("library.serviceDescription")}</p>
+    <main className="landing-root pricing-public">
+      <div className="landing-ambient" aria-hidden />
+      <div className="landing-grain" aria-hidden />
+
+      <header className="pricing-public__nav">
+        <Link href="/" className="landing-link-quiet">
+          <ArrowLeft size={15} /> Back to Nuvio Bridge
+        </Link>
+        <div>
+          <Link href="/build-your-bridge" className="landing-btn-primary">
+            Build your Bridge <ArrowRight size={15} />
+          </Link>
+        </div>
       </header>
+
+      <section className="pricing-public__hero">
+        <p className="landing-kicker">{t("pricing.eyebrow")}</p>
+        <h1>{t("pricing.header")}</h1>
+        <p>{t("library.serviceDescription")}</p>
+        <div className="pricing-public__trust">
+          <span><ShieldCheck size={15} /> Coverage depends on eligibility and documentation</span>
+          <span><ShieldCheck size={15} /> No guarantee of insurance approval</span>
+          <span><ShieldCheck size={15} /> Supportive technology, not medical advice</span>
+        </div>
+      </section>
+
+      <div className="pricing-public__content">
 
       <section id="plans" className="scroll-mt-24 mt-12">
         <h2 className="text-2xl font-bold text-stone-900">{t("pricing.directTitle")}</h2>
@@ -178,6 +235,7 @@ export function PricingPageClient() {
         <p className="mt-2 text-sm leading-relaxed text-stone-700">{t("pricing.legalNotice")}</p>
         <p className="mt-3 text-sm leading-relaxed text-stone-700">{t("pricing.legalCptNote")}</p>
       </footer>
+      </div>
     </main>
   );
 }

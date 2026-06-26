@@ -24,13 +24,13 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Bridge — Support. Grow. Thrive.",
-    template: "%s | Bridge",
+    default: "Nuvio Bridge — AI-assisted support that connects everyday care",
+    template: "%s | Nuvio Bridge",
   },
   description:
-    "Bridge connects people, families, clinicians, schools, veteran organizations, and support teams with practical tools for everyday life between appointments.",
+    "Nuvio Bridge connects people, families, clinicians, schools, veteran organizations, and support teams with practical tools for everyday life between appointments.",
   openGraph: {
-    siteName: "Bridge",
+    siteName: "Nuvio Bridge",
     type: "website",
     url: "/",
   },

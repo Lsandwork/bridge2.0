@@ -31,11 +31,24 @@ type Settings = {
 export default function TessSettingsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [profileId, setProfileId] = useState("cp1");
+  const [profileId, setProfileId] = useState("");
+  const [profiles, setProfiles] = useState<{ id: string; name: string }[]>([]);
   const [settings, setSettings] = useState<Settings | null>(null);
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
+    fetch("/api/profiles")
+      .then((r) => r.json())
+      .then((data) => {
+        const list = Array.isArray(data) ? data : [];
+        setProfiles(list);
+        if (list[0]) setProfileId((current) => current || list[0].id);
+      });
+  }, []);
+
+  useEffect(() => {
+    if (!profileId) return;
+    setLoading(true);
     fetch(`/api/tess/settings?childProfileId=${profileId}`)
       .then((r) => r.json())
       .then((data) => {
@@ -101,8 +114,9 @@ export default function TessSettingsPage() {
             value={profileId}
             onChange={(e) => setProfileId(e.target.value)}
           >
-            <option value="cp1">Alex</option>
-            <option value="cp2">Sam</option>
+            {profiles.map((profile) => (
+              <option key={profile.id} value={profile.id}>{profile.name}</option>
+            ))}
           </select>
         </label>
 

@@ -12,14 +12,15 @@ import {
   createSupabaseUserClient,
   hasSupabaseAuth,
 } from "./supabase-server";
-import { DEMO_ACCOUNT_IDS, DEMO_PROFILE_IDS, LEGACY_DEMO_PROFILE_IDS, shouldSeeLegacyDemoData, isDemoAccountId } from "./demo-accounts";
+import {
+  DEMO_ACCOUNT_EMAILS,
+  DEMO_PROFILE_IDS,
+  isDemoAccountEmail,
+  isDemoAccountId,
+} from "./demo-accounts";
 
-export const DEMO_AUTH_EMAILS = new Set([
-  "lsand.work@gmail.com",
-  "erika@test.com",
-  "therapist@test.com",
-  "nathan@test.com",
-]);
+/** @deprecated Use isDemoAccountEmail — only @demo.com accounts are demo. */
+export const DEMO_AUTH_EMAILS = new Set<string>();
 
 export type AuthSessionTokens = {
   accessToken: string;
@@ -52,7 +53,7 @@ export type CreateChildProfileInput = {
 };
 
 export function isDemoAuthEmail(email: string): boolean {
-  return DEMO_AUTH_EMAILS.has(email.trim().toLowerCase());
+  return isDemoAccountEmail(email);
 }
 
 export function isDemoAuthUserId(userId: string): boolean {
@@ -128,13 +129,21 @@ export async function bridgeUserFromSupabaseUser(
 
   if (!row) throw new Error("Could not load user profile.");
 
+  const meta = authUser.user_metadata ?? {};
+  const mustChangePassword =
+    meta.must_change_password === true ||
+    (typeof row === "object" &&
+      row !== null &&
+      "must_change_password" in row &&
+      Boolean((row as { must_change_password?: boolean }).must_change_password));
+
   return {
     id: row.id,
     email: row.email,
     name: row.full_name,
     role: mapDbRole(row.role),
-    mustChangePassword: false,
-    isDemo: false,
+    mustChangePassword,
+    isDemo: isDemoAccountEmail(row.email) || isDemoAuthUserId(row.id),
     onboardingComplete: Boolean(row.onboarding_complete),
   };
 }
@@ -143,8 +152,10 @@ export async function supabaseSignIn(
   email: string,
   password: string
 ): Promise<{ user: BridgeAuthUser; tokens: AuthSessionTokens }> {
-  if (isDemoAuthEmail(email)) {
-    const demo = demoLogin(email, password);
+  const normalized = email.trim().toLowerCase();
+
+  if (isDemoAccountEmail(normalized)) {
+    const demo = demoLogin(normalized, password);
     if (!demo) throw new Error("Invalid email or password.");
     return {
       user: demo,
@@ -153,13 +164,13 @@ export async function supabaseSignIn(
   }
 
   if (!hasSupabaseAuth) {
-    throw new Error("Supabase authentication is not configured for production sign-in.");
+    throw new Error("Invalid email or password.");
   }
 
   const anon = createSupabaseAnonClient();
   if (!anon) throw new Error("Supabase client is not configured.");
 
-  const { data, error } = await anon.auth.signInWithPassword({ email, password });
+  const { data, error } = await anon.auth.signInWithPassword({ email: normalized, password });
   if (error || !data.session || !data.user) {
     throw new Error(error?.message ?? "Invalid email or password.");
   }
@@ -184,8 +195,8 @@ export async function supabaseSignUp(input: {
   childProfile?: CreateChildProfileInput;
 }): Promise<{ user: BridgeAuthUser; tokens: AuthSessionTokens }> {
   const email = input.email.trim().toLowerCase();
-  if (isDemoAuthEmail(email)) {
-    throw new Error("This email is reserved for demo access. Choose a different email.");
+  if (isDemoAccountEmail(email)) {
+    throw new Error("Demo accounts use the investor demo sign-in. Real sign-up requires a non-@demo.com email.");
   }
   if (!hasSupabaseAuth) {
     throw new Error("Supabase authentication is not configured for production sign-up.");
@@ -450,9 +461,8 @@ export async function fetchPersistedChildProfiles(
   role: AppRole
 ): Promise<ChildProfile[]> {
   if (isDemoAuthUserId(authUserId)) {
-    const { getLocalChildProfiles } = await import("./local-store");
-    const allowed = shouldSeeLegacyDemoData(authUserId) ? LEGACY_DEMO_PROFILE_IDS : DEMO_PROFILE_IDS;
-    return getLocalChildProfiles().filter((p) => allowed.has(p.id));
+    const { getDemoChildProfiles } = await import("./local-store");
+    return getDemoChildProfiles();
   }
 
   const admin = createSupabaseAdminClient();
@@ -517,8 +527,7 @@ export async function userCanAccessPersistedProfile(
 ): Promise<boolean> {
   if (role === "admin" || role === "super_admin") return true;
   if (isDemoAuthUserId(authUserId)) {
-    const allowed = shouldSeeLegacyDemoData(authUserId) ? LEGACY_DEMO_PROFILE_IDS : DEMO_PROFILE_IDS;
-    return allowed.has(childProfileId);
+    return DEMO_PROFILE_IDS.has(childProfileId);
   }
   const profiles = await fetchPersistedChildProfiles(authUserId, role);
   return profiles.some((p) => p.id === childProfileId);
@@ -653,4 +662,164 @@ export async function supabaseSignOut(accessToken?: string): Promise<void> {
   const client = createSupabaseUserClient(accessToken);
   if (!client) return;
   await client.auth.signOut();
+}
+
+export async function provisionPlatformAdmin(input: {
+  email: string;
+  password: string;
+  name: string;
+  role?: AppRole;
+}): Promise<{ userId: string; created: boolean }> {
+  const admin = createSupabaseAdminClient();
+  if (!admin) throw new Error("Supabase admin client is not configured.");
+
+  const email = input.email.trim().toLowerCase();
+  const role = input.role ?? "super_admin";
+
+  const { data: existingRow, error: existingError } = await admin
+    .from("users")
+    .select("id")
+    .eq("email", email)
+    .maybeSingle();
+  if (existingError) throw new Error(existingError.message);
+
+  let authUserId = existingRow?.id;
+  if (!authUserId) {
+    let page = 1;
+    while (page <= 10) {
+      const { data, error } = await admin.auth.admin.listUsers({ page, perPage: 200 });
+      if (error) throw new Error(error.message);
+      const match = data.users.find((user) => user.email?.toLowerCase() === email);
+      if (match) {
+        authUserId = match.id;
+        break;
+      }
+      if (data.users.length < 200) break;
+      page += 1;
+    }
+  }
+
+  if (authUserId) {
+    const { error: authError } = await admin.auth.admin.updateUserById(authUserId, {
+      password: input.password,
+      email_confirm: true,
+      user_metadata: {
+        full_name: input.name,
+        role,
+        must_change_password: true,
+      },
+    });
+    if (authError) throw new Error(authError.message);
+
+    const profilePayload = {
+      id: authUserId,
+      email,
+      full_name: input.name,
+      role,
+      must_change_password: true,
+      onboarding_complete: true,
+      updated_at: new Date().toISOString(),
+    };
+
+    const { error: userError } = existingRow?.id
+      ? await admin.from("users").update(profilePayload).eq("id", authUserId)
+      : await admin.from("users").upsert(profilePayload, { onConflict: "id" });
+    if (userError) {
+      if (!userError.message.includes("must_change_password")) throw new Error(userError.message);
+      const { must_change_password: _flag, ...withoutFlag } = profilePayload;
+      const retry = existingRow?.id
+        ? await admin.from("users").update(withoutFlag).eq("id", authUserId)
+        : await admin.from("users").upsert(withoutFlag, { onConflict: "id" });
+      if (retry.error) throw new Error(retry.error.message);
+    }
+
+    return { userId: authUserId, created: false };
+  }
+
+  const { data: created, error: createError } = await admin.auth.admin.createUser({
+    email,
+    password: input.password,
+    email_confirm: true,
+    user_metadata: {
+      full_name: input.name,
+      role,
+      must_change_password: true,
+    },
+  });
+  if (createError || !created.user) {
+    throw new Error(createError?.message ?? "Could not create admin account.");
+  }
+
+  const newUserId = created.user.id;
+  const { error: userRowError } = await admin.from("users").insert({
+    id: newUserId,
+    email,
+    full_name: input.name,
+    role,
+    onboarding_complete: true,
+    must_change_password: true,
+  });
+  if (userRowError) {
+    if (!userRowError.message.includes("must_change_password")) throw new Error(userRowError.message);
+    const { error: fallbackError } = await admin.from("users").insert({
+      id: newUserId,
+      email,
+      full_name: input.name,
+      role,
+      onboarding_complete: true,
+    });
+    if (fallbackError) throw new Error(fallbackError.message);
+  }
+
+  return { userId: newUserId, created: true };
+}
+
+export async function supabaseChangePassword(input: {
+  accessToken: string;
+  authUserId: string;
+  email: string;
+  currentPassword: string;
+  newPassword: string;
+}): Promise<void> {
+  if (input.newPassword.length < 8) {
+    throw new Error("New password must be at least 8 characters.");
+  }
+  if (input.newPassword === "password123") {
+    throw new Error("Choose a password different from the temporary one.");
+  }
+
+  const anon = createSupabaseAnonClient();
+  const admin = createSupabaseAdminClient();
+  if (!anon || !admin) throw new Error("Supabase client is not configured.");
+
+  const { error: verifyError } = await anon.auth.signInWithPassword({
+    email: input.email.trim().toLowerCase(),
+    password: input.currentPassword,
+  });
+  if (verifyError) throw new Error("Current password is incorrect.");
+
+  const { data: currentUser, error: currentUserError } = await admin.auth.admin.getUserById(input.authUserId);
+  if (currentUserError || !currentUser.user) {
+    throw new Error(currentUserError?.message ?? "Could not load account.");
+  }
+
+  const { error: updateError } = await admin.auth.admin.updateUserById(input.authUserId, {
+    password: input.newPassword,
+    user_metadata: {
+      ...(currentUser.user.user_metadata ?? {}),
+      must_change_password: false,
+    },
+  });
+  if (updateError) throw new Error(updateError.message);
+
+  const { error: flagError } = await admin
+    .from("users")
+    .update({
+      must_change_password: false,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", input.authUserId);
+  if (flagError && !flagError.message.includes("must_change_password")) {
+    throw new Error(flagError.message);
+  }
 }

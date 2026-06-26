@@ -23,7 +23,7 @@ type Props = {
 };
 
 export function TessVoiceMode({
-  childProfileId = "cp1",
+  childProfileId,
   mode = "voice",
   onSwitchToText,
   compact = false,

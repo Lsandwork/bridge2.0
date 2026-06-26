@@ -94,10 +94,9 @@ function ensureAccount(user: PublicAuthUser): UserAccountRecord {
   if (existing) return existing;
 
   const defaults: Record<string, Partial<UserAccountRecord>> = {
-    "u-parent": { libraryCredits: 2, accessPlan: "monthly", accessExpiresAt: daysFromNow(30) },
-    "u-therapist": { libraryCredits: 5, accessPlan: "annual", accessExpiresAt: daysFromNow(365) },
-    "u-child": { libraryCredits: 0, accessPlan: "free", accessExpiresAt: null },
-    "u-admin": { libraryCredits: 99, accessPlan: "annual", accessExpiresAt: daysFromNow(365) },
+    "u-demo-caregiver": { libraryCredits: 2, accessPlan: "monthly", accessExpiresAt: daysFromNow(30) },
+    "u-demo-casemanager": { libraryCredits: 5, accessPlan: "annual", accessExpiresAt: daysFromNow(365) },
+    "u-demo-user": { libraryCredits: 0, accessPlan: "free", accessExpiresAt: null },
   };
 
   const seed = defaults[user.id] ?? {};

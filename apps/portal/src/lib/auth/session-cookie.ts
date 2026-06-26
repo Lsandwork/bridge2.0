@@ -31,6 +31,7 @@ export function bridgeAuthUserToSessionUser(user: BridgeAuthUser): SessionUser {
 export function homePathForRole(role: AppRole): string {
   if (role === "child_user") return "/my-space";
   if (role === "caregiver_therapist_teacher") return "/therapist";
+  if (role === "admin" || role === "super_admin") return "/admin";
   return "/dashboard";
 }
 

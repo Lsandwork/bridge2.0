@@ -109,8 +109,8 @@ describe("demo isolation", () => {
     expect(isDemoAccountEmail("real@parent.com")).toBe(false);
   });
 
-  it("legacy demo only for legacy accounts", () => {
-    expect(shouldSeeLegacyDemoData("u-parent")).toBe(true);
+  it("never exposes legacy Nathan/Sam data in production paths", () => {
+    expect(shouldSeeLegacyDemoData("u-parent")).toBe(false);
     expect(shouldSeeLegacyDemoData("u-demo-caregiver")).toBe(false);
   });
 });

@@ -25,21 +25,30 @@ export default function CareTeamPage() {
   const [members, setMembers] = useState<Member[]>([]);
   const [profiles, setProfiles] = useState<{ id: string; name: string }[]>([]);
   const [loading, setLoading] = useState(true);
-  const [form, setForm] = useState({ name: "", email: "", role: "caregiver", notes: "", childProfileId: "cp1" });
+  const [form, setForm] = useState({ name: "", email: "", role: "caregiver", notes: "", childProfileId: "" });
 
   useEffect(() => {
-    Promise.all([
-      fetch("/api/bridge?section=care-team").then((r) => r.json()),
-      fetch("/api/profiles").then((r) => r.json()),
-    ]).then(([team, profs]) => {
-      setMembers(Array.isArray(team) ? team : []);
-      setProfiles(Array.isArray(profs) ? profs : []);
-      setLoading(false);
-    });
+    fetch("/api/profiles")
+      .then((r) => r.json())
+      .then((profs) => {
+        const list = Array.isArray(profs) ? profs : [];
+        setProfiles(list);
+        const firstId = list[0]?.id ?? "";
+        setForm((current) => ({ ...current, childProfileId: current.childProfileId || firstId }));
+        if (!firstId) {
+          setLoading(false);
+          return;
+        }
+        return fetch(`/api/bridge?section=care-team&profileId=${firstId}`)
+          .then((r) => r.json())
+          .then((team) => setMembers(Array.isArray(team) ? team : []))
+          .finally(() => setLoading(false));
+      })
+      .catch(() => setLoading(false));
   }, []);
 
   const addMember = async () => {
-    if (!form.name.trim() || !form.email.includes("@")) return;
+    if (!form.name.trim() || !form.email.includes("@") || !form.childProfileId) return;
     const res = await fetch("/api/bridge", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -55,11 +64,12 @@ export default function CareTeamPage() {
     const member = await res.json();
     if (res.ok) {
       setMembers((prev) => [...prev, member]);
-      setForm({ name: "", email: "", role: "caregiver", notes: "", childProfileId: "cp1" });
+      setForm((current) => ({ name: "", email: "", role: "caregiver", notes: "", childProfileId: current.childProfileId }));
     }
   };
 
   if (loading) return <LoadingBlock label={t("parent.careTeam.loading")} />;
+  if (!profiles.length) return <EmptyBlock message={t("parent.dashboard.noProfile")} />;
 
   return (
     <main className="mx-auto max-w-6xl p-6">
@@ -85,7 +95,7 @@ export default function CareTeamPage() {
             ))}
           </select>
           <input className="rounded-xl border px-3 py-2 md:col-span-2" placeholder={t("parent.careTeam.notes")} value={form.notes} onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))} />
-          <button type="button" className="btn-primary py-2" onClick={addMember}>{t("parent.careTeam.add")}</button>
+          <button type="button" className="btn-primary py-2" onClick={addMember} disabled={!form.childProfileId}>{t("parent.careTeam.add")}</button>
         </div>
       </section>
 

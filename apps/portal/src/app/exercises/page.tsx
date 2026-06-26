@@ -45,7 +45,7 @@ export default function ExercisesPage() {
     difficulty: "easy",
     frequency: "daily",
     rewardIdea: "Choose a favorite show after",
-    childProfileId: "cp1",
+    childProfileId: "",
     ageLevel: "8-12",
   });
 
@@ -55,7 +55,11 @@ export default function ExercisesPage() {
       fetch("/api/profiles").then((r) => r.json()),
     ]).then(([ex, profs]) => {
       setExercises(Array.isArray(ex) ? ex : []);
-      setProfiles(Array.isArray(profs) ? profs : []);
+      const list = Array.isArray(profs) ? profs : [];
+      setProfiles(list);
+      if (list[0]) {
+        setForm((current) => ({ ...current, childProfileId: current.childProfileId || list[0].id }));
+      }
       setLoading(false);
     });
   }, []);

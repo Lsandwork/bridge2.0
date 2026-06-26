@@ -28,6 +28,7 @@ export async function POST(request: Request) {
     const response = NextResponse.json({
       user: sessionUser,
       redirectTo: homePathForAuthUser(sessionUser),
+      clearClientState: true,
     });
     setAuthSession(response, sessionUser, tokens.accessToken ? tokens : undefined);
     return response;

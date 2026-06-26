@@ -40,7 +40,7 @@ type Options = {
 };
 
 export function useTessChatSession({
-  childProfileId = "cp1",
+  childProfileId,
   userName = "friend",
   mode = "text",
   defaultInputMode = "talk",

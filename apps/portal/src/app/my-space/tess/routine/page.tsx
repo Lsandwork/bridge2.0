@@ -21,7 +21,8 @@ export default function MySpaceTessRoutinePage() {
   const [helpReply, setHelpReply] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch(`/api/routines?childProfileId=${activeProfile?.id ?? "cp1"}`)
+    if (!activeProfile?.id) return;
+    fetch(`/api/routines?childProfileId=${activeProfile.id}`)
       .then((r) => r.json())
       .then((data) => {
         const list = Array.isArray(data) ? data : [];
@@ -32,13 +33,14 @@ export default function MySpaceTessRoutinePage() {
   }, [activeProfile?.id]);
 
   const askTess = async (prompt: string) => {
+    if (!activeProfile?.id) return;
     setHelpReply(null);
     const res = await fetch("/api/tess/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         message: prompt,
-        childProfileId: activeProfile?.id ?? "cp1",
+        childProfileId: activeProfile.id,
         mode: "routine_helper",
       }),
     });

@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 import { useLanguage } from "@/components/LanguageProvider";
+import { isAdminRole } from "@family-support/data";
 import { TessNavIcon } from "@/components/tess/TessIcon";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { NotificationBell } from "@/components/NotificationBell";
@@ -245,7 +246,7 @@ function SidebarContent({
 export function PortalShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, signOut } = useAuth();
+  const { user, signOut, loading: authLoading } = useAuth();
   const { t } = useLanguage();
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -259,6 +260,10 @@ export function PortalShell({ children }: { children: React.ReactNode }) {
     pathname === "/terms" ||
     pathname === "/safety" ||
     pathname === "/data-policy" ||
+    pathname === "/pricing" ||
+    pathname === "/contact" ||
+    pathname === "/build-your-bridge" ||
+    pathname.startsWith("/admin") ||
     pathname.startsWith("/my-space") ||
     pathname.startsWith("/setup") ||
     pathname.startsWith("/therapist");
@@ -276,7 +281,36 @@ export function PortalShell({ children }: { children: React.ReactNode }) {
     };
   }, [menuOpen]);
 
+  const isAdmin = Boolean(user && isAdminRole(user.role));
+
+  useEffect(() => {
+    if (!user || authLoading) return;
+    if (isAdminRole(user.role)) {
+      router.replace("/admin");
+    }
+  }, [user, authLoading, router]);
+
   if (hideNav) return <>{children}</>;
+
+  if (isAdmin) {
+    return (
+      <div className="flex min-h-screen min-h-[100dvh] items-center justify-center bg-slate-50 px-4">
+        <div className="max-w-md rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
+          <p className="text-sm font-semibold uppercase tracking-wider text-indigo-600">Admin account</p>
+          <h1 className="mt-2 text-xl font-bold text-slate-900">Use the admin panel</h1>
+          <p className="mt-2 text-sm text-slate-600">
+            This account manages users, pricing, safety alerts, and platform settings — not the family dashboard.
+          </p>
+          <Link
+            href="/admin"
+            className="mt-6 inline-flex rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700"
+          >
+            Open admin panel
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   const activeNav = mainNav.concat(contentNav, toolsNav).find((n) =>
     n.href === "/dashboard" ? pathname === "/dashboard" : pathname.startsWith(n.href)

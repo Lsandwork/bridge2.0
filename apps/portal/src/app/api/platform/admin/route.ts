@@ -37,6 +37,9 @@ export async function POST(request: Request) {
       removeBridgeGroupMember,
       updateErrorLog,
       updateSafetyAlertStatus,
+      updatePricingPlan,
+      updatePayerPlan,
+      resetPricingOverrides,
     } = await import("@family-support/data");
 
     switch (action) {
@@ -85,6 +88,33 @@ export async function POST(request: Request) {
           ok: true,
           alert: updateSafetyAlertStatus(body.alertId, body.status, session.id, body.note),
         });
+      case "update-pricing-plan":
+        return NextResponse.json({
+          ok: true,
+          plan: updatePricingPlan(body.planId, body.patch, session.email),
+        });
+      case "update-payer-plan":
+        return NextResponse.json({
+          ok: true,
+          plan: updatePayerPlan(body.planId, body.patch, session.email),
+        });
+      case "reset-pricing":
+        resetPricingOverrides(session.email);
+        return NextResponse.json({ ok: true });
+      case "update-health-report": {
+        const { updateHealthReportStatus } = await import("@family-support/data");
+        return NextResponse.json({
+          ok: true,
+          report: updateHealthReportStatus(body.reportId, body.status, body.note),
+        });
+      }
+      case "update-support-request": {
+        const { updateSupportRequestStatus } = await import("@family-support/data");
+        return NextResponse.json({
+          ok: true,
+          request: updateSupportRequestStatus(body.requestId, body.status, body.assignedAdminId),
+        });
+      }
       default:
         return NextResponse.json({ error: "Unknown action" }, { status: 400 });
     }

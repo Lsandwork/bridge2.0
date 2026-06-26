@@ -10,13 +10,17 @@ import { LoadingBlock } from "@/components/StateBlock";
 
 function TessChatPageInner() {
   const params = useSearchParams();
-  const [profileId, setProfileId] = useState(params.get("profile") ?? "cp1");
+  const [profileId, setProfileId] = useState(params.get("profile") ?? "");
   const [profiles, setProfiles] = useState<{ id: string; name: string }[]>([]);
   const initialPrompt = params.get("prompt");
   const startTalk = params.get("talk") === "1";
 
   useEffect(() => {
-    fetch("/api/profiles").then((r) => r.json()).then((data) => setProfiles(Array.isArray(data) ? data : []));
+    fetch("/api/profiles").then((r) => r.json()).then((data) => {
+      const list = Array.isArray(data) ? data : [];
+      setProfiles(list);
+      setProfileId((current) => current || list[0]?.id || "");
+    });
   }, []);
 
   useEffect(() => {

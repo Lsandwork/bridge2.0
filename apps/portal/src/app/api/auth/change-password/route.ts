@@ -1,19 +1,23 @@
 import { NextResponse } from "next/server";
-import { changeDemoUserPassword, logUserActivity } from "@family-support/data";
-import { bridgeAuthUserToSessionUser, getSession, homePathForRole, setAuthSession } from "@/lib/auth/session";
+import { cookies } from "next/headers";
+import {
+  changeDemoUserPassword,
+  logUserActivity,
+  supabaseChangePassword,
+} from "@family-support/data";
+import {
+  SUPABASE_ACCESS_COOKIE,
+  bridgeAuthUserToSessionUser,
+  getSession,
+  homePathForRole,
+  setAuthSession,
+} from "@/lib/auth/session";
 
 export async function POST(request: Request) {
   try {
     const session = await getSession();
     if (!session) {
       return NextResponse.json({ error: "Not signed in." }, { status: 401 });
-    }
-
-    if (!session.isDemo) {
-      return NextResponse.json(
-        { error: "Use your account provider or Bridge account settings to change your password." },
-        { status: 400 }
-      );
     }
 
     const body = (await request.json()) as {
@@ -34,11 +38,32 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "New passwords do not match." }, { status: 400 });
     }
 
-    const user = changeDemoUserPassword(session.email, currentPassword, newPassword);
+    let user;
+    if (session.isDemo) {
+      user = changeDemoUserPassword(session.email, currentPassword, newPassword);
+    } else {
+      const cookieStore = await cookies();
+      const accessToken = cookieStore.get(SUPABASE_ACCESS_COOKIE)?.value;
+      if (!accessToken) {
+        return NextResponse.json({ error: "Session expired. Sign in again." }, { status: 401 });
+      }
+      await supabaseChangePassword({
+        accessToken,
+        authUserId: session.id,
+        email: session.email,
+        currentPassword,
+        newPassword,
+      });
+      user = {
+        ...session,
+        mustChangePassword: false,
+      };
+    }
+
     logUserActivity(user.id, user.email, "password_change");
     const sessionUser = bridgeAuthUserToSessionUser({
       ...user,
-      isDemo: true,
+      isDemo: session.isDemo ?? false,
     });
     const response = NextResponse.json({
       user: sessionUser,

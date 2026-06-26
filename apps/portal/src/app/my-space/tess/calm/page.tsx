@@ -22,6 +22,7 @@ export default function MySpaceTessCalmPage() {
   const [loading, setLoading] = useState(false);
 
   const choose = async (prompt: string) => {
+    if (!activeProfile?.id) return;
     setLoading(true);
     setResponse(null);
     const res = await fetch("/api/tess/chat", {
@@ -29,7 +30,7 @@ export default function MySpaceTessCalmPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         message: prompt,
-        childProfileId: activeProfile?.id ?? "cp1",
+        childProfileId: activeProfile.id,
         mode: "calm",
       }),
     });

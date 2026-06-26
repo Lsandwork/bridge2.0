@@ -5,59 +5,90 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   Users,
-  Link2,
-  MessageSquare,
+  UserPlus,
   ShieldAlert,
+  HeartPulse,
+  Inbox,
+  CreditCard,
   Activity,
   AlertTriangle,
   Stethoscope,
+  MessageSquare,
+  Link2,
   BookOpen,
-  CreditCard,
+  DollarSign,
   FlaskConical,
   Settings,
   Menu,
   X,
+  ScrollText,
 } from "lucide-react";
 import { useState } from "react";
+import { useAuth } from "@/components/AuthProvider";
+import { StatusPill } from "./AdminUi";
 
-const tabs = [
+type Tab = {
+  href: string;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  exact?: boolean;
+  superAdminOnly?: boolean;
+  accent?: boolean;
+};
+
+const tabs: Tab[] = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard, exact: true },
-  { href: "/admin/users", label: "User Accounts", icon: Users },
-  { href: "/admin/bridge-groups", label: "Bridge Groups", icon: Link2 },
+  { href: "/admin/users", label: "Users", icon: Users },
+  { href: "/admin/new-signups", label: "New Signups", icon: UserPlus },
+  { href: "/admin/safety-alerts", label: "Safety Center", icon: ShieldAlert, accent: true },
+  { href: "/admin/health-reports", label: "Health Reports", icon: HeartPulse },
+  { href: "/admin/requests", label: "Requests", icon: Inbox },
   { href: "/admin/messages", label: "Messages", icon: MessageSquare },
-  { href: "/admin/safety-alerts", label: "Safety Alerts", icon: ShieldAlert, accent: true },
+  { href: "/admin/bridge-groups", label: "Bridge Groups", icon: Link2 },
+  { href: "/admin/pricing", label: "Pricing & Coverage", icon: DollarSign },
+  { href: "/admin/payments", label: "Payments", icon: CreditCard },
+  { href: "/admin/credits", label: "Credits / Library", icon: BookOpen },
   { href: "/admin/activity", label: "User Activity", icon: Activity },
   { href: "/admin/error-logs", label: "Error Logs", icon: AlertTriangle },
   { href: "/admin/diagnostics", label: "Diagnostics", icon: Stethoscope },
-  { href: "/admin/credits", label: "Credits / Library", icon: BookOpen },
-  { href: "/admin/payments", label: "Payment Processors", icon: CreditCard },
   { href: "/admin/demo-accounts", label: "Demo Accounts", icon: FlaskConical },
-  { href: "/admin/settings", label: "Settings", icon: Settings },
+  { href: "/admin/audit", label: "Audit Trail", icon: ScrollText, superAdminOnly: true },
+  { href: "/admin/settings", label: "Platform Settings", icon: Settings },
 ];
 
-export function AdminPlatformShell({ children }: { children: React.ReactNode }) {
+export function AdminPlatformShell({
+  children,
+  systemStatus,
+}: {
+  children: React.ReactNode;
+  systemStatus?: "healthy" | "warning" | "critical";
+}) {
   const pathname = usePathname();
+  const { user } = useAuth();
   const [open, setOpen] = useState(false);
+  const isSuperAdmin = user?.role === "super_admin";
+
+  const visibleTabs = tabs.filter((t) => !t.superAdminOnly || isSuperAdmin);
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
+    <div className="min-h-screen bg-[#0f172a] text-slate-100">
       <div className="flex min-h-screen">
         <aside
-          className={`fixed inset-y-0 left-0 z-40 w-64 border-r border-slate-200 bg-white transition-transform dark:border-slate-800 dark:bg-slate-900 lg:static lg:translate-x-0 ${
+          className={`fixed inset-y-0 left-0 z-40 flex w-72 flex-col border-r border-slate-800 bg-[#111827] transition-transform lg:static lg:translate-x-0 ${
             open ? "translate-x-0" : "-translate-x-full"
           }`}
         >
-          <div className="flex h-16 items-center border-b border-slate-200 px-5 dark:border-slate-800">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Nuvio Bridge</p>
-              <p className="text-sm font-bold text-slate-900 dark:text-white">Admin Panel</p>
-            </div>
-            <button type="button" className="ml-auto lg:hidden" onClick={() => setOpen(false)} aria-label="Close menu">
-              <X className="h-5 w-5" />
-            </button>
+          <div className="border-b border-slate-800 p-5">
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-indigo-400">Nuvio Bridge</p>
+            <h1 className="mt-1 text-lg font-bold text-white">Admin Command Center</h1>
+            {systemStatus ? (
+              <div className="mt-3">
+                <StatusPill status={systemStatus} />
+              </div>
+            ) : null}
           </div>
-          <nav className="space-y-1 p-3">
-            {tabs.map((tab) => {
+          <nav className="flex-1 space-y-1 overflow-y-auto p-3">
+            {visibleTabs.map((tab) => {
               const active = tab.exact ? pathname === tab.href : pathname.startsWith(tab.href);
               const Icon = tab.icon;
               return (
@@ -65,14 +96,14 @@ export function AdminPlatformShell({ children }: { children: React.ReactNode }) 
                   key={tab.href}
                   href={tab.href}
                   onClick={() => setOpen(false)}
-                  className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                  className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition ${
                     tab.accent
                       ? active
                         ? "bg-rose-600 text-white"
-                        : "text-rose-700 hover:bg-rose-50 dark:text-rose-300 dark:hover:bg-rose-950/40"
+                        : "text-rose-300 hover:bg-rose-950/50"
                       : active
                         ? "bg-indigo-600 text-white"
-                        : "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                        : "text-slate-300 hover:bg-slate-800"
                   }`}
                 >
                   <Icon className="h-4 w-4 shrink-0" />
@@ -81,19 +112,35 @@ export function AdminPlatformShell({ children }: { children: React.ReactNode }) 
               );
             })}
           </nav>
+          <div className="border-t border-slate-800 p-4 text-xs text-slate-400">
+            <p className="font-semibold text-slate-200">{user?.name ?? "Admin"}</p>
+            <p className="truncate">{user?.email}</p>
+            <p className="mt-1 capitalize text-indigo-300">{user?.role?.replace(/_/g, " ")}</p>
+          </div>
         </aside>
 
         <div className="flex min-w-0 flex-1 flex-col">
-          <header className="flex h-16 items-center gap-3 border-b border-slate-200 bg-white px-4 dark:border-slate-800 dark:bg-slate-900 lg:px-8">
+          <header className="flex items-center gap-3 border-b border-slate-800 bg-[#111827]/80 px-4 py-4 backdrop-blur lg:px-8">
             <button type="button" className="lg:hidden" onClick={() => setOpen(true)} aria-label="Open menu">
               <Menu className="h-5 w-5" />
             </button>
-            <p className="text-sm text-slate-500">Platform administration — production controls</p>
-            <Link href="/dashboard" className="ml-auto text-sm font-medium text-indigo-600 hover:underline">
-              Back to portal
-            </Link>
+            <button type="button" className="hidden lg:hidden" onClick={() => setOpen(false)}>
+              <X className="h-5 w-5" />
+            </button>
+            <div className="min-w-0 flex-1">
+              <p className="text-xs uppercase tracking-wider text-slate-500">Operations dashboard</p>
+              <p className="truncate text-sm text-slate-300">Manage users, safety, payments, and platform health</p>
+            </div>
+            <a
+              href="/"
+              target="_blank"
+              rel="noreferrer"
+              className="shrink-0 rounded-lg border border-slate-700 px-3 py-1.5 text-xs font-medium text-slate-200 hover:bg-slate-800"
+            >
+              Preview public site
+            </a>
           </header>
-          <main className="flex-1 p-4 lg:p-8">{children}</main>
+          <main className="flex-1 bg-slate-50 p-4 text-slate-900 lg:p-8">{children}</main>
         </div>
       </div>
     </div>

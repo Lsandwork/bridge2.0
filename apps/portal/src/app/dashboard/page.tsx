@@ -6,9 +6,10 @@ import { useRouter } from "next/navigation";
 import { WeekBarChart, EmotionDonut } from "@/components/bridge/Charts";
 import { EmptyBlock, ErrorBlock, LoadingBlock } from "@/components/StateBlock";
 import { useAuth } from "@/components/AuthProvider";
+import { isAdminRole } from "@family-support/data";
 import { useLanguage } from "@/components/LanguageProvider";
 import { useSupportPathway } from "@/components/SupportPathwayProvider";
-import { PathwayDashboard } from "@/components/dashboard/PathwayDashboard";
+import { QuickSetupCard } from "@/components/dashboard/QuickSetupCard";
 
 type Snapshot = {
   childName: string;
@@ -35,6 +36,7 @@ export default function DashboardPage() {
   const [aiSummary, setAiSummary] = useState<string | null>(null);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
+  const [quickSetupHidden, setQuickSetupHidden] = useState(false);
 
   const load = useCallback(() => {
     if (!profileId) return;
@@ -52,6 +54,10 @@ export default function DashboardPage() {
   useEffect(() => {
     if (authLoading) return;
     if (!user) return;
+    if (isAdminRole(user.role)) {
+      router.replace("/admin");
+      return;
+    }
     if (user.role === "caregiver_therapist_teacher") {
       router.replace("/therapist");
     }
@@ -74,6 +80,40 @@ export default function DashboardPage() {
   useEffect(() => {
     load();
   }, [load]);
+
+  useEffect(() => {
+    if (!profileId || !snapshot || user?.isDemo) return;
+
+    const hasActivity =
+      snapshot.tasksCompletedPct > 0 ||
+      snapshot.routinesCompletedPct > 0 ||
+      snapshot.checkInsCount > 0 ||
+      snapshot.newSkillsCount > 0;
+
+    const skipped = window.localStorage.getItem(`bridge.quickSetup.skipped.${profileId}`);
+    const remindAt = window.localStorage.getItem(`bridge.quickSetup.remindAt.${profileId}`);
+    const reminderActive = remindAt ? new Date(remindAt).getTime() > Date.now() : false;
+    setQuickSetupHidden(Boolean(skipped) || reminderActive || hasActivity);
+
+    if (!hasActivity) {
+      const key = `bridge.quickSetup.incompleteNotified.${profileId}`;
+      if (!window.localStorage.getItem(key)) {
+        window.localStorage.setItem(key, new Date().toISOString());
+        void fetch("/api/quick-setup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          cache: "no-store",
+          body: JSON.stringify({
+            action: "quick_setup_incomplete",
+            profileId,
+            childName: snapshot.childName,
+            reason: "New real user has not completed Quick Setup or created trackable activity.",
+          }),
+        }).catch(() => undefined);
+      }
+    }
+  }, [profileId, snapshot, user?.isDemo]);
 
   const generateSummary = async () => {
     if (!profileId) return;
@@ -109,7 +149,6 @@ export default function DashboardPage() {
     }
   };
 
-  if (pathway.id !== "autism") return <PathwayDashboard pathway={pathway} />;
   if (authLoading || !profilesLoaded) return <LoadingBlock label={t("parent.dashboard.loading")} />;
 
   if (!profiles.length) {
@@ -152,6 +191,9 @@ export default function DashboardPage() {
           <h2 className="text-2xl font-extrabold text-[var(--text-primary)]">
             {t("parent.dashboard.title", { name: snapshot.childName })}
           </h2>
+          <p className="mt-1 text-xs font-bold uppercase tracking-wider text-[var(--brand)]">
+            {pathway.name} support pathway
+          </p>
           <p className="mt-1 max-w-2xl text-sm text-[var(--text-secondary)]">{t("common.safetyDisclaimer")}</p>
         </div>
         {profiles.length > 1 ? (
@@ -168,9 +210,19 @@ export default function DashboardPage() {
       </section>
 
       {!hasActivity ? (
-        <p className="rounded-xl border border-dashed border-[var(--border)] bg-[var(--surface-muted)] px-4 py-3 text-sm text-[var(--text-secondary)]">
-          {t("parent.dashboard.emptyState")}
-        </p>
+        <>
+          {!quickSetupHidden ? (
+            <QuickSetupCard
+              profileId={profileId}
+              childName={snapshot.childName}
+              onDismiss={() => setQuickSetupHidden(true)}
+            />
+          ) : (
+            <p className="rounded-xl border border-dashed border-[var(--border)] bg-[var(--surface-muted)] px-4 py-3 text-sm text-[var(--text-secondary)]">
+              {t("parent.dashboard.emptyState")} Quick Setup is available anytime from Goals, Routines, Settings, and Care Team.
+            </p>
+          )}
+        </>
       ) : null}
 
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

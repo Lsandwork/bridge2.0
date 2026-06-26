@@ -6,6 +6,22 @@ import {
   SESSION_COOKIE,
 } from "@/lib/auth/session-cookie";
 
+function isAdminRole(role: string | undefined) {
+  return role === "admin" || role === "super_admin";
+}
+
+const ADMIN_ROUTE_MAP: Record<string, string> = {
+  "/pricing": "/admin/pricing",
+  "/dashboard": "/admin",
+  "/settings": "/admin/settings",
+  "/messages": "/admin/messages",
+  "/safety-alerts": "/admin/safety-alerts",
+  "/profiles": "/admin/users",
+  "/library": "/admin/credits",
+  "/library/coverage": "/admin/pricing",
+  "/reports": "/admin/activity",
+};
+
 const PUBLIC_EXACT = new Set(["/", "/login", "/change-password", "/pricing", "/onboarding", "/onboarding/account"]);
 
 const PUBLIC_PREFIXES = ["/library"];
@@ -49,6 +65,16 @@ export function proxy(request: NextRequest) {
   }
 
   const session = parseSessionCookie(request.cookies.get(SESSION_COOKIE)?.value);
+
+  if (session && isAdminRole(session.role) && !pathname.startsWith("/admin")) {
+    const mapped = ADMIN_ROUTE_MAP[pathname];
+    if (mapped) {
+      return NextResponse.redirect(new URL(mapped, request.url));
+    }
+    if (isProtected(pathname)) {
+      return NextResponse.redirect(new URL("/admin", request.url));
+    }
+  }
 
   if (pathname === "/login" && session && !session.mustChangePassword) {
     return NextResponse.redirect(new URL(homePathForRole(session.role), request.url));

@@ -9,6 +9,8 @@ export type AuthUser = {
   name: string;
   role: AppRole;
   mustChangePassword: boolean;
+  isDemo?: boolean;
+  onboardingComplete?: boolean;
 };
 
 type AuthContextValue = {
@@ -44,6 +46,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [refresh]);
 
   const signOut = useCallback(async () => {
+    const { clearBridgeClientState } = await import("@/lib/auth/clear-client-state");
+    clearBridgeClientState();
     await fetch("/api/auth/logout", {
       method: "POST",
       credentials: "include",

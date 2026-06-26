@@ -13,7 +13,8 @@ import type { TessViewMode } from "@/components/tess/tessTypes";
 function ChatInner() {
   const params = useSearchParams();
   const { activeProfile } = useProfile();
-  const profileId = activeProfile?.id ?? "cp1";
+  const profileId = activeProfile?.id;
+  if (!profileId) return <LoadingBlock label="Loading profile…" />;
   const initialPrompt = params.get("prompt");
   const startTalk = params.get("talk") === "1";
   const viewParam = params.get("view");

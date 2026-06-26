@@ -19,7 +19,7 @@ type Props = {
 
 /** @deprecated Use TessScreen — kept for imports that expect TessChat */
 export function TessChat({
-  childProfileId = "cp1",
+  childProfileId,
   userName = "friend",
   quickActions = [],
   placeholder,

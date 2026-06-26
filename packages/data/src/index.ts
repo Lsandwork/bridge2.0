@@ -145,20 +145,22 @@ export async function getCommunicationCards(childProfileId?: string) {
   let query = supabase.from("communication_cards").select("*");
   if (childProfileId) query = query.eq("child_profile_id", childProfileId);
   const { data } = await query;
-  const rows = data ?? [];
-  if (rows.length > 0) return rows;
-  return getLocalCommunicationCards(childProfileId);
-}
-
-export async function getGoals() {
-  if (!supabase) return getLocalGoals();
-  const { data } = await supabase.from("goals").select("*");
   return data ?? [];
 }
 
-export async function getRewards() {
-  if (!supabase) return getLocalRewards();
-  const { data } = await supabase.from("rewards").select("*");
+export async function getGoals(childProfileId?: string) {
+  if (!supabase) return getLocalGoals(childProfileId);
+  let query = supabase.from("goals").select("*");
+  if (childProfileId) query = query.eq("child_profile_id", childProfileId);
+  const { data } = await query;
+  return data ?? [];
+}
+
+export async function getRewards(childProfileId?: string) {
+  if (!supabase) return getLocalRewards(childProfileId);
+  let query = supabase.from("rewards").select("*");
+  if (childProfileId) query = query.eq("child_profile_id", childProfileId);
+  const { data } = await query;
   return data ?? [];
 }
 
@@ -186,9 +188,11 @@ export async function getExercises() {
   return data ?? [];
 }
 
-export async function getCheckIns() {
-  if (!supabase) return getLocalCheckIns();
-  const { data } = await supabase.from("check_ins").select("*");
+export async function getCheckIns(childProfileId?: string) {
+  if (!supabase) return getLocalCheckIns(childProfileId);
+  let query = supabase.from("check_ins").select("*");
+  if (childProfileId) query = query.eq("child_profile_id", childProfileId);
+  const { data } = await query;
   return data ?? [];
 }
 
@@ -239,19 +243,19 @@ export {
   requestRedemption,
   updateLocalGameSettings,
 } from "./rewards";
-export async function getCareTeam() {
-  if (!supabase) return getLocalCareTeam();
-  return getLocalCareTeam();
+export async function getCareTeam(childProfileId?: string) {
+  if (!supabase) return getLocalCareTeam(childProfileId);
+  return [];
 }
 
 export async function getReports(childProfileId?: string) {
   if (!supabase) return getLocalReports(childProfileId);
-  return getLocalReports(childProfileId);
+  return [];
 }
 
 export async function getSocialStories(childProfileId?: string) {
   if (!supabase) return getLocalSocialStories(childProfileId);
-  return getLocalSocialStories(childProfileId);
+  return [];
 }
 
 export { createLocalChildProfile, createLocalCommunicationCard, createLocalExercise, createLocalCheckIn, createLocalRoutine, createLocalGoal, createLocalAiSuggestion, createLocalCareTeamMember, createLocalReport, completeLocalTask, updateLocalGoalProgress, useCommunicationCard };
@@ -327,7 +331,9 @@ export {
   isDemoAuthUserId,
   markPersistedSetupComplete,
   redeemPersistedAccessCode,
+  provisionPlatformAdmin,
   resolveSupabaseSession,
+  supabaseChangePassword,
   supabaseSignIn,
   supabaseSignOut,
   supabaseSignUp,
@@ -426,4 +432,9 @@ export * from "./platform-notifications";
 export * from "./error-log-store";
 export * from "./platform-diagnostics";
 export * from "./platform-admin";
+export * from "./pricing-store";
+export * from "./admin-command-center";
+export * from "./health-report-store";
+export * from "./support-request-store";
 export * from "./analytics-store";
+export * from "./quick-setup-store";
