@@ -121,8 +121,24 @@ export async function getAdminSection(section: string, params: URLSearchParams) 
       });
     case "bridge-groups": {
       const productionBridgeGroups = await listProductionBridgeGroups({ includeDemo: params.get("includeDemo") === "true" });
-      return productionBridgeGroups ?? {
-        groups: listBridgeGroups({ includeDemo: true }),
+      const demoGroups = listBridgeGroups({ includeDemo: true }).filter((group) => group.isDemo);
+      if (productionBridgeGroups) {
+        const existing = new Set(productionBridgeGroups.groups.map((group) => group.id));
+        const mergedDemoGroups = demoGroups.filter((group) => !existing.has(group.id));
+        return {
+          groups: [...productionBridgeGroups.groups, ...mergedDemoGroups],
+          overview: {
+            ...productionBridgeGroups.overview,
+            totalGroups: productionBridgeGroups.overview.totalGroups + mergedDemoGroups.length,
+            activeGroups:
+              productionBridgeGroups.overview.activeGroups +
+              mergedDemoGroups.filter((group) => group.status === "active").length,
+            demoGroups: productionBridgeGroups.overview.demoGroups + mergedDemoGroups.length,
+          },
+        };
+      }
+      return {
+        groups: demoGroups,
         overview: getAdminBridgeOverview(),
       };
     }
@@ -168,7 +184,7 @@ export async function getAdminSection(section: string, params: URLSearchParams) 
     case "pricing":
       return getAdminPricingState();
     case "demo-accounts":
-      return (await searchAdminUsers()).filter((u) =>
+      return listAllUsersForAdmin().filter((u) =>
         ["caregiver@demo.com", "casemanager@demo.com", "user@demo.com", "erika@test.com", "nathan@test.com"].includes(
           u.email.toLowerCase()
         )

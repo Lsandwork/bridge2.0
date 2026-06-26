@@ -1,9 +1,7 @@
-"use client";
+import { getAdminSection } from "@family-support/data";
+import { AdminErrorState } from "./AdminUi";
 
-import { useEffect, useState } from "react";
-import { AdminErrorState, AdminLoadingState } from "./AdminUi";
-
-export function AdminSectionPage({
+export async function AdminSectionPage({
   title,
   description,
   section,
@@ -14,33 +12,15 @@ export function AdminSectionPage({
   section: string;
   render: (data: unknown) => React.ReactNode;
 }) {
-  const [data, setData] = useState<unknown>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  let data: unknown = null;
+  let error: string | null = null;
 
-  useEffect(() => {
-    let cancelled = false;
-    setLoading(true);
-    setError(null);
-    fetch(`/api/platform/admin?section=${section}`)
-      .then(async (r) => {
-        const payload = await r.json().catch(() => null);
-        if (!r.ok) throw new Error(payload?.error ?? `Could not load ${title}.`);
-        return payload;
-      })
-      .then((d) => {
-        if (!cancelled) setData(d);
-      })
-      .catch((err) => {
-        if (!cancelled) setError(err instanceof Error ? err.message : `Could not load ${title}.`);
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [section, title]);
+  try {
+    data = await getAdminSection(section, new URLSearchParams({ section }));
+    if (data === null) error = `Unknown admin section: ${section}`;
+  } catch (err) {
+    error = err instanceof Error ? err.message : `Could not load ${title}.`;
+  }
 
   return (
     <div className="space-y-6">
@@ -48,9 +28,7 @@ export function AdminSectionPage({
         <h1 className="text-2xl font-bold">{title}</h1>
         <p className="text-slate-600">{description}</p>
       </div>
-      {loading ? <AdminLoadingState label={`Loading ${title.toLowerCase()}…`} /> : null}
-      {!loading && error ? <AdminErrorState message={error} /> : null}
-      {!loading && !error ? render(data) : null}
+      {error ? <AdminErrorState message={error} /> : render(data)}
     </div>
   );
 }
