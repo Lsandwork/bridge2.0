@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import {
+  clearSessionCookie,
   homePathForRole,
   parseSessionCookie,
   SESSION_COOKIE,
+  SUPABASE_ACCESS_COOKIE,
 } from "@/lib/auth/session-cookie";
 
 function isAdminRole(role: string | undefined) {
@@ -64,7 +66,22 @@ export function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const session = parseSessionCookie(request.cookies.get(SESSION_COOKIE)?.value);
+  const parsedSession = parseSessionCookie(request.cookies.get(SESSION_COOKIE)?.value);
+  const hasSupabaseAccessCookie = Boolean(request.cookies.get(SUPABASE_ACCESS_COOKIE)?.value);
+  const session = parsedSession && (parsedSession.isDemo || hasSupabaseAccessCookie) ? parsedSession : null;
+
+  if (parsedSession && !session) {
+    if (!isProtected(pathname)) {
+      const response = NextResponse.next();
+      clearSessionCookie(response);
+      return response;
+    }
+    const login = new URL("/login", request.url);
+    login.searchParams.set("next", pathname);
+    const response = NextResponse.redirect(login);
+    clearSessionCookie(response);
+    return response;
+  }
 
   if (session && isAdminRole(session.role) && !pathname.startsWith("/admin")) {
     const mapped = ADMIN_ROUTE_MAP[pathname];
