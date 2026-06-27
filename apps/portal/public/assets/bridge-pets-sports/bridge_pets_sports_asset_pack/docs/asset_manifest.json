@@ -1,0 +1,578 @@
+[
+  {
+    "path": "docs/README.md",
+    "bytes": 1263
+  },
+  {
+    "path": "config/fan_gear_items.seed.json",
+    "bytes": 9109
+  },
+  {
+    "path": "config/sports_partners.seed.json",
+    "bytes": 1796
+  },
+  {
+    "path": "config/design_tokens.json",
+    "bytes": 286
+  },
+  {
+    "path": "preview_boards/asset_catalog_board.png",
+    "bytes": 503717
+  },
+  {
+    "path": "preview_boards/investor_ui_board.png",
+    "bytes": 256512
+  },
+  {
+    "path": "svg/icons/generic_trophy.svg",
+    "bytes": 619
+  },
+  {
+    "path": "svg/icons/generic_soccer_ball.svg",
+    "bytes": 244
+  },
+  {
+    "path": "svg/icons/generic_basketball.svg",
+    "bytes": 244
+  },
+  {
+    "path": "svg/icons/generic_baseball.svg",
+    "bytes": 244
+  },
+  {
+    "path": "svg/icons/generic_football.svg",
+    "bytes": 244
+  },
+  {
+    "path": "svg/icons/generic_jersey.svg",
+    "bytes": 315
+  },
+  {
+    "path": "svg/icons/generic_cap.svg",
+    "bytes": 315
+  },
+  {
+    "path": "svg/icons/generic_stadium.svg",
+    "bytes": 315
+  },
+  {
+    "path": "svg/icons/generic_city_badge.svg",
+    "bytes": 315
+  },
+  {
+    "path": "svg/icons/generic_ring.svg",
+    "bytes": 315
+  },
+  {
+    "path": "svg/icons/generic_pennant.svg",
+    "bytes": 315
+  },
+  {
+    "path": "svg/icons/generic_shield.svg",
+    "bytes": 315
+  },
+  {
+    "path": "svg/icons/generic_star_badge.svg",
+    "bytes": 315
+  },
+  {
+    "path": "svg/icons/generic_sneaker.svg",
+    "bytes": 315
+  },
+  {
+    "path": "svg/icons/generic_backpack.svg",
+    "bytes": 315
+  },
+  {
+    "path": "svg/icons/generic_headphones.svg",
+    "bytes": 315
+  },
+  {
+    "path": "svg/icons/generic_scarf.svg",
+    "bytes": 313
+  },
+  {
+    "path": "svg/icons/generic_sparkle.svg",
+    "bytes": 315
+  },
+  {
+    "path": "svg/icons/generic_flame.svg",
+    "bytes": 316
+  },
+  {
+    "path": "svg/icons/generic_heart.svg",
+    "bytes": 315
+  },
+  {
+    "path": "svg/accessories/icon_snapback.svg",
+    "bytes": 425
+  },
+  {
+    "path": "svg/accessories/midnight_beanie.svg",
+    "bytes": 424
+  },
+  {
+    "path": "svg/accessories/arena_headphones.svg",
+    "bytes": 425
+  },
+  {
+    "path": "svg/accessories/neon_visor.svg",
+    "bytes": 419
+  },
+  {
+    "path": "svg/accessories/pixel_shades.svg",
+    "bytes": 421
+  },
+  {
+    "path": "svg/accessories/focus_lens.svg",
+    "bytes": 419
+  },
+  {
+    "path": "svg/accessories/courtside_hoodie.svg",
+    "bytes": 425
+  },
+  {
+    "path": "svg/accessories/warmup_jacket.svg",
+    "bytes": 422
+  },
+  {
+    "path": "svg/accessories/varsity_jacket.svg",
+    "bytes": 423
+  },
+  {
+    "path": "svg/accessories/stadium_backpack.svg",
+    "bytes": 425
+  },
+  {
+    "path": "svg/accessories/locker_pack.svg",
+    "bytes": 420
+  },
+  {
+    "path": "svg/accessories/tech_sling.svg",
+    "bytes": 419
+  },
+  {
+    "path": "svg/accessories/neon_kicks.svg",
+    "bytes": 419
+  },
+  {
+    "path": "svg/accessories/trail_boots.svg",
+    "bytes": 420
+  },
+  {
+    "path": "svg/accessories/calm_slippers.svg",
+    "bytes": 422
+  },
+  {
+    "path": "svg/accessories/victory_glow.svg",
+    "bytes": 421
+  },
+  {
+    "path": "svg/accessories/focus_ring.svg",
+    "bytes": 419
+  },
+  {
+    "path": "svg/accessories/streak_flame.svg",
+    "bytes": 421
+  },
+  {
+    "path": "svg/accessories/championship_badge.svg",
+    "bytes": 427
+  },
+  {
+    "path": "svg/accessories/helper_heart.svg",
+    "bytes": 421
+  },
+  {
+    "path": "svg/accessories/shield_patch.svg",
+    "bytes": 421
+  },
+  {
+    "path": "svg/pets/spark_base.svg",
+    "bytes": 531
+  },
+  {
+    "path": "svg/pets/ripple_base.svg",
+    "bytes": 531
+  },
+  {
+    "path": "svg/pets/moss_base.svg",
+    "bytes": 531
+  },
+  {
+    "path": "svg/pets/slate_base.svg",
+    "bytes": 531
+  },
+  {
+    "path": "svg/pets/pixel_base.svg",
+    "bytes": 531
+  },
+  {
+    "path": "svg/pets/halo_base.svg",
+    "bytes": 531
+  },
+  {
+    "path": "svg/pets/orbit_base.svg",
+    "bytes": 531
+  },
+  {
+    "path": "svg/pets/nova_base.svg",
+    "bytes": 531
+  },
+  {
+    "path": "svg/backgrounds/arena_neon.svg",
+    "bytes": 304
+  },
+  {
+    "path": "svg/backgrounds/city_night.svg",
+    "bytes": 304
+  },
+  {
+    "path": "svg/backgrounds/championship_gold.svg",
+    "bytes": 304
+  },
+  {
+    "path": "svg/backgrounds/calm_focus.svg",
+    "bytes": 304
+  },
+  {
+    "path": "png/icons/generic_trophy.png",
+    "bytes": 6112
+  },
+  {
+    "path": "png/icons/generic_soccer_ball.png",
+    "bytes": 5931
+  },
+  {
+    "path": "png/icons/generic_basketball.png",
+    "bytes": 7767
+  },
+  {
+    "path": "png/icons/generic_baseball.png",
+    "bytes": 7302
+  },
+  {
+    "path": "png/icons/generic_football.png",
+    "bytes": 4709
+  },
+  {
+    "path": "png/icons/generic_jersey.png",
+    "bytes": 39581
+  },
+  {
+    "path": "png/icons/generic_cap.png",
+    "bytes": 50451
+  },
+  {
+    "path": "png/icons/generic_stadium.png",
+    "bytes": 42722
+  },
+  {
+    "path": "png/icons/generic_city_badge.png",
+    "bytes": 47877
+  },
+  {
+    "path": "png/icons/generic_ring.png",
+    "bytes": 55193
+  },
+  {
+    "path": "png/icons/generic_pennant.png",
+    "bytes": 45101
+  },
+  {
+    "path": "png/icons/generic_shield.png",
+    "bytes": 38489
+  },
+  {
+    "path": "png/icons/generic_star_badge.png",
+    "bytes": 51553
+  },
+  {
+    "path": "png/icons/generic_sneaker.png",
+    "bytes": 43094
+  },
+  {
+    "path": "png/icons/generic_backpack.png",
+    "bytes": 41794
+  },
+  {
+    "path": "png/icons/generic_headphones.png",
+    "bytes": 48031
+  },
+  {
+    "path": "png/icons/generic_scarf.png",
+    "bytes": 48420
+  },
+  {
+    "path": "png/icons/generic_sparkle.png",
+    "bytes": 47906
+  },
+  {
+    "path": "png/icons/generic_flame.png",
+    "bytes": 43215
+  },
+  {
+    "path": "png/icons/generic_heart.png",
+    "bytes": 47358
+  },
+  {
+    "path": "png/accessories/icon_snapback.png",
+    "bytes": 24464
+  },
+  {
+    "path": "png/accessories/midnight_beanie.png",
+    "bytes": 16218
+  },
+  {
+    "path": "png/accessories/arena_headphones.png",
+    "bytes": 28270
+  },
+  {
+    "path": "png/accessories/neon_visor.png",
+    "bytes": 26633
+  },
+  {
+    "path": "png/accessories/pixel_shades.png",
+    "bytes": 27201
+  },
+  {
+    "path": "png/accessories/focus_lens.png",
+    "bytes": 26399
+  },
+  {
+    "path": "png/accessories/courtside_hoodie.png",
+    "bytes": 12416
+  },
+  {
+    "path": "png/accessories/warmup_jacket.png",
+    "bytes": 12906
+  },
+  {
+    "path": "png/accessories/varsity_jacket.png",
+    "bytes": 12820
+  },
+  {
+    "path": "png/accessories/stadium_backpack.png",
+    "bytes": 14509
+  },
+  {
+    "path": "png/accessories/locker_pack.png",
+    "bytes": 13549
+  },
+  {
+    "path": "png/accessories/tech_sling.png",
+    "bytes": 13470
+  },
+  {
+    "path": "png/accessories/neon_kicks.png",
+    "bytes": 25707
+  },
+  {
+    "path": "png/accessories/trail_boots.png",
+    "bytes": 25067
+  },
+  {
+    "path": "png/accessories/calm_slippers.png",
+    "bytes": 25991
+  },
+  {
+    "path": "png/accessories/victory_glow.png",
+    "bytes": 32522
+  },
+  {
+    "path": "png/accessories/focus_ring.png",
+    "bytes": 25130
+  },
+  {
+    "path": "png/accessories/streak_flame.png",
+    "bytes": 29713
+  },
+  {
+    "path": "png/accessories/championship_badge.png",
+    "bytes": 34581
+  },
+  {
+    "path": "png/accessories/helper_heart.png",
+    "bytes": 31071
+  },
+  {
+    "path": "png/accessories/shield_patch.png",
+    "bytes": 13294
+  },
+  {
+    "path": "png/pets/spark_base.png",
+    "bytes": 34637
+  },
+  {
+    "path": "png/pets/spark_idle.png",
+    "bytes": 34637
+  },
+  {
+    "path": "png/pets/spark_happy.png",
+    "bytes": 34872
+  },
+  {
+    "path": "png/pets/spark_listening.png",
+    "bytes": 35334
+  },
+  {
+    "path": "png/pets/spark_creator.png",
+    "bytes": 35031
+  },
+  {
+    "path": "png/pets/ripple_base.png",
+    "bytes": 38991
+  },
+  {
+    "path": "png/pets/ripple_idle.png",
+    "bytes": 38991
+  },
+  {
+    "path": "png/pets/ripple_happy.png",
+    "bytes": 39211
+  },
+  {
+    "path": "png/pets/ripple_listening.png",
+    "bytes": 39694
+  },
+  {
+    "path": "png/pets/ripple_creator.png",
+    "bytes": 39605
+  },
+  {
+    "path": "png/pets/moss_base.png",
+    "bytes": 36437
+  },
+  {
+    "path": "png/pets/moss_idle.png",
+    "bytes": 36208
+  },
+  {
+    "path": "png/pets/moss_happy.png",
+    "bytes": 36437
+  },
+  {
+    "path": "png/pets/moss_listening.png",
+    "bytes": 36896
+  },
+  {
+    "path": "png/pets/moss_creator.png",
+    "bytes": 36725
+  },
+  {
+    "path": "png/pets/slate_base.png",
+    "bytes": 35443
+  },
+  {
+    "path": "png/pets/slate_idle.png",
+    "bytes": 35443
+  },
+  {
+    "path": "png/pets/slate_happy.png",
+    "bytes": 35676
+  },
+  {
+    "path": "png/pets/slate_listening.png",
+    "bytes": 36248
+  },
+  {
+    "path": "png/pets/slate_creator.png",
+    "bytes": 36286
+  },
+  {
+    "path": "png/pets/pixel_base.png",
+    "bytes": 37228
+  },
+  {
+    "path": "png/pets/pixel_idle.png",
+    "bytes": 37228
+  },
+  {
+    "path": "png/pets/pixel_happy.png",
+    "bytes": 37451
+  },
+  {
+    "path": "png/pets/pixel_listening.png",
+    "bytes": 37809
+  },
+  {
+    "path": "png/pets/pixel_creator.png",
+    "bytes": 38064
+  },
+  {
+    "path": "png/pets/halo_base.png",
+    "bytes": 39317
+  },
+  {
+    "path": "png/pets/halo_idle.png",
+    "bytes": 39098
+  },
+  {
+    "path": "png/pets/halo_happy.png",
+    "bytes": 39317
+  },
+  {
+    "path": "png/pets/halo_listening.png",
+    "bytes": 39810
+  },
+  {
+    "path": "png/pets/halo_creator.png",
+    "bytes": 39671
+  },
+  {
+    "path": "png/pets/orbit_base.png",
+    "bytes": 38481
+  },
+  {
+    "path": "png/pets/orbit_idle.png",
+    "bytes": 38481
+  },
+  {
+    "path": "png/pets/orbit_happy.png",
+    "bytes": 38707
+  },
+  {
+    "path": "png/pets/orbit_listening.png",
+    "bytes": 39277
+  },
+  {
+    "path": "png/pets/orbit_creator.png",
+    "bytes": 39304
+  },
+  {
+    "path": "png/pets/nova_base.png",
+    "bytes": 38956
+  },
+  {
+    "path": "png/pets/nova_idle.png",
+    "bytes": 38956
+  },
+  {
+    "path": "png/pets/nova_happy.png",
+    "bytes": 39160
+  },
+  {
+    "path": "png/pets/nova_listening.png",
+    "bytes": 38956
+  },
+  {
+    "path": "png/pets/nova_creator.png",
+    "bytes": 38983
+  },
+  {
+    "path": "png/backgrounds/arena_neon.png",
+    "bytes": 12970
+  },
+  {
+    "path": "png/backgrounds/city_night.png",
+    "bytes": 12978
+  },
+  {
+    "path": "png/backgrounds/championship_gold.png",
+    "bytes": 12964
+  },
+  {
+    "path": "png/backgrounds/calm_focus.png",
+    "bytes": 12969
+  }
+]

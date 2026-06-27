@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Heart, Moon, PartyPopper, Sparkles, Target, X } from "lucide-react";
+import Link from "next/link";
+import { Heart, MessageCircle, Moon, PartyPopper, Sparkles, Target, X } from "lucide-react";
 import type { CompanionPet } from "./CompanionPetProvider";
 import { PetSprite } from "./PetSprite";
 import { PetGrowthMeter } from "./PetGrowthMeter";
@@ -83,6 +84,11 @@ export function PetPanel({ pet, onClose, onHide, onAwardXp, onEquip, onUpdate }:
               Celebrate win
               <span>tiny wins count</span>
             </button>
+            <Link href="/tess/chat" className="pet-action-link">
+              <MessageCircle className="h-4 w-4" />
+              Talk with Nuvio
+              <span>open assistant</span>
+            </Link>
           </div>
           <div className="pet-panel__note">
             <Sparkles className="h-4 w-4" />

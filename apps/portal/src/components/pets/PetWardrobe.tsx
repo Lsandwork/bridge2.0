@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { usePetInventory } from "@/hooks/usePetInventory";
 import { PetItemCard } from "./PetItemCard";
 
@@ -17,6 +18,9 @@ export function PetWardrobe({
       <div className="pet-panel__section-title">
         <span>Wardrobe</span>
         <small>Unlocks grow with healthy engagement.</small>
+        <Link href="/bridge-pets/accessories" className="pet-wardrobe__fan-link">
+          Open fan gear collection →
+        </Link>
       </div>
       <div className="pet-wardrobe__grid">
         {items.map((item) => {

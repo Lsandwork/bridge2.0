@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 type PetItemCardProps = {
   item: {
     id: string;
@@ -19,7 +21,23 @@ function slotForItem(item: PetItemCardProps["item"]) {
   return typeof slot === "string" ? slot : item.itemType;
 }
 
+function imageForItem(item: PetItemCardProps["item"]) {
+  const png = item.assetConfig?.png;
+  return typeof png === "string" ? png : "";
+}
+
+function fallbackIcon(item: PetItemCardProps["item"]) {
+  if (item.itemType.includes("head") || item.itemType.includes("hat")) return "🧢";
+  if (item.itemType.includes("face") || item.itemType.includes("glasses")) return "🕶️";
+  if (item.itemType.includes("badge")) return "⭐";
+  if (item.itemType.includes("backpack")) return "🎒";
+  if (item.itemType.includes("foot")) return "👟";
+  if (item.itemType.includes("effect")) return "✨";
+  return "🧸";
+}
+
 export function PetItemCard({ item, unlocked, equipped, onEquip }: PetItemCardProps) {
+  const image = imageForItem(item);
   return (
     <button
       type="button"
@@ -28,7 +46,7 @@ export function PetItemCard({ item, unlocked, equipped, onEquip }: PetItemCardPr
       className={`pet-item-card ${equipped ? "pet-item-card--equipped" : ""}`}
     >
       <span className="pet-item-card__icon" aria-hidden>
-        {item.itemType.includes("hat") ? "🎩" : item.itemType.includes("glasses") ? "👓" : item.itemType.includes("badge") ? "⭐" : item.itemType.includes("backpack") ? "🎒" : "🧸"}
+        {image ? <Image src={image} alt="" width={40} height={40} className="pet-item-card__image" /> : fallbackIcon(item)}
       </span>
       <span className="pet-item-card__name">{item.name}</span>
       <span className="pet-item-card__meta">

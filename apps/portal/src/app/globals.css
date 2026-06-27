@@ -412,7 +412,8 @@ textarea::placeholder {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.pet-action-grid button {
+.pet-action-grid button,
+.pet-action-link {
   display: grid;
   gap: 0.25rem;
   min-height: 5rem;
@@ -426,7 +427,8 @@ textarea::placeholder {
   font-weight: 900;
 }
 
-.pet-action-grid button span {
+.pet-action-grid button span,
+.pet-action-link span {
   color: #6d5bd0;
   font-size: 0.72rem;
   font-weight: 800;
@@ -482,11 +484,29 @@ textarea::placeholder {
 
 .pet-item-card__icon {
   font-size: 1.35rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.5rem;
+}
+
+.pet-item-card__image {
+  object-fit: contain;
+  filter: drop-shadow(0 0 10px rgba(124, 58, 237, 0.25));
 }
 
 .pet-item-card__name {
   font-size: 0.82rem;
   font-weight: 900;
+}
+
+.pet-wardrobe__fan-link {
+  width: fit-content;
+  color: #6d5bd0;
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .pet-settings {

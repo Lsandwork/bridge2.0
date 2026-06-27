@@ -1,4 +1,5 @@
 import { createSupabaseAdminClient } from "./supabase-server";
+import { companionFanGearItems } from "./fan-gear";
 
 export type PetGrowthStage = "baby" | "little_buddy" | "teen_companion" | "adult_companion" | "master_companion";
 export type PetMood =
@@ -145,7 +146,7 @@ const localPets = new Map<string, CompanionPet>();
 const localInventory = new Map<string, PetInventoryItem[]>();
 const localEvents = new Map<string, number>();
 const localEventLog: PetEventLogItem[] = [];
-let localCatalog: PetItem[] = [...starterItems];
+let localCatalog: PetItem[] = [...starterItems, ...companionFanGearItems];
 
 function nowIso() {
   return new Date().toISOString();

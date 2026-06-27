@@ -1,0 +1,338 @@
+[
+  {
+    "id": "icon_snapback",
+    "name": "Creator Snapback",
+    "item_type": "headwear",
+    "category": "headwear",
+    "theme": "sports_placeholder",
+    "rarity": "common",
+    "unlock_level": 1,
+    "asset_config": {
+      "png": "/pets/fan-gear/accessories/icon_snapback.png",
+      "svg": "/pets/fan-gear/accessories/icon_snapback.svg",
+      "slot": "headwear"
+    },
+    "licensing_required": false,
+    "is_official": false
+  },
+  {
+    "id": "midnight_beanie",
+    "name": "Midnight Beanie",
+    "item_type": "headwear",
+    "category": "headwear",
+    "theme": "sports_placeholder",
+    "rarity": "common",
+    "unlock_level": 1,
+    "asset_config": {
+      "png": "/pets/fan-gear/accessories/midnight_beanie.png",
+      "svg": "/pets/fan-gear/accessories/midnight_beanie.svg",
+      "slot": "headwear"
+    },
+    "licensing_required": false,
+    "is_official": false
+  },
+  {
+    "id": "arena_headphones",
+    "name": "Arena Headphones",
+    "item_type": "headwear",
+    "category": "headwear",
+    "theme": "sports_placeholder",
+    "rarity": "common",
+    "unlock_level": 1,
+    "asset_config": {
+      "png": "/pets/fan-gear/accessories/arena_headphones.png",
+      "svg": "/pets/fan-gear/accessories/arena_headphones.svg",
+      "slot": "headwear"
+    },
+    "licensing_required": false,
+    "is_official": false
+  },
+  {
+    "id": "neon_visor",
+    "name": "Neon Visor",
+    "item_type": "facewear",
+    "category": "facewear",
+    "theme": "sports_placeholder",
+    "rarity": "common",
+    "unlock_level": 1,
+    "asset_config": {
+      "png": "/pets/fan-gear/accessories/neon_visor.png",
+      "svg": "/pets/fan-gear/accessories/neon_visor.svg",
+      "slot": "facewear"
+    },
+    "licensing_required": false,
+    "is_official": false
+  },
+  {
+    "id": "pixel_shades",
+    "name": "Pixel Shades",
+    "item_type": "facewear",
+    "category": "facewear",
+    "theme": "sports_placeholder",
+    "rarity": "common",
+    "unlock_level": 1,
+    "asset_config": {
+      "png": "/pets/fan-gear/accessories/pixel_shades.png",
+      "svg": "/pets/fan-gear/accessories/pixel_shades.svg",
+      "slot": "facewear"
+    },
+    "licensing_required": false,
+    "is_official": false
+  },
+  {
+    "id": "focus_lens",
+    "name": "Focus Lens",
+    "item_type": "facewear",
+    "category": "facewear",
+    "theme": "sports_placeholder",
+    "rarity": "common",
+    "unlock_level": 1,
+    "asset_config": {
+      "png": "/pets/fan-gear/accessories/focus_lens.png",
+      "svg": "/pets/fan-gear/accessories/focus_lens.svg",
+      "slot": "facewear"
+    },
+    "licensing_required": false,
+    "is_official": false
+  },
+  {
+    "id": "courtside_hoodie",
+    "name": "Courtside Hoodie",
+    "item_type": "outerwear",
+    "category": "outerwear",
+    "theme": "sports_placeholder",
+    "rarity": "rare",
+    "unlock_level": 5,
+    "asset_config": {
+      "png": "/pets/fan-gear/accessories/courtside_hoodie.png",
+      "svg": "/pets/fan-gear/accessories/courtside_hoodie.svg",
+      "slot": "outerwear"
+    },
+    "licensing_required": false,
+    "is_official": false
+  },
+  {
+    "id": "warmup_jacket",
+    "name": "Warmup Jacket",
+    "item_type": "outerwear",
+    "category": "outerwear",
+    "theme": "sports_placeholder",
+    "rarity": "rare",
+    "unlock_level": 5,
+    "asset_config": {
+      "png": "/pets/fan-gear/accessories/warmup_jacket.png",
+      "svg": "/pets/fan-gear/accessories/warmup_jacket.svg",
+      "slot": "outerwear"
+    },
+    "licensing_required": false,
+    "is_official": false
+  },
+  {
+    "id": "varsity_jacket",
+    "name": "Varsity Jacket",
+    "item_type": "outerwear",
+    "category": "outerwear",
+    "theme": "sports_placeholder",
+    "rarity": "rare",
+    "unlock_level": 5,
+    "asset_config": {
+      "png": "/pets/fan-gear/accessories/varsity_jacket.png",
+      "svg": "/pets/fan-gear/accessories/varsity_jacket.svg",
+      "slot": "outerwear"
+    },
+    "licensing_required": false,
+    "is_official": false
+  },
+  {
+    "id": "stadium_backpack",
+    "name": "Stadium Backpack",
+    "item_type": "backpack",
+    "category": "backpack",
+    "theme": "sports_placeholder",
+    "rarity": "rare",
+    "unlock_level": 5,
+    "asset_config": {
+      "png": "/pets/fan-gear/accessories/stadium_backpack.png",
+      "svg": "/pets/fan-gear/accessories/stadium_backpack.svg",
+      "slot": "backpack"
+    },
+    "licensing_required": false,
+    "is_official": false
+  },
+  {
+    "id": "locker_pack",
+    "name": "Locker Pack",
+    "item_type": "backpack",
+    "category": "backpack",
+    "theme": "sports_placeholder",
+    "rarity": "rare",
+    "unlock_level": 5,
+    "asset_config": {
+      "png": "/pets/fan-gear/accessories/locker_pack.png",
+      "svg": "/pets/fan-gear/accessories/locker_pack.svg",
+      "slot": "backpack"
+    },
+    "licensing_required": false,
+    "is_official": false
+  },
+  {
+    "id": "tech_sling",
+    "name": "Tech Sling",
+    "item_type": "backpack",
+    "category": "backpack",
+    "theme": "sports_placeholder",
+    "rarity": "rare",
+    "unlock_level": 5,
+    "asset_config": {
+      "png": "/pets/fan-gear/accessories/tech_sling.png",
+      "svg": "/pets/fan-gear/accessories/tech_sling.svg",
+      "slot": "backpack"
+    },
+    "licensing_required": false,
+    "is_official": false
+  },
+  {
+    "id": "neon_kicks",
+    "name": "Neon Kicks",
+    "item_type": "footwear",
+    "category": "footwear",
+    "theme": "sports_placeholder",
+    "rarity": "rare",
+    "unlock_level": 5,
+    "asset_config": {
+      "png": "/pets/fan-gear/accessories/neon_kicks.png",
+      "svg": "/pets/fan-gear/accessories/neon_kicks.svg",
+      "slot": "footwear"
+    },
+    "licensing_required": false,
+    "is_official": false
+  },
+  {
+    "id": "trail_boots",
+    "name": "Trail Boots",
+    "item_type": "footwear",
+    "category": "footwear",
+    "theme": "sports_placeholder",
+    "rarity": "rare",
+    "unlock_level": 5,
+    "asset_config": {
+      "png": "/pets/fan-gear/accessories/trail_boots.png",
+      "svg": "/pets/fan-gear/accessories/trail_boots.svg",
+      "slot": "footwear"
+    },
+    "licensing_required": false,
+    "is_official": false
+  },
+  {
+    "id": "calm_slippers",
+    "name": "Calm Slippers",
+    "item_type": "footwear",
+    "category": "footwear",
+    "theme": "sports_placeholder",
+    "rarity": "rare",
+    "unlock_level": 5,
+    "asset_config": {
+      "png": "/pets/fan-gear/accessories/calm_slippers.png",
+      "svg": "/pets/fan-gear/accessories/calm_slippers.svg",
+      "slot": "footwear"
+    },
+    "licensing_required": false,
+    "is_official": false
+  },
+  {
+    "id": "victory_glow",
+    "name": "Victory Glow",
+    "item_type": "effect",
+    "category": "effect",
+    "theme": "sports_placeholder",
+    "rarity": "rare",
+    "unlock_level": 5,
+    "asset_config": {
+      "png": "/pets/fan-gear/accessories/victory_glow.png",
+      "svg": "/pets/fan-gear/accessories/victory_glow.svg",
+      "slot": "effect"
+    },
+    "licensing_required": false,
+    "is_official": false
+  },
+  {
+    "id": "focus_ring",
+    "name": "Focus Ring",
+    "item_type": "effect",
+    "category": "effect",
+    "theme": "sports_placeholder",
+    "rarity": "rare",
+    "unlock_level": 5,
+    "asset_config": {
+      "png": "/pets/fan-gear/accessories/focus_ring.png",
+      "svg": "/pets/fan-gear/accessories/focus_ring.svg",
+      "slot": "effect"
+    },
+    "licensing_required": false,
+    "is_official": false
+  },
+  {
+    "id": "streak_flame",
+    "name": "Streak Flame",
+    "item_type": "effect",
+    "category": "effect",
+    "theme": "sports_placeholder",
+    "rarity": "rare",
+    "unlock_level": 5,
+    "asset_config": {
+      "png": "/pets/fan-gear/accessories/streak_flame.png",
+      "svg": "/pets/fan-gear/accessories/streak_flame.svg",
+      "slot": "effect"
+    },
+    "licensing_required": false,
+    "is_official": false
+  },
+  {
+    "id": "championship_badge",
+    "name": "Championship Badge",
+    "item_type": "badge",
+    "category": "badge",
+    "theme": "sports_placeholder",
+    "rarity": "rare",
+    "unlock_level": 5,
+    "asset_config": {
+      "png": "/pets/fan-gear/accessories/championship_badge.png",
+      "svg": "/pets/fan-gear/accessories/championship_badge.svg",
+      "slot": "badge"
+    },
+    "licensing_required": false,
+    "is_official": false
+  },
+  {
+    "id": "helper_heart",
+    "name": "Helper Heart",
+    "item_type": "badge",
+    "category": "badge",
+    "theme": "sports_placeholder",
+    "rarity": "rare",
+    "unlock_level": 5,
+    "asset_config": {
+      "png": "/pets/fan-gear/accessories/helper_heart.png",
+      "svg": "/pets/fan-gear/accessories/helper_heart.svg",
+      "slot": "badge"
+    },
+    "licensing_required": false,
+    "is_official": false
+  },
+  {
+    "id": "shield_patch",
+    "name": "Shield Patch",
+    "item_type": "badge",
+    "category": "badge",
+    "theme": "sports_placeholder",
+    "rarity": "rare",
+    "unlock_level": 5,
+    "asset_config": {
+      "png": "/pets/fan-gear/accessories/shield_patch.png",
+      "svg": "/pets/fan-gear/accessories/shield_patch.svg",
+      "slot": "badge"
+    },
+    "licensing_required": false,
+    "is_official": false
+  }
+]

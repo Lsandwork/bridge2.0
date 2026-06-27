@@ -1,0 +1,14 @@
+{
+  "dark": "#050812",
+  "panel": "#0B1020",
+  "panel2": "#111827",
+  "purple": "#7C3AED",
+  "purpleGlow": "#A855F7",
+  "gold": "#FFD23F",
+  "orange": "#FF8A00",
+  "blue": "#38BDF8",
+  "green": "#22C55E",
+  "pink": "#FF5C9D",
+  "white": "#F8FAFC",
+  "border": "rgba(255,255,255,0.10)"
+}

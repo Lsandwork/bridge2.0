@@ -87,6 +87,8 @@ export function BridgePetsClient({ pets }: BridgePetsClientProps) {
           </p>
           <div className="bridge-pets-hero-actions mt-6 flex flex-wrap gap-3">
             <a href="#pet-lineup" className="bridge-pets-primary-action rounded-full bg-gradient-to-r from-yellow-300 to-violet-500 px-5 py-3 text-sm font-black text-slate-950 shadow-lg shadow-violet-900/30 transition hover:-translate-y-0.5">Explore companions</a>
+            <Link href="/bridge-pets/accessories" className="bridge-pets-secondary-action rounded-full border border-yellow-300/30 bg-yellow-300/10 px-5 py-3 text-sm font-black text-yellow-100 transition hover:-translate-y-0.5 hover:bg-yellow-300/20">Fan gear</Link>
+            <Link href="/bridge-pets/sports-partnerships" className="bridge-pets-secondary-action rounded-full border border-violet-300/30 bg-violet-400/10 px-5 py-3 text-sm font-black text-violet-100 transition hover:-translate-y-0.5 hover:bg-violet-400/20">Partnerships</Link>
             <Link href="/dashboard" className="bridge-pets-secondary-action rounded-full border border-white/15 bg-white/10 px-5 py-3 text-sm font-black text-white transition hover:-translate-y-0.5 hover:bg-white/15">Dashboard widget</Link>
           </div>
         </div>

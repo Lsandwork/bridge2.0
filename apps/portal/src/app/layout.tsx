@@ -2,7 +2,6 @@ import { PortalShell } from "@/components/PortalShell";
 import { AuthProvider } from "@/components/AuthProvider";
 import { BridgeAnalytics } from "@/components/BridgeAnalytics";
 import { LanguageProvider } from "@/components/LanguageProvider";
-import { TessAssistantBubble } from "@/components/tess/TessAssistantBubble";
 import { SupportPathwayProvider } from "@/components/SupportPathwayProvider";
 import { CompanionPetProvider } from "@/components/pets/CompanionPetProvider";
 import type { Metadata, Viewport } from "next";
@@ -50,7 +49,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
               <Suspense fallback={null}>
                 <BridgeAnalytics />
               </Suspense>
-              <TessAssistantBubble />
             </SupportPathwayProvider>
           </AuthProvider>
         </LanguageProvider>

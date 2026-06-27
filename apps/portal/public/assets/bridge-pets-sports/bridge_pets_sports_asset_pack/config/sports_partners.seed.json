@@ -1,0 +1,82 @@
+[
+  {
+    "slug": "global-football",
+    "name": "Global Football",
+    "partner_type": "placeholder",
+    "licensing_status": "placeholder",
+    "brand_colors": {
+      "primary": "#7C3AED",
+      "accent": "#FFD23F"
+    }
+  },
+  {
+    "slug": "pro-basketball",
+    "name": "Pro Basketball",
+    "partner_type": "placeholder",
+    "licensing_status": "placeholder",
+    "brand_colors": {
+      "primary": "#7C3AED",
+      "accent": "#FFD23F"
+    }
+  },
+  {
+    "slug": "pro-baseball",
+    "name": "Pro Baseball",
+    "partner_type": "placeholder",
+    "licensing_status": "placeholder",
+    "brand_colors": {
+      "primary": "#7C3AED",
+      "accent": "#FFD23F"
+    }
+  },
+  {
+    "slug": "pro-football",
+    "name": "Pro Football",
+    "partner_type": "placeholder",
+    "licensing_status": "placeholder",
+    "brand_colors": {
+      "primary": "#7C3AED",
+      "accent": "#FFD23F"
+    }
+  },
+  {
+    "slug": "championship-drops",
+    "name": "Championship Drops",
+    "partner_type": "placeholder",
+    "licensing_status": "placeholder",
+    "brand_colors": {
+      "primary": "#7C3AED",
+      "accent": "#FFD23F"
+    }
+  },
+  {
+    "slug": "city-pride",
+    "name": "City Pride",
+    "partner_type": "placeholder",
+    "licensing_status": "placeholder",
+    "brand_colors": {
+      "primary": "#7C3AED",
+      "accent": "#FFD23F"
+    }
+  },
+  {
+    "slug": "creator-series",
+    "name": "Creator Series",
+    "partner_type": "placeholder",
+    "licensing_status": "placeholder",
+    "brand_colors": {
+      "primary": "#7C3AED",
+      "accent": "#FFD23F"
+    }
+  },
+  {
+    "slug": "hometown-packs",
+    "name": "Hometown Packs",
+    "partner_type": "placeholder",
+    "licensing_status": "placeholder",
+    "brand_colors": {
+      "primary": "#7C3AED",
+      "accent": "#FFD23F"
+    }
+  }
+]

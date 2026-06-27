@@ -20,6 +20,7 @@ import { getErrorCountsBySeverity, listErrorLogs, updateErrorLog } from "./error
 import { getAdminPlatformOverview, getPaymentProcessorStatuses, getPlatformDiagnostics } from "./platform-diagnostics";
 import { getPetAdminDiagnostics } from "./companion-pets";
 import { getBridgePetsAdminOverview } from "./bridge-pets";
+import { getFanGearAdminDiagnostics } from "./fan-gear";
 import { getAdminPricingState, resetPricingOverrides, updatePayerPlan, updatePricingPlan } from "./pricing-store";
 import { getPlatformActivity } from "./safety-alert-store";
 import { listSafetyAlertsForUser } from "./safety-alert-store";
@@ -185,6 +186,8 @@ export async function getAdminSection(section: string, params: URLSearchParams) 
       return getPetAdminDiagnostics();
     case "bridge-pets":
       return getBridgePetsAdminOverview();
+    case "fan-gear":
+      return getFanGearAdminDiagnostics();
     case "payments":
       return getPaymentProcessorStatuses();
     case "pricing":
