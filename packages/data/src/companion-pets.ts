@@ -67,6 +67,16 @@ export type PetInventoryItem = {
   source: string;
 };
 
+export type PetEventLogItem = {
+  id: string;
+  userId: string;
+  childProfileId: string | null;
+  eventType: PetEventType | string;
+  xpAwarded: number;
+  metadata: Record<string, unknown>;
+  createdAt: string;
+};
+
 export type PetEventType =
   | "routine_complete"
   | "goal_complete"
@@ -134,6 +144,8 @@ const starterItems: PetItem[] = [
 const localPets = new Map<string, CompanionPet>();
 const localInventory = new Map<string, PetInventoryItem[]>();
 const localEvents = new Map<string, number>();
+const localEventLog: PetEventLogItem[] = [];
+let localCatalog: PetItem[] = [...starterItems];
 
 function nowIso() {
   return new Date().toISOString();
@@ -222,6 +234,18 @@ function normalizeInventory(row: Record<string, any>): PetInventoryItem {
   };
 }
 
+function normalizeEvent(row: Record<string, any>): PetEventLogItem {
+  return {
+    id: row.id,
+    userId: row.user_id,
+    childProfileId: row.child_profile_id ?? null,
+    eventType: row.event_type,
+    xpAwarded: row.xp_awarded ?? 0,
+    metadata: row.metadata ?? {},
+    createdAt: row.created_at,
+  };
+}
+
 function createLocalPet(input: {
   userId: string;
   childProfileId?: string | null;
@@ -251,6 +275,15 @@ function createLocalPet(input: {
   localInventory.set(input.userId, [
     { id: `pinv-${Date.now()}`, userId: input.userId, itemId: "starter-bandana", itemType: "comfort_item", unlockedAt: at, source: "starter" },
   ]);
+  localEventLog.unshift({
+    id: `pevt-${Date.now()}-created`,
+    userId: input.userId,
+    childProfileId: input.childProfileId ?? null,
+    eventType: "pet_created",
+    xpAwarded: 0,
+    metadata: { species: input.species, personality: input.personality },
+    createdAt: at,
+  });
   return pet;
 }
 
@@ -285,7 +318,7 @@ export async function getCompanionPetState(userId: string, childProfileId?: stri
     return {
       pet: localPets.get(localKey(userId, childProfileId)) ?? null,
       inventory: localInventory.get(userId) ?? [],
-      items: starterItems,
+      items: localCatalog.filter((item) => item.isActive),
       diagnostics: { source: "local", tablesAvailable: false, localCache: "supported", serviceWorker: "not_checked", push: "not_checked", lastSyncAt },
     };
   }
@@ -302,7 +335,7 @@ export async function getCompanionPetState(userId: string, childProfileId?: stri
     return {
       pet: localPets.get(localKey(userId, childProfileId)) ?? null,
       inventory: localInventory.get(userId) ?? [],
-      items: starterItems,
+      items: localCatalog.filter((item) => item.isActive),
       diagnostics: { source: "local", tablesAvailable: false, localCache: "supported", serviceWorker: "not_checked", push: "not_checked", lastSyncAt },
     };
   }
@@ -412,6 +445,15 @@ export async function awardCompanionPetXp(input: {
       xp: nextXp,
       eventType: input.eventType,
     });
+    localEventLog.unshift({
+      id: `pevt-${Date.now()}-${input.eventType}`,
+      userId: input.userId,
+      childProfileId: input.childProfileId ?? null,
+      eventType: input.eventType,
+      xpAwarded,
+      metadata: input.metadata ?? {},
+      createdAt: nowIso(),
+    });
     await unlockEligiblePetItems(input.userId, nextXp, input.eventType);
     return { ok: true, pet: updated, xpAwarded };
   }
@@ -432,6 +474,15 @@ export async function awardCompanionPetXp(input: {
       xp: nextXp,
       eventType: input.eventType,
     });
+    localEventLog.unshift({
+      id: `pevt-${Date.now()}-${input.eventType}`,
+      userId: input.userId,
+      childProfileId: input.childProfileId ?? null,
+      eventType: input.eventType,
+      xpAwarded,
+      metadata: input.metadata ?? {},
+      createdAt: nowIso(),
+    });
     await unlockEligiblePetItems(input.userId, nextXp, input.eventType);
     return { ok: true, pet: updated, xpAwarded };
   }
@@ -443,7 +494,7 @@ export async function unlockEligiblePetItems(userId: string, xp: number, eventTy
   const admin = createSupabaseAdminClient();
   const items = admin
     ? (await admin.from("pet_items").select("*").eq("is_active", true)).data?.map(normalizeItem) ?? starterItems
-    : starterItems;
+    : localCatalog.filter((item) => item.isActive);
   const unlocked = items.filter((item) => {
     const ruleXp = typeof item.unlockRule.xp === "number" ? item.unlockRule.xp : item.unlockLevel * 75;
     const eventRule = typeof item.unlockRule.event === "string" ? item.unlockRule.event : null;
@@ -468,6 +519,104 @@ export async function unlockEligiblePetItems(userId: string, xp: number, eventTy
     }, { onConflict: "user_id,item_id" });
   }
   return unlocked;
+}
+
+export async function grantCompanionPetItem(input: {
+  userId: string;
+  itemId: string;
+  source?: string;
+}) {
+  const admin = createSupabaseAdminClient();
+  const item = admin
+    ? (await admin.from("pet_items").select("*").eq("id", input.itemId).maybeSingle()).data
+    : localCatalog.find((row) => row.id === input.itemId);
+  const normalized = item ? ("item_type" in item ? normalizeItem(item as Record<string, any>) : item as PetItem) : null;
+  if (!normalized) return { ok: false, error: "Item not found." };
+
+  if (!admin) {
+    const existing = localInventory.get(input.userId) ?? [];
+    if (!existing.some((row) => row.itemId === input.itemId)) {
+      existing.unshift({
+        id: `pinv-${Date.now()}-${input.itemId}`,
+        userId: input.userId,
+        itemId: input.itemId,
+        itemType: normalized.itemType,
+        unlockedAt: nowIso(),
+        source: input.source ?? "admin_grant",
+      });
+    }
+    localInventory.set(input.userId, existing);
+    return { ok: true, item: normalized };
+  }
+
+  const { error } = await admin.from("pet_inventory").upsert({
+    user_id: input.userId,
+    item_id: normalized.id,
+    item_type: normalized.itemType,
+    source: input.source ?? "admin_grant",
+  }, { onConflict: "user_id,item_id" });
+  return { ok: !error, error: error?.message, item: normalized };
+}
+
+export async function upsertCompanionPetItem(input: {
+  id: string;
+  name: string;
+  itemType: string;
+  theme?: string | null;
+  unlockLevel?: number;
+  unlockRule?: Record<string, unknown>;
+  assetConfig?: Record<string, unknown>;
+  isActive?: boolean;
+}) {
+  const item: PetItem = {
+    id: input.id.trim().toLowerCase().replace(/[^a-z0-9-]+/g, "-").slice(0, 80),
+    name: input.name.trim().slice(0, 80),
+    itemType: input.itemType.trim().slice(0, 60),
+    theme: input.theme?.trim().slice(0, 80) || null,
+    unlockLevel: Math.max(1, Number(input.unlockLevel ?? 1)),
+    unlockRule: input.unlockRule ?? {},
+    assetConfig: input.assetConfig ?? {},
+    isActive: input.isActive ?? true,
+  };
+  if (!item.id || !item.name || !item.itemType) return { ok: false, error: "id, name, and itemType are required." };
+
+  const admin = createSupabaseAdminClient();
+  if (!admin) {
+    localCatalog = [item, ...localCatalog.filter((row) => row.id !== item.id)];
+    return { ok: true, item };
+  }
+  const { data, error } = await admin.from("pet_items").upsert({
+    id: item.id,
+    name: item.name,
+    item_type: item.itemType,
+    theme: item.theme,
+    unlock_level: item.unlockLevel,
+    unlock_rule: item.unlockRule,
+    asset_config: item.assetConfig,
+    is_active: item.isActive,
+  }).select("*").single();
+  return { ok: !error, error: error?.message, item: data ? normalizeItem(data) : item };
+}
+
+export async function setCompanionPetItemActive(itemId: string, isActive: boolean) {
+  const admin = createSupabaseAdminClient();
+  if (!admin) {
+    localCatalog = localCatalog.map((item) => item.id === itemId ? { ...item, isActive } : item);
+    return { ok: true };
+  }
+  const { error } = await admin.from("pet_items").update({ is_active: isActive }).eq("id", itemId);
+  return { ok: !error, error: error?.message };
+}
+
+export async function resetCompanionPet(input: { userId: string; childProfileId?: string | null }) {
+  const admin = createSupabaseAdminClient();
+  if (!admin) {
+    localPets.delete(localKey(input.userId, input.childProfileId));
+    return { ok: true };
+  }
+  const query = admin.from("companion_pets").delete().eq("user_id", input.userId);
+  const { error } = await petScopeQuery(query, input.childProfileId);
+  return { ok: !error, error: error?.message };
 }
 
 export async function updateCompanionPet(input: {
@@ -528,21 +677,28 @@ export async function getPetAdminDiagnostics() {
     return {
       tablesAvailable: false,
       pets: localPets.size,
-      items: starterItems.length,
+      items: localCatalog.length,
+      events: localEventLog.length,
+      catalog: localCatalog,
+      recentEvents: localEventLog.slice(0, 25),
       source: "local",
       xpApi: "available",
     };
   }
-  const [pets, items, events] = await Promise.all([
+  const [pets, items, events, catalog, recentEvents] = await Promise.all([
     admin.from("companion_pets").select("id", { count: "exact", head: true }),
     admin.from("pet_items").select("id", { count: "exact", head: true }),
     admin.from("pet_events").select("id", { count: "exact", head: true }),
+    admin.from("pet_items").select("*").order("unlock_level", { ascending: true }),
+    admin.from("pet_events").select("*").order("created_at", { ascending: false }).limit(25),
   ]);
   return {
     tablesAvailable: !pets.error && !items.error && !events.error,
     pets: pets.count ?? 0,
     items: items.count ?? 0,
     events: events.count ?? 0,
+    catalog: (catalog.data ?? []).map(normalizeItem),
+    recentEvents: (recentEvents.data ?? []).map(normalizeEvent),
     source: "supabase",
     xpApi: "available",
   };

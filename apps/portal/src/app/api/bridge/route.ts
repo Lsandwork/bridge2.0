@@ -14,6 +14,7 @@ import {
   userCanAccessProfile,
 } from "@family-support/data";
 import { getSession } from "@/lib/auth/session";
+import { safeAwardPetXp } from "@/lib/pets/server-awards";
 
 export async function GET(req: NextRequest) {
   const session = await getSession();
@@ -54,22 +55,44 @@ export async function POST(req: NextRequest) {
     }
 
     switch (action) {
-      case "complete-task":
-        return NextResponse.json(completeLocalTask(body.taskId));
-      case "check-in":
-        return NextResponse.json(createLocalCheckIn(body));
-      case "create-goal":
-        return NextResponse.json(createLocalGoal(body));
-      case "update-goal":
-        return NextResponse.json(updateLocalGoalProgress(body.id, body.current));
-      case "create-routine":
-        return NextResponse.json(createLocalRoutine(body));
+      case "complete-task": {
+        const task = completeLocalTask(body.taskId);
+        const petXp = task
+          ? await safeAwardPetXp(session, task.childProfileId, "routine_complete", { source: "complete-task", taskId: body.taskId })
+          : null;
+        return NextResponse.json(task ? { ...task, petXp } : { task: null, petXp });
+      }
+      case "check-in": {
+        const checkIn = createLocalCheckIn(body);
+        const petXp = await safeAwardPetXp(session, checkIn.childProfileId, "mood_check_in", { source: "check-in", mood: body.mood });
+        return NextResponse.json({ ...checkIn, petXp });
+      }
+      case "create-goal": {
+        const goal = createLocalGoal(body);
+        return NextResponse.json(goal);
+      }
+      case "update-goal": {
+        const goal = updateLocalGoalProgress(body.id, body.current);
+        const petXp = goal && Number(goal.current) >= Number(goal.target)
+          ? await safeAwardPetXp(session, goal.childProfileId, "goal_complete", { source: "update-goal", goalId: goal.id })
+          : null;
+        return NextResponse.json(goal ? { ...goal, petXp } : { goal: null, petXp });
+      }
+      case "create-routine": {
+        const routine = createLocalRoutine(body);
+        return NextResponse.json(routine);
+      }
       case "add-care-team":
         return NextResponse.json(createLocalCareTeamMember(body));
       case "create-report":
         return NextResponse.json(createLocalReport(body));
-      case "use-card":
-        return NextResponse.json(useCommunicationCard(body.cardId));
+      case "use-card": {
+        const card = useCommunicationCard(body.cardId);
+        const petXp = requestedProfileId
+          ? await safeAwardPetXp(session, requestedProfileId, "communication_card", { source: "use-card", cardId: body.cardId })
+          : null;
+        return NextResponse.json(card ? { ...card, petXp } : { card: null, petXp });
+      }
       default:
         return NextResponse.json({ error: "Unknown action" }, { status: 400 });
     }

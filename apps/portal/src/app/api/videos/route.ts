@@ -11,6 +11,7 @@ import {
 } from "@family-support/data";
 import { getSession } from "@/lib/auth/session";
 import { searchYouTubeVideos } from "@/lib/youtube-search";
+import { safeAwardPetXp } from "@/lib/pets/server-awards";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -124,7 +125,10 @@ export async function POST(request: Request) {
           body.profileName,
           body.playToken
         );
-        return NextResponse.json(result);
+        const petXp = result.rewarded
+          ? await safeAwardPetXp(session, profileId, "routine_complete", { source: "video-complete", sessionId: body.sessionId })
+          : null;
+        return NextResponse.json({ ...result, petXp });
       }
       default:
         return NextResponse.json({ error: "Unknown action." }, { status: 400 });

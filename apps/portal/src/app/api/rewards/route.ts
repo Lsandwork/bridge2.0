@@ -15,6 +15,7 @@ import {
 } from "@family-support/data";
 import { getGame as getGameMeta } from "@family-support/core";
 import { getSession } from "@/lib/auth/session";
+import { safeAwardPetXp } from "@/lib/pets/server-awards";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -62,7 +63,10 @@ export async function POST(request: Request) {
         const game = getGameMeta(body.gameId);
         if (!game) return NextResponse.json({ error: "Unknown game" }, { status: 400 });
         const result = completeGameSession(body.profileId, body.gameId, game.title, game.pointsPerPlay);
-        return NextResponse.json(result);
+        const petXp = result.status === "earned"
+          ? await safeAwardPetXp(session, body.profileId, "routine_complete", { source: "game-complete", gameId: body.gameId })
+          : null;
+        return NextResponse.json({ ...result, petXp });
       }
       case "redeem": {
         const redemption = requestRedemption(body.profileId, body.rewardId);
@@ -70,7 +74,10 @@ export async function POST(request: Request) {
       }
       case "approve-redemption": {
         const item = approveRedemption(body.redemptionId);
-        return NextResponse.json({ item });
+        const petXp = item?.childProfileId
+          ? await safeAwardPetXp(session, item.childProfileId, "goal_complete", { source: "approve-redemption", redemptionId: body.redemptionId })
+          : null;
+        return NextResponse.json({ item, petXp });
       }
       case "create-reward": {
         const reward = createLocalReward({
@@ -93,7 +100,8 @@ export async function POST(request: Request) {
       }
       case "award-points": {
         const event = awardParentPoints(body.profileId, body.amount, body.reason ?? "Bonus from parent");
-        return NextResponse.json({ event, balance: (await fetchRewardsHub(body.profileId))?.balance });
+        const petXp = await safeAwardPetXp(session, body.profileId, "caregiver_encouragement", { source: "award-points", amount: body.amount });
+        return NextResponse.json({ event, petXp, balance: (await fetchRewardsHub(body.profileId))?.balance });
       }
       default:
         return NextResponse.json({ error: "Unknown action" }, { status: 400 });

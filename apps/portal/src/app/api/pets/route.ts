@@ -2,10 +2,14 @@ import { NextResponse } from "next/server";
 import {
   awardCompanionPetXp,
   createCompanionPet,
+  grantCompanionPetItem,
   getCompanionPetState,
   getPetAdminDiagnostics,
+  resetCompanionPet,
   schedulePetNotification,
   starterPetSpecies,
+  setCompanionPetItemActive,
+  upsertCompanionPetItem,
   updateCompanionPet,
   userCanAccessProfile,
   type PetEventType,
@@ -29,6 +33,10 @@ const eventTypes = new Set<PetEventType>([
 async function canUseProfile(session: { id: string; role: string }, profileId?: string | null) {
   if (!profileId) return true;
   return userCanAccessProfile(session as never, profileId);
+}
+
+function isAdmin(session: { role: string }) {
+  return session.role === "admin" || session.role === "super_admin";
 }
 
 export async function GET(request: Request) {
@@ -113,6 +121,48 @@ export async function POST(request: Request) {
         notificationType: String(body.notificationType ?? "pet_check_in"),
         message: String(body.message).slice(0, 240),
         scheduledFor: String(body.scheduledFor),
+      }));
+    }
+    case "grant-item": {
+      if (!isAdmin(session)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      const userId = typeof body.userId === "string" ? body.userId : session.id;
+      const itemId = typeof body.itemId === "string" ? body.itemId : "";
+      if (!itemId) return NextResponse.json({ error: "itemId required." }, { status: 400 });
+      return NextResponse.json(await grantCompanionPetItem({
+        userId,
+        itemId,
+        source: String(body.source ?? "admin_grant").slice(0, 80),
+      }));
+    }
+    case "upsert-item": {
+      if (!isAdmin(session)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      return NextResponse.json(await upsertCompanionPetItem({
+        id: String(body.id ?? ""),
+        name: String(body.name ?? ""),
+        itemType: String(body.itemType ?? ""),
+        theme: typeof body.theme === "string" ? body.theme : null,
+        unlockLevel: Number(body.unlockLevel ?? 1),
+        unlockRule: typeof body.unlockRule === "object" && body.unlockRule ? body.unlockRule : {},
+        assetConfig: typeof body.assetConfig === "object" && body.assetConfig ? body.assetConfig : {},
+        isActive: body.isActive !== false,
+      }));
+    }
+    case "toggle-item": {
+      if (!isAdmin(session)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      const itemId = typeof body.itemId === "string" ? body.itemId : "";
+      if (!itemId) return NextResponse.json({ error: "itemId required." }, { status: 400 });
+      return NextResponse.json(await setCompanionPetItemActive(itemId, Boolean(body.isActive)));
+    }
+    case "reset-pet": {
+      if (!isAdmin(session)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      const targetUserId = typeof body.userId === "string" ? body.userId : "";
+      if (!targetUserId) return NextResponse.json({ error: "userId required." }, { status: 400 });
+      if (body.confirm !== "RESET_COMPANION_PET") {
+        return NextResponse.json({ error: "Confirmation required." }, { status: 400 });
+      }
+      return NextResponse.json(await resetCompanionPet({
+        userId: targetUserId,
+        childProfileId: typeof body.childProfileId === "string" ? body.childProfileId : null,
       }));
     }
     case "sync": {

@@ -7,6 +7,7 @@ import {
   userCanAccessProfile,
 } from "@family-support/data";
 import { getSession } from "@/lib/auth/session";
+import { safeAwardPetXp } from "@/lib/pets/server-awards";
 
 export async function GET(request: Request) {
   try {
@@ -62,7 +63,8 @@ export async function POST(request: Request) {
       phrase: body.phrase,
       isFavorite: Boolean(body.isFavorite),
     });
-    return NextResponse.json(card, { status: 201 });
+    const petXp = await safeAwardPetXp(session, childProfileId, "communication_card", { source: "create-communication-card", cardId: card.id });
+    return NextResponse.json({ ...card, petXp }, { status: 201 });
   } catch (error) {
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Failed to create card" },
