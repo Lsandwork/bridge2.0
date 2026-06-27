@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
+import { SignOutButton } from "@/components/SignOutButton";
 import { StatusPill } from "./AdminUi";
 
 type Tab = {
@@ -116,6 +117,10 @@ export function AdminPlatformShell({
             <p className="font-semibold text-slate-200">{user?.name ?? "Admin"}</p>
             <p className="truncate">{user?.email}</p>
             <p className="mt-1 capitalize text-indigo-300">{user?.role?.replace(/_/g, " ")}</p>
+            <SignOutButton
+              variant="compact"
+              className="mt-3 w-full justify-center border-slate-700 bg-slate-900/60 text-slate-200 hover:bg-slate-800 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
+            />
           </div>
         </aside>
 
@@ -139,6 +144,10 @@ export function AdminPlatformShell({
             >
               Preview public site
             </a>
+            <SignOutButton
+              variant="compact"
+              className="shrink-0 border-slate-700 text-slate-200 hover:bg-slate-800 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
+            />
           </header>
           <main className="flex-1 bg-slate-50 p-4 text-slate-900 lg:p-8">{children}</main>
         </div>
