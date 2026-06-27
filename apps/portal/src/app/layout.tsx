@@ -4,6 +4,7 @@ import { BridgeAnalytics } from "@/components/BridgeAnalytics";
 import { LanguageProvider } from "@/components/LanguageProvider";
 import { TessAssistantBubble } from "@/components/tess/TessAssistantBubble";
 import { SupportPathwayProvider } from "@/components/SupportPathwayProvider";
+import { CompanionPetProvider } from "@/components/pets/CompanionPetProvider";
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Suspense } from "react";
@@ -43,7 +44,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <LanguageProvider>
           <AuthProvider>
             <SupportPathwayProvider>
-              <PortalShell>{children}</PortalShell>
+              <CompanionPetProvider>
+                <PortalShell>{children}</PortalShell>
+              </CompanionPetProvider>
               <Suspense fallback={null}>
                 <BridgeAnalytics />
               </Suspense>
