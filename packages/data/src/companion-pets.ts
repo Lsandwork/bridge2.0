@@ -254,6 +254,9 @@ function createLocalPet(input: {
   personality: string;
   settings?: Partial<PetSettings>;
 }) {
+  const existing = localPets.get(localKey(input.userId, input.childProfileId));
+  if (existing) return existing;
+
   const at = nowIso();
   const pet: CompanionPet = {
     id: `pet-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
@@ -360,8 +363,9 @@ export async function createCompanionPet(input: {
   const settings = { ...defaultSettings, ...(input.settings ?? {}) };
   if (!admin) return createLocalPet(input);
 
-  const existingQuery = admin.from("companion_pets").select("id").eq("user_id", input.userId);
+  const existingQuery = admin.from("companion_pets").select("*").eq("user_id", input.userId);
   const { data: existing } = await petScopeQuery(existingQuery, input.childProfileId).order("updated_at", { ascending: false }).limit(1).maybeSingle();
+  if (existing) return normalizePet(existing);
 
   const payload = {
     user_id: input.userId,

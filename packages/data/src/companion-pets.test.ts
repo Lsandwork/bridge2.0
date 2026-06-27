@@ -1,5 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { calculatePetGrowthStage, calculatePetLevel, xpForPetEvent } from "./companion-pets";
+import {
+  awardCompanionPetXp,
+  calculatePetGrowthStage,
+  calculatePetLevel,
+  createCompanionPet,
+  getCompanionPetState,
+  unlockEligiblePetItems,
+  xpForPetEvent,
+} from "./companion-pets";
 
 describe("Nuvio Companion Pets", () => {
   it("uses supportive XP values for real engagement events", () => {
@@ -21,5 +29,46 @@ describe("Nuvio Companion Pets", () => {
     expect(calculatePetLevel(-100)).toBe(1);
     expect(calculatePetLevel(0)).toBe(1);
     expect(calculatePetLevel(300)).toBeGreaterThan(1);
+  });
+
+  it("does not duplicate or reset an existing companion when setup is repeated", async () => {
+    const userId = `pet-user-${Date.now()}-duplicate`;
+    const first = await createCompanionPet({
+      userId,
+      name: "First Buddy",
+      species: "star_pup",
+      personality: "gentle",
+    });
+    await awardCompanionPetXp({ userId, eventType: "manual_celebrate" });
+    const second = await createCompanionPet({
+      userId,
+      name: "Second Buddy",
+      species: "calm_cat",
+      personality: "calm",
+    });
+
+    expect(second.id).toBe(first.id);
+    expect(second.name).toBe(first.name);
+    expect((await getCompanionPetState(userId)).pet?.xp).toBeGreaterThan(0);
+  });
+
+  it("rate-limits repeat XP farming for the same event", async () => {
+    const userId = `pet-user-${Date.now()}-rate`;
+    const first = await awardCompanionPetXp({ userId, eventType: "routine_complete" });
+    const second = await awardCompanionPetXp({ userId, eventType: "routine_complete" });
+
+    expect(first.ok).toBe(true);
+    expect(second.ok).toBe(false);
+    expect(second.reason).toBe("rate_limited");
+  });
+
+  it("unlocks eligible items by XP and event rules", async () => {
+    const userId = `pet-user-${Date.now()}-unlock`;
+    await createCompanionPet({ userId, name: "Unlock Buddy", species: "star_pup", personality: "gentle" });
+    const unlocked = await unlockEligiblePetItems(userId, 350, "goal_complete");
+    const ids = unlocked.map((item) => "itemId" in item ? item.itemId : item.id);
+
+    expect(ids).toContain("focus-glasses");
+    expect(ids).toContain("star-badge");
   });
 });

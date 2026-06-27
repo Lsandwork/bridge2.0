@@ -63,9 +63,9 @@ export default function PortalLoginPage() {
         accountType,
       });
       clearBridgeClientState();
-      window.location.assign(
-        data.redirectTo ?? (accountType === "therapist" ? "/setup/therapist" : "/setup/parent")
-      );
+      const defaultRedirect = accountType === "therapist" ? "/setup/therapist" : "/setup/parent";
+      const dest = next ? resolvePostLoginDestination(data.user, data.redirectTo ?? defaultRedirect, next) : data.redirectTo ?? defaultRedirect;
+      window.location.assign(dest);
     } catch (err) {
       setError(err instanceof Error ? err.message : t("auth.signupFailed"));
     } finally {

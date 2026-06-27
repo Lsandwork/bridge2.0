@@ -54,6 +54,7 @@ const tabs: Tab[] = [
   { href: "/admin/error-logs", label: "Error Logs", icon: AlertTriangle },
   { href: "/admin/diagnostics", label: "Diagnostics", icon: Stethoscope },
   { href: "/admin/pets", label: "Companion Pets", icon: PawPrint },
+  { href: "/admin/bridge-pets", label: "Bridge PETS", icon: PawPrint },
   { href: "/admin/demo-accounts", label: "Demo Accounts", icon: FlaskConical },
   { href: "/admin/audit", label: "Audit Trail", icon: ScrollText, superAdminOnly: true },
   { href: "/admin/settings", label: "Platform Settings", icon: Settings },

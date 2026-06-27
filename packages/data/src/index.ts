@@ -440,3 +440,4 @@ export * from "./analytics-store";
 export * from "./quick-setup-store";
 export * from "./production-admin-store";
 export * from "./companion-pets";
+export * from "./bridge-pets";

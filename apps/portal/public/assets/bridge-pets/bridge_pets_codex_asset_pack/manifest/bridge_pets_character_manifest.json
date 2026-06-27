@@ -1,0 +1,220 @@
+{
+  "brand": "Bridge PETS by Nuvio",
+  "version": "1.0",
+  "usage_note": "Concept assets and Codex implementation spec. Avoid official military insignia, flags, trademarked symbols, and diagnosis labels in public UI unless clinically reviewed.",
+  "characters": [
+    {
+      "id": "ranger",
+      "name": "Ranger",
+      "theme": "ready-for-action / mission support",
+      "audience_tags": [
+        "ready-for-action",
+        "adults",
+        "teens"
+      ],
+      "descriptor": "Your steady mission companion.",
+      "palette": [
+        "#87D65A",
+        "#3C4F2F",
+        "#C58A4A",
+        "#171B12"
+      ]
+    },
+    {
+      "id": "focus",
+      "name": "Focus",
+      "theme": "attention support / clarity",
+      "audience_tags": [
+        "focus support",
+        "routine support"
+      ],
+      "descriptor": "Built for clarity and momentum.",
+      "palette": [
+        "#20C7FF",
+        "#8DFF5A",
+        "#0B2030",
+        "#EAFBFF"
+      ]
+    },
+    {
+      "id": "zip",
+      "name": "Zip",
+      "theme": "ADHD / ADD style energy and routine support",
+      "audience_tags": [
+        "focus support",
+        "routine support",
+        "teens"
+      ],
+      "descriptor": "For busy minds and bold moves.",
+      "palette": [
+        "#FF8A20",
+        "#00C9CF",
+        "#111827",
+        "#FFD15A"
+      ]
+    },
+    {
+      "id": "echo",
+      "name": "Echo",
+      "theme": "teen social expression / music",
+      "audience_tags": [
+        "teens",
+        "creative expression"
+      ],
+      "descriptor": "Always connected. Always expressive.",
+      "palette": [
+        "#A15CFF",
+        "#1DD3FF",
+        "#2D1747",
+        "#F069FF"
+      ]
+    },
+    {
+      "id": "atlas",
+      "name": "Atlas",
+      "theme": "adult goals and progress",
+      "audience_tags": [
+        "adults",
+        "routine support"
+      ],
+      "descriptor": "Built for goals, balance, and progress.",
+      "palette": [
+        "#FFC34A",
+        "#222329",
+        "#0A0B12",
+        "#F3E6BF"
+      ]
+    },
+    {
+      "id": "luna",
+      "name": "Luna",
+      "theme": "emotional regulation / calm",
+      "audience_tags": [
+        "calm support",
+        "teens",
+        "adults"
+      ],
+      "descriptor": "Gentle support for reset and reflection.",
+      "palette": [
+        "#C89CFF",
+        "#7F5BFF",
+        "#17102A",
+        "#FFE6FF"
+      ]
+    },
+    {
+      "id": "rocket",
+      "name": "Rocket",
+      "theme": "action, motivation, movement",
+      "audience_tags": [
+        "routine support",
+        "ready-for-action"
+      ],
+      "descriptor": "Fuel for action and follow-through.",
+      "palette": [
+        "#FF3D31",
+        "#FFBE2E",
+        "#311111",
+        "#FFE1D1"
+      ]
+    },
+    {
+      "id": "sage",
+      "name": "Sage",
+      "theme": "mature reassurance / mentor energy",
+      "audience_tags": [
+        "adults",
+        "calm support"
+      ],
+      "descriptor": "A calm guide for everyday growth.",
+      "palette": [
+        "#8ED28A",
+        "#2E4A30",
+        "#C8D6B0",
+        "#101810"
+      ]
+    },
+    {
+      "id": "tide",
+      "name": "Tide",
+      "theme": "calm regulation / reset",
+      "audience_tags": [
+        "calm support"
+      ],
+      "descriptor": "Your calming companion. Always steady. Always flowing.",
+      "palette": [
+        "#21B7FF",
+        "#7CE6FF",
+        "#12204A",
+        "#A48CFF"
+      ]
+    },
+    {
+      "id": "nova",
+      "name": "Nova",
+      "theme": "curiosity and creative thinking",
+      "audience_tags": [
+        "creative expression",
+        "teens"
+      ],
+      "descriptor": "Your curious companion. Always exploring. Always expanding.",
+      "palette": [
+        "#9D7BFF",
+        "#6A4DFF",
+        "#FFE69B",
+        "#79F0FF"
+      ]
+    },
+    {
+      "id": "moss",
+      "name": "Moss",
+      "theme": "grounding / routines / focus",
+      "audience_tags": [
+        "calm support",
+        "routine support"
+      ],
+      "descriptor": "Your grounded companion. Always rooted. Always growing.",
+      "palette": [
+        "#6BAF6E",
+        "#8ED28A",
+        "#BFE8A9",
+        "#3D2E1F"
+      ]
+    },
+    {
+      "id": "bolt",
+      "name": "Bolt",
+      "theme": "energy / momentum",
+      "audience_tags": [
+        "routine support",
+        "ready-for-action"
+      ],
+      "descriptor": "Your energized companion. Always ready. Always moving.",
+      "palette": [
+        "#FFD400",
+        "#6A3DFF",
+        "#FFC737",
+        "#0D0B1A"
+      ]
+    }
+  ],
+  "recommended_animation_states": [
+    "idle",
+    "wave",
+    "listening",
+    "thinking",
+    "cheering",
+    "check_in",
+    "happy",
+    "focused",
+    "sleepy",
+    "proud"
+  ],
+  "recommended_exports": [
+    "png_transparent",
+    "svg_icons",
+    "webp_optimized",
+    "psd_source",
+    "json_manifest"
+  ]
+}

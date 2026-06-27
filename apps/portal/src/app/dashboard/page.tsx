@@ -10,6 +10,7 @@ import { isAdminRole } from "@family-support/data";
 import { useLanguage } from "@/components/LanguageProvider";
 import { useSupportPathway } from "@/components/SupportPathwayProvider";
 import { QuickSetupCard } from "@/components/dashboard/QuickSetupCard";
+import { BridgePetDashboardWidget } from "@/components/bridge-pets/BridgePetDashboardWidget";
 
 type Snapshot = {
   childName: string;
@@ -224,6 +225,8 @@ export default function DashboardPage() {
           )}
         </>
       ) : null}
+
+      <BridgePetDashboardWidget />
 
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((s) => (

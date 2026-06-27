@@ -18,6 +18,7 @@ import {
   logTessUsage,
 } from "@family-support/data";
 import { getAIProvider } from "@/lib/ai";
+import { safeAwardPetXp } from "@/lib/pets/server-awards";
 import { buildTessChatContext, getTessSession } from "@/lib/tess/session";
 import { buildRecommendationContextBlock, searchRecommendations } from "@/lib/tess/recommendations";
 
@@ -209,10 +210,20 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    const petXp = !platformSafety.flagged && !safety.flagged
+      ? await safeAwardPetXp(
+          { id: session.userId },
+          childProfileId,
+          mode === "calm" ? "emotional_regulation" : "returning_after_hard_day",
+          { source: "tess-chat", mode }
+        )
+      : null;
+
     return NextResponse.json({
       conversationId: conv.id,
       message: assistantMsg,
       suggestion,
+      petXp,
       provider: result.provider,
       model: result.model,
       recommendations: recommendationPayload?.items ?? undefined,
