@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Bell, BookOpen, CalendarCheck, CheckCircle2, HeartPulse, MessageCircle, PartyPopper, PawPrint, Sparkles, Target, Users, Zap } from "lucide-react";
 import { WeekBarChart, EmotionDonut } from "@/components/bridge/Charts";
 import { EmptyBlock, ErrorBlock, LoadingBlock } from "@/components/StateBlock";
 import { useAuth } from "@/components/AuthProvider";
@@ -11,6 +12,8 @@ import { useLanguage } from "@/components/LanguageProvider";
 import { useSupportPathway } from "@/components/SupportPathwayProvider";
 import { QuickSetupCard } from "@/components/dashboard/QuickSetupCard";
 import { BridgePetDashboardWidget } from "@/components/bridge-pets/BridgePetDashboardWidget";
+import { useCompanionPet } from "@/components/pets/CompanionPetProvider";
+import { pickStressReliefActivity, type StressReliefActivity } from "@family-support/data";
 
 type Snapshot = {
   childName: string;
@@ -38,6 +41,8 @@ export default function DashboardPage() {
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
   const [quickSetupHidden, setQuickSetupHidden] = useState(false);
+  const [stressActivity, setStressActivity] = useState<StressReliefActivity | null>(null);
+  const { awardXp, updatePet, state: petState } = useCompanionPet();
 
   const load = useCallback(() => {
     if (!profileId) return;
@@ -79,7 +84,10 @@ export default function DashboardPage() {
   }, [authLoading, user]);
 
   useEffect(() => {
-    load();
+    const id = window.setTimeout(() => {
+      void load();
+    }, 0);
+    return () => window.clearTimeout(id);
   }, [load]);
 
   useEffect(() => {
@@ -94,7 +102,10 @@ export default function DashboardPage() {
     const skipped = window.localStorage.getItem(`bridge.quickSetup.skipped.${profileId}`);
     const remindAt = window.localStorage.getItem(`bridge.quickSetup.remindAt.${profileId}`);
     const reminderActive = remindAt ? new Date(remindAt).getTime() > Date.now() : false;
-    setQuickSetupHidden(Boolean(skipped) || reminderActive || hasActivity);
+    const shouldHideQuickSetup = Boolean(skipped) || reminderActive || hasActivity;
+    const id = window.setTimeout(() => {
+      setQuickSetupHidden(shouldHideQuickSetup);
+    }, 0);
 
     if (!hasActivity) {
       const key = `bridge.quickSetup.incompleteNotified.${profileId}`;
@@ -114,6 +125,7 @@ export default function DashboardPage() {
         }).catch(() => undefined);
       }
     }
+    return () => window.clearTimeout(id);
   }, [profileId, snapshot, user?.isDemo]);
 
   const generateSummary = async () => {
@@ -148,6 +160,21 @@ export default function DashboardPage() {
       setAiSummary(data.text);
       alert(t("parent.dashboard.aiSummary.saved"));
     }
+  };
+
+  const runDashboardStressReset = async () => {
+    const activity = pickStressReliefActivity(Date.now());
+    setStressActivity(activity);
+    await updatePet({ mood: "overwhelmed_support" });
+    await awardXp("stress_relief_reset", {
+      source: activity.source,
+      activityId: activity.id,
+      activityTitle: activity.title,
+      category: activity.category,
+      pointsAwarded: activity.pointsAwarded,
+      noDailyLimit: true,
+      location: "parent_today_dashboard",
+    });
   };
 
   if (authLoading || !profilesLoaded) return <LoadingBlock label={t("parent.dashboard.loading")} />;
@@ -185,29 +212,63 @@ export default function DashboardPage() {
     { label: t("parent.dashboard.newSkills"), value: String(snapshot.newSkillsCount) },
   ];
 
+  const todaysPlan = [
+    { title: "Morning routine", detail: "Keep it small, visual, and predictable.", href: "/routines", icon: CalendarCheck },
+    { title: "Goal step", detail: "Pick one trackable goal for today.", href: "/goals", icon: Target },
+    { title: "Communication practice", detail: "Use one card, script, or choice prompt.", href: "/communication", icon: MessageCircle },
+    { title: "Reward goal", detail: "Choose a reward that feels motivating.", href: "/rewards", icon: PartyPopper },
+  ];
+
+  const quickSetupSteps = [
+    { title: "Set first goals", href: "/goals", icon: Target },
+    { title: "Create routines", href: "/routines", icon: CalendarCheck },
+    { title: "Notification preferences", href: "/settings", icon: Bell },
+    { title: "Invite care team", href: "/care-team", icon: Users },
+    { title: "Talk to Nuvio", href: "/tess/chat", icon: MessageCircle },
+    { title: "Try Stressed Out reset", href: "#stressed-out", icon: Zap },
+  ];
+
   return (
-    <main className="mx-auto flex w-full max-w-6xl flex-col gap-5 p-6">
-      <section className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-extrabold text-[var(--text-primary)]">
-            {t("parent.dashboard.title", { name: snapshot.childName })}
-          </h2>
-          <p className="mt-1 text-xs font-bold uppercase tracking-wider text-[var(--brand)]">
-            {pathway.name} support pathway
+    <main className="parent-today mx-auto flex w-full max-w-7xl flex-col gap-6 p-4 sm:p-6">
+      <section className="parent-today-hero">
+        <div className="relative z-10">
+          <p className="text-xs font-black uppercase tracking-[0.28em] text-violet-200">Today</p>
+          <h1 className="mt-3 text-3xl font-black tracking-tight text-white sm:text-5xl">
+            Good to see you. Here’s {snapshot.childName}’s support day.
+          </h1>
+          <p className="mt-3 max-w-3xl text-sm leading-7 text-violet-100/90">
+            {pathway.name} pathway · Nuvio is watching for small wins, reset moments, and practical next steps. {t("common.safetyDisclaimer")}
           </p>
-          <p className="mt-1 max-w-2xl text-sm text-[var(--text-secondary)]">{t("common.safetyDisclaimer")}</p>
+          <div className="mt-5 flex flex-wrap gap-3">
+            <button id="stressed-out" type="button" className="parent-stress-btn" onClick={() => void runDashboardStressReset()}>
+              <Zap className="h-5 w-5" /> Stressed Out?
+            </button>
+            <Link href="/tess/chat" className="parent-hero-btn">
+              <MessageCircle className="h-5 w-5" /> Talk to Nuvio
+            </Link>
+            {profiles.length > 1 ? (
+              <select
+                className="rounded-full border border-white/20 bg-white/10 px-4 py-3 text-sm font-black text-white"
+                value={profileId}
+                onChange={(e) => setProfileId(e.target.value)}
+              >
+                {profiles.map((p) => (
+                  <option key={p.id} value={p.id}>{p.name}</option>
+                ))}
+              </select>
+            ) : null}
+          </div>
+          {stressActivity ? (
+            <p className="mt-4 rounded-2xl border border-emerald-200/40 bg-emerald-400/15 px-4 py-3 text-sm font-bold text-emerald-50">
+              +20 points — Nuvio is growing. Let’s try this: {stressActivity.title}.
+            </p>
+          ) : null}
         </div>
-        {profiles.length > 1 ? (
-          <select
-            className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm font-semibold"
-            value={profileId}
-            onChange={(e) => setProfileId(e.target.value)}
-          >
-            {profiles.map((p) => (
-              <option key={p.id} value={p.id}>{p.name}</option>
-            ))}
-          </select>
-        ) : null}
+        <div className="parent-hero-orb">
+          <PawPrint className="h-12 w-12" />
+          <span>{petState?.pet?.xp ?? 0}</span>
+          <small>Nuvio points</small>
+        </div>
       </section>
 
       {!hasActivity ? (
@@ -226,22 +287,26 @@ export default function DashboardPage() {
         </>
       ) : null}
 
-      <BridgePetDashboardWidget />
-
-      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         {stats.map((s) => (
-          <article key={s.label} className="stat-card">
+          <article key={s.label} className="parent-glass-card">
             <p className="stat-label">{s.label}</p>
             <p className="stat-value">{s.value}</p>
           </article>
         ))}
+        <article className="parent-glass-card">
+          <p className="stat-label">Nuvio Recommendation</p>
+          <p className="text-sm font-bold text-slate-700">Start with one routine, one reset, and one celebration.</p>
+        </article>
       </section>
 
-      <section className="grid gap-5 lg:grid-cols-2">
-        <article className="card p-6">
-          <h3 className="font-bold text-[var(--text-primary)]">
-            {t("parent.dashboard.weekAtGlance", { name: snapshot.childName })}
-          </h3>
+      <section className="grid gap-5 xl:grid-cols-[1.25fr_.75fr]">
+        <article className="parent-card p-6">
+          <div className="flex items-center gap-3">
+            <HeartPulse className="h-5 w-5 text-violet-600" />
+            <h2 className="text-xl font-black text-slate-950">Family Snapshot</h2>
+          </div>
+          <p className="mt-2 text-sm text-slate-500">Overall mood, progress, streaks, weekly wins, and Nuvio’s next best nudge.</p>
           <div className="mt-4">
             {snapshot.weekChart.some((d) => d.tasks > 0 || d.routines > 0 || d.checkIns > 0) ? (
               <WeekBarChart data={snapshot.weekChart} />
@@ -250,8 +315,8 @@ export default function DashboardPage() {
             )}
           </div>
         </article>
-        <article className="card p-6">
-          <h3 className="font-bold text-[var(--text-primary)]">{t("parent.dashboard.topEmotions")}</h3>
+        <article className="parent-card p-6">
+          <h2 className="text-xl font-black text-slate-950">Overall Mood</h2>
           <div className="mt-4">
             {snapshot.emotionBreakdown.length ? (
               <EmotionDonut emotions={snapshot.emotionBreakdown} />
@@ -262,9 +327,55 @@ export default function DashboardPage() {
         </article>
       </section>
 
-      <section className="card border-2 border-[var(--brand-light)] p-6">
+      <section className="grid gap-5 xl:grid-cols-[.9fr_1.1fr]">
+        <article className="parent-card p-6">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-violet-600">Today’s Plan</p>
+              <h2 className="mt-1 text-xl font-black text-slate-950">Make today trackable</h2>
+            </div>
+            <Sparkles className="h-6 w-6 text-yellow-500" />
+          </div>
+          <div className="mt-4 grid gap-3">
+            {todaysPlan.map((item) => {
+              const Icon = item.icon;
+              return (
+                <Link key={item.title} href={item.href} className="parent-plan-row">
+                  <Icon className="h-5 w-5" />
+                  <span><strong>{item.title}</strong><small>{item.detail}</small></span>
+                </Link>
+              );
+            })}
+          </div>
+        </article>
+
+        <BridgePetDashboardWidget />
+      </section>
+
+      {!hasActivity ? (
+        <section className="parent-card p-6">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-violet-600">Warm setup</p>
+          <h2 className="mt-1 text-xl font-black text-slate-950">New here? Build the first support loop.</h2>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {quickSetupSteps.map((step) => {
+              const Icon = step.icon;
+              return (
+                <Link key={step.title} href={step.href} className="parent-setup-tile">
+                  <Icon className="h-5 w-5" />
+                  {step.title}
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+      ) : null}
+
+      <section className="parent-card border-2 border-violet-200 p-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h3 className="font-bold text-[var(--text-primary)]">{t("parent.dashboard.aiSummary.title")}</h3>
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-violet-600">Nuvio Summary</p>
+            <h3 className="font-black text-slate-950">Review and approve support insights</h3>
+          </div>
           <button
             type="button"
             className="btn-primary px-4 py-2 text-sm"
@@ -272,10 +383,10 @@ export default function DashboardPage() {
             disabled={aiLoading}
           >
             {aiLoading
-              ? t("parent.dashboard.aiSummary.generating")
+              ? "Generating…"
               : aiSummary
-                ? t("parent.dashboard.aiSummary.regenerate")
-                : t("parent.dashboard.aiSummary.generate")}
+                ? "Regenerate Nuvio Summary"
+                : "Generate Nuvio Summary"}
           </button>
         </div>
         {aiError ? (
@@ -288,29 +399,32 @@ export default function DashboardPage() {
               <button type="button" className="btn-purple px-4 py-2 text-sm" onClick={approveSummary}>
                 {t("parent.dashboard.aiSummary.approve")}
               </button>
-              <Link href="/tess" className="btn-secondary px-4 py-2 text-sm">
-                {t("parent.dashboard.aiSummary.editTess")}
+              <Link href="/tess/chat" className="btn-secondary px-4 py-2 text-sm">
+                Edit with Nuvio
               </Link>
             </div>
           </div>
         ) : (
           <p className="mt-3 text-sm text-[var(--text-tertiary)]">
-            {t("parent.dashboard.aiSummary.placeholder")}
+            Nuvio can review routines, tasks, check-ins, and wins to suggest practical next steps for your family.
           </p>
         )}
       </section>
 
       <section className="grid gap-4 sm:grid-cols-3">
-        <Link href="/library" className="card p-5 transition hover:shadow-md">
-          <h3 className="font-bold">{t("parent.dashboard.quickLinks.library")}</h3>
-          <p className="mt-1 text-sm text-[var(--text-secondary)]">{t("parent.dashboard.quickLinks.libraryDesc")}</p>
+        <Link href="/library" className="parent-card p-5 transition hover:shadow-md">
+          <BookOpen className="h-5 w-5 text-violet-600" />
+          <h3 className="mt-3 font-bold">Parent Education</h3>
+          <p className="mt-1 text-sm text-[var(--text-secondary)]">Lessons, insurance paths, and pathway resources.</p>
         </Link>
-        <Link href="/tess" className="card p-5 transition hover:shadow-md">
-          <h3 className="font-bold">{t("parent.dashboard.quickLinks.tess")}</h3>
-          <p className="mt-1 text-sm text-[var(--text-secondary)]">{t("parent.dashboard.quickLinks.tessDesc")}</p>
+        <Link href="/tess/chat" className="parent-card p-5 transition hover:shadow-md">
+          <MessageCircle className="h-5 w-5 text-violet-600" />
+          <h3 className="mt-3 font-bold">Nuvio Assistant</h3>
+          <p className="mt-1 text-sm text-[var(--text-secondary)]">Create routines, stories, practice ideas, and reset plans.</p>
         </Link>
-        <Link href="/my-space" className="card p-5 transition hover:shadow-md">
-          <h3 className="font-bold">{t("parent.dashboard.quickLinks.mySpace")}</h3>
+        <Link href="/my-space" className="parent-card p-5 transition hover:shadow-md">
+          <CheckCircle2 className="h-5 w-5 text-violet-600" />
+          <h3 className="mt-3 font-bold">{t("parent.dashboard.quickLinks.mySpace")}</h3>
           <p className="mt-1 text-sm text-[var(--text-secondary)]">{t("parent.dashboard.quickLinks.mySpaceDesc")}</p>
         </Link>
       </section>

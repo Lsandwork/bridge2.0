@@ -27,6 +27,16 @@ const eventTypes = new Set<PetEventType>([
   "daily_streak",
   "returning_after_hard_day",
   "manual_celebrate",
+  "task_complete",
+  "social_story_complete",
+  "exercise_complete",
+  "play_with_nuvio",
+  "talk_to_nuvio",
+  "stress_relief_reset",
+  "calm_activity_complete",
+  "family_challenge_complete",
+  "mystery_reward",
+  "daily_reset_wheel",
   "pet_created",
 ]);
 

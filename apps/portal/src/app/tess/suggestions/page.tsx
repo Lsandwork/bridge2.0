@@ -60,9 +60,9 @@ export default function TessSuggestionsPage() {
   return (
     <main className="mx-auto max-w-5xl p-6">
       <Link href="/tess" className="mb-4 flex items-center gap-1 text-sm font-bold text-[var(--brand)]">
-        <ArrowLeft className="h-4 w-4" /> Back to Tess
+        <ArrowLeft className="h-4 w-4" /> Back to Nuvio
       </Link>
-      <h1 className="text-2xl font-extrabold">Tess Suggestions Review</h1>
+      <h1 className="text-2xl font-extrabold">Nuvio Suggestions Review</h1>
       <p className="mt-1 text-sm text-[var(--text-secondary)]">
         Approve, edit, reject, or archive AI suggestions before they appear in your child&apos;s app.
       </p>
@@ -86,7 +86,7 @@ export default function TessSuggestionsPage() {
       {error ? <p className="mt-4 rounded-lg bg-red-50 p-3 text-sm text-red-700">{error}</p> : null}
 
       {!loading && suggestions.length === 0 ? (
-        <EmptyBlock title="No suggestions yet" description={`No ${statusFilter} Tess suggestions.`} />
+        <EmptyBlock title="No suggestions yet" description={`No ${statusFilter} Nuvio suggestions.`} />
       ) : null}
 
       <div className="mt-6 space-y-4">

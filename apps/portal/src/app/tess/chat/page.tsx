@@ -39,7 +39,7 @@ function TessChatPageInner() {
     <main className="mx-auto flex h-[calc(100vh-5rem)] max-w-4xl flex-col p-4">
       <div className="mb-3 flex items-center justify-between gap-3">
         <Link href="/tess" className="flex items-center gap-1 text-sm font-bold text-[var(--brand)]">
-          <ArrowLeft className="h-4 w-4" /> Tess Assistant
+          <ArrowLeft className="h-4 w-4" /> Nuvio
         </Link>
         <select
           className="rounded-xl border px-3 py-2 text-sm"
@@ -55,10 +55,10 @@ function TessChatPageInner() {
         <TessChat
           childProfileId={profileId}
           quickActions={PARENT_QUICK_PROMPTS}
-          header="Tess — Parent Assistant"
+          header="Nuvio — Parent Assistant"
           mode="parent_assistant"
           defaultInputMode={startTalk ? "talk" : "text"}
-          placeholder="Ask Tess about routines, social stories, exercises, or progress…"
+          placeholder="Ask Nuvio about routines, social stories, exercises, or progress…"
         />
       </div>
     </main>
@@ -67,7 +67,7 @@ function TessChatPageInner() {
 
 export default function TessChatPage() {
   return (
-    <Suspense fallback={<LoadingBlock label="Loading Tess chat…" />}>
+    <Suspense fallback={<LoadingBlock label="Loading Nuvio chat…" />}>
       <TessChatPageInner />
     </Suspense>
   );

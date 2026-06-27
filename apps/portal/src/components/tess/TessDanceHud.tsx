@@ -12,7 +12,7 @@ export function TessDanceHud({ visible, secondsRemaining, onStop }: Props) {
 
   return (
     <div className="tess-dance-hud" role="status" aria-live="polite">
-      <span>Dancing with Tess · {secondsRemaining}s</span>
+      <span>Dancing with Nuvio · {secondsRemaining}s</span>
       <button type="button" className="tess-dance-hud__stop" onClick={onStop}>
         Stop
       </button>

@@ -16,7 +16,7 @@ export function TessViewModeToggle({ mode, onChange, compact }: Props) {
     <div
       className={`tess-view-toggle ${compact ? "tess-view-toggle--compact" : ""}`}
       role="group"
-      aria-label="Tess viewing mode"
+      aria-label="Nuvio viewing mode"
     >
       <button
         type="button"

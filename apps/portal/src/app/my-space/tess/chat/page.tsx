@@ -14,7 +14,6 @@ function ChatInner() {
   const params = useSearchParams();
   const { activeProfile } = useProfile();
   const profileId = activeProfile?.id;
-  if (!profileId) return <LoadingBlock label="Loading profile…" />;
   const initialPrompt = params.get("prompt");
   const startTalk = params.get("talk") === "1";
   const viewParam = params.get("view");
@@ -33,10 +32,12 @@ function ChatInner() {
     return () => window.clearTimeout(timer);
   }, [initialPrompt, startTalk]);
 
+  if (!profileId) return <LoadingBlock label="Loading profile…" />;
+
   return (
     <div className="ms-page ms-page-pad-bottom mx-auto flex max-w-lg flex-col px-2 pb-4 pt-2 md:px-4">
       <Link href="/my-space/tess" className="mb-2 flex min-h-[2.75rem] items-center gap-1 px-2 text-sm font-bold text-[var(--ms-accent)]">
-        <ArrowLeft className="h-4 w-4" /> Tess
+        <ArrowLeft className="h-4 w-4" /> Nuvio
       </Link>
       <div className="mx-2 flex min-h-[min(75dvh,36rem)] flex-1 flex-col overflow-hidden rounded-2xl border-2 border-[var(--ms-accent-soft)] bg-[var(--ms-card)] md:mx-4">
         <TessScreen
@@ -55,7 +56,7 @@ function ChatInner() {
 
 export default function MySpaceTessChatPage() {
   return (
-    <Suspense fallback={<LoadingBlock label="Loading Tess…" />}>
+    <Suspense fallback={<LoadingBlock label="Loading Nuvio…" />}>
       <ChatInner />
     </Suspense>
   );

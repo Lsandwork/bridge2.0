@@ -137,7 +137,7 @@ export const navItems: NavItem[] = [
   { id: "videos", label: "Videos", icon: "▶️", href: "/my-space/videos", labelKey: "myspace.videos" },
   { id: "rewards", label: "Rewards", icon: "🎁", href: "/my-space/rewards", labelKey: "nav.rewards" },
   { id: "talk", label: "Talk", icon: "💬", href: "/my-space/communicate", labelKey: "myspace.talk" },
-  { id: "tess", label: "Tess", icon: "", href: "/my-space/tess/chat", labelKey: "myspace.tess", useTessIcon: true },
+  { id: "tess", label: "Nuvio", icon: "", href: "/my-space/tess/chat", labelKey: "myspace.tess", useTessIcon: true },
   { id: "mood", label: "Mood", icon: "😊", href: "/my-space/mood", labelKey: "myspace.mood" },
 ];
 

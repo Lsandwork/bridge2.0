@@ -86,7 +86,7 @@ export function TessVoiceMode({
         });
         if (mutedRef.current) setStatus("idle");
       } catch (e) {
-        setError(e instanceof Error ? e.message : "Tess could not respond");
+        setError(e instanceof Error ? e.message : "Nuvio could not respond");
         setStatus("idle");
       }
     },
@@ -213,7 +213,7 @@ export function TessVoiceMode({
         <TessStatusLabel state={characterState} className="mt-6" />
         <p className="mt-1 text-center text-xs text-[var(--text-tertiary)]">
           {caps?.serverTranscribe
-            ? "Tap mic → speak → tap again. Tess listens, thinks, and speaks back."
+            ? "Tap mic → speak → tap again. Nuvio listens, thinks, and speaks back."
             : "Voice needs OPENAI_API_KEY in apps/portal/.env.local — then restart npm run dev."}
         </p>
 
@@ -252,7 +252,7 @@ TESS_VOICE_MODEL=nova`}
           <p className="mt-1 min-h-[1.5rem] text-sm leading-relaxed">{transcript || "—"}</p>
         </div>
         <div>
-          <p className="text-[10px] font-bold uppercase tracking-wide text-[var(--text-tertiary)]">Tess said</p>
+          <p className="text-[10px] font-bold uppercase tracking-wide text-[var(--text-tertiary)]">Nuvio said</p>
           <p className="mt-1 min-h-[1.5rem] text-sm leading-relaxed">{response || "—"}</p>
         </div>
         {response ? (

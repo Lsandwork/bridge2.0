@@ -3,7 +3,7 @@ import Image from "next/image";
 export const TESS_ICON_PATH = "/tess/tess-icon.png";
 export const TESS_AVATAR_PATH = "/tess/tess-avatar.png";
 export const TESS_REFERENCE_PATH = "/tess/tess-reference.png";
-export const TESS_ICON_ALT = "Tess AI support companion";
+export const TESS_ICON_ALT = "Nuvio support companion";
 
 type Props = {
   size?: number;

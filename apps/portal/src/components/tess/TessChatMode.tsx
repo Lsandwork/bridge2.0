@@ -77,7 +77,7 @@ export function TessChatMode({
             </div>
             <div className="min-w-0">
               <p className="tess-chat-header__name">
-                Tess <span className="tess-chat-header__badge" aria-label="Verified">✓</span>
+                Nuvio <span className="tess-chat-header__badge" aria-label="Verified">✓</span>
               </p>
               <p className="tess-chat-header__sub">{t("tess.companion.subtitle")}</p>
             </div>

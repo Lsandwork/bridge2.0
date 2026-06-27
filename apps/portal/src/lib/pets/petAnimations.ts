@@ -4,5 +4,13 @@ export const petAnimationClasses = {
   celebrating: "pet-sprite--celebrate",
   calm: "pet-sprite--calm",
   focus: "pet-sprite--focus",
+  thinking: "pet-sprite--thinking",
+  waiting: "pet-sprite--thinking",
+  routine_reminder: "pet-sprite--listening",
+  talking: "pet-sprite--talking",
+  listening: "pet-sprite--listening",
+  goal_complete: "pet-sprite--celebrate",
+  overwhelmed_support: "pet-sprite--calm",
+  excited: "pet-sprite--celebrate",
   sleeping: "pet-sprite--sleeping",
 };

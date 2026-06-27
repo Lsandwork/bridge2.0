@@ -21,7 +21,7 @@ export function TessSafetySupport({ open, onDismiss }: Props) {
           you trust right away, or call or text <strong>988</strong> (Suicide &amp; Crisis Lifeline) in the US.
         </p>
         <p className="tess-dance-modal__desc">
-          For emergencies, call <strong>911</strong>. Tess is a supportive companion — not a replacement for professional
+          For emergencies, call <strong>911</strong>. Nuvio is a supportive companion — not a replacement for professional
           or emergency help.
         </p>
         <button type="button" className="tess-dance-modal__btn tess-dance-modal__btn--primary" onClick={onDismiss}>

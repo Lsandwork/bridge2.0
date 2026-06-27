@@ -11,7 +11,10 @@ import { PetSprite } from "./PetSprite";
 import { PetMobileDock } from "./PetMobileDock";
 
 const skipKey = "nuvio.pet.setup.skipUntil";
-const positionKey = "nuvio.pet.position";
+const legacyPositionKey = "nuvio.pet.position";
+const positionKey = "nuvio_pet_position";
+const dragThreshold = 6;
+const petBounds = { width: 112, height: 112 };
 
 function skippedForNow() {
   if (typeof window === "undefined") return false;
@@ -25,20 +28,55 @@ export function CompanionPetOverlay() {
   const [open, setOpen] = useState(false);
   const [setupSkipped, setSetupSkipped] = useState(false);
   const [dragging, setDragging] = useState(false);
+  const [dragMoved, setDragMoved] = useState(false);
+  const [released, setReleased] = useState(false);
   const [position, setPosition] = useState<{ x: number; y: number } | null>(null);
   const dragOffset = useRef({ x: 0, y: 0 });
+  const pointerStart = useRef({ x: 0, y: 0 });
+
+  const clamp = useMemo(() => {
+    return (next: { x: number; y: number }) => {
+      const margin = window.matchMedia("(max-width: 640px)").matches ? 20 : 32;
+      const bottomSafe = window.matchMedia("(max-width: 640px)").matches ? 88 : 32;
+      return {
+        x: Math.max(margin, Math.min(window.innerWidth - petBounds.width - margin, next.x)),
+        y: Math.max(margin, Math.min(window.innerHeight - petBounds.height - bottomSafe, next.y)),
+      };
+    };
+  }, []);
 
   useEffect(() => {
-    setSetupSkipped(skippedForNow());
-    const saved = window.localStorage.getItem(positionKey);
-    if (saved) {
-      try {
-        setPosition(JSON.parse(saved));
-      } catch {
-        window.localStorage.removeItem(positionKey);
+    const id = window.setTimeout(() => {
+      setSetupSkipped(skippedForNow());
+      const saved = window.localStorage.getItem(positionKey) ?? window.localStorage.getItem(legacyPositionKey);
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          const next = clamp(parsed);
+          setPosition(next);
+          window.localStorage.setItem(positionKey, JSON.stringify(next));
+          window.localStorage.removeItem(legacyPositionKey);
+        } catch {
+          window.localStorage.removeItem(positionKey);
+          window.localStorage.removeItem(legacyPositionKey);
+        }
       }
-    }
-  }, []);
+    }, 0);
+    return () => window.clearTimeout(id);
+  }, [clamp]);
+
+  useEffect(() => {
+    const onResize = () => {
+      setPosition((current) => {
+        if (!current) return current;
+        const next = clamp(current);
+        window.localStorage.setItem(positionKey, JSON.stringify(next));
+        return next;
+      });
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [clamp]);
 
   useEffect(() => {
     if (!("serviceWorker" in navigator)) return;
@@ -59,27 +97,38 @@ export function CompanionPetOverlay() {
     setSetupSkipped(true);
   }
 
+  function resetPosition() {
+    setPosition(null);
+    window.localStorage.removeItem(positionKey);
+    window.localStorage.removeItem(legacyPositionKey);
+  }
+
   function startDrag(event: ReactPointerEvent<HTMLButtonElement>) {
-    if (window.matchMedia("(pointer: coarse)").matches) return;
     const rect = event.currentTarget.getBoundingClientRect();
     dragOffset.current = { x: event.clientX - rect.left, y: event.clientY - rect.top };
+    pointerStart.current = { x: event.clientX, y: event.clientY };
+    setDragMoved(false);
     setDragging(true);
     event.currentTarget.setPointerCapture(event.pointerId);
   }
 
   function moveDrag(event: ReactPointerEvent<HTMLButtonElement>) {
     if (!dragging) return;
-    const next = {
-      x: Math.max(12, Math.min(window.innerWidth - 112, event.clientX - dragOffset.current.x)),
-      y: Math.max(12, Math.min(window.innerHeight - 112, event.clientY - dragOffset.current.y)),
-    };
-    setPosition(next);
+    const distance = Math.hypot(event.clientX - pointerStart.current.x, event.clientY - pointerStart.current.y);
+    if (distance <= dragThreshold && !dragMoved) return;
+    setDragMoved(true);
+    setPosition(clamp({
+      x: event.clientX - dragOffset.current.x,
+      y: event.clientY - dragOffset.current.y,
+    }));
   }
 
   function endDrag() {
     if (!dragging) return;
     setDragging(false);
-    if (position) window.localStorage.setItem(positionKey, JSON.stringify(position));
+    setReleased(true);
+    window.setTimeout(() => setReleased(false), 420);
+    if (position && dragMoved) window.localStorage.setItem(positionKey, JSON.stringify(clamp(position)));
   }
 
   if (loading && !state) return null;
@@ -127,13 +176,14 @@ export function CompanionPetOverlay() {
           onAwardXp={awardXp}
           onEquip={equipItem}
           onUpdate={updatePet}
+          onResetPosition={resetPosition}
         />
       ) : null}
       <button
         type="button"
-        className="pet-float"
+        className={`pet-float ${dragging ? "pet-float--dragging" : ""} ${released ? "pet-float--released" : ""}`}
         onClick={() => {
-          if (!dragging) setOpen((value) => !value);
+          if (!dragMoved) setOpen((value) => !value);
         }}
         onPointerDown={startDrag}
         onPointerMove={moveDrag}

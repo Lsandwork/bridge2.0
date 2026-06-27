@@ -35,14 +35,14 @@ export default function MySpaceTessCalmPage() {
       }),
     });
     const data = await res.json();
-    setResponse(data.message?.content ?? "Tess is here. You can pick another option or take a break.");
+    setResponse(data.message?.content ?? "Nuvio is here. You can pick another option or take a break.");
     setLoading(false);
   };
 
   return (
     <div className="ms-page ms-page-pad-bottom mx-auto max-w-lg px-4 py-6">
       <Link href="/my-space/tess" className="mb-4 flex items-center gap-1 text-sm font-bold text-[var(--ms-accent)]">
-        <ArrowLeft className="h-4 w-4" /> Tess
+        <ArrowLeft className="h-4 w-4" /> Nuvio
       </Link>
 
       <h1 className="text-xl font-extrabold">What do you need right now?</h1>
@@ -62,7 +62,7 @@ export default function MySpaceTessCalmPage() {
         ))}
       </div>
 
-      {loading ? <p className="mt-6 text-center text-sm font-bold text-[var(--ms-muted)]">Tess is thinking…</p> : null}
+      {loading ? <p className="mt-6 text-center text-sm font-bold text-[var(--ms-muted)]">Nuvio is thinking…</p> : null}
       {response ? (
         <div className="mt-6 rounded-2xl bg-[var(--ms-accent-soft)] p-4 text-sm leading-relaxed">{response}</div>
       ) : null}

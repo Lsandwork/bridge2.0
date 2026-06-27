@@ -56,7 +56,7 @@ type FallbackProps = { size: TessCharacterSize; className?: string };
 
 function TessCharacterFallback({ size, className }: FallbackProps) {
   return (
-    <div className={`tess-char tess-char--${size} tess-char--fallback ${className ?? ""}`.trim()} role="img" aria-label="Tess assistant avatar">
+    <div className={`tess-char tess-char--${size} tess-char--fallback ${className ?? ""}`.trim()} role="img" aria-label="Nuvio avatar">
       <TessIcon size={AVATAR_PX[size]} variant="avatar" decorative className="tess-char__icon" />
     </div>
   );
@@ -161,7 +161,7 @@ function TessAnimatedCharacterInner({
     <div
       className={rootClass}
       role="img"
-      aria-label="Tess assistant avatar"
+      aria-label="Nuvio avatar"
       data-tess-character-state={displayState}
       onPointerEnter={handlePointerEnter}
       onClick={handleClick}

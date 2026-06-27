@@ -37,7 +37,7 @@ export function TessStatusCard({
         type="button"
         className="tess-status-card__companion-btn"
         onClick={onCompanionTap}
-        aria-label="Tess assistant avatar"
+        aria-label="Nuvio support companion"
       >
         <TessAnimatedCharacter
           state={characterState}

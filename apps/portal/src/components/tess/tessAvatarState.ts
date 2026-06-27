@@ -66,7 +66,7 @@ export function avatarStatusLabel(state: TessAvatarState | TessCharacterState): 
       return "Thinking…";
     case "speaking":
     case "tessSpeaking":
-      return "Tess is speaking…";
+      return "Nuvio is speaking…";
     case "error":
       return "Let's try that again.";
     case "greeting":

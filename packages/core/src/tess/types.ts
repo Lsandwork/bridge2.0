@@ -1,10 +1,10 @@
 import { z } from "zod";
 
 export const TESS_DISCLAIMER =
-  "Tess is an AI educational support companion. Tess does not diagnose, treat, cure, or replace doctors, therapists, speech therapy, occupational therapy, ABA, school services, clinical care, or emergency services. Tess provides supportive tools, education, routines, communication help, and skill-building guidance. Parents and caregivers should review AI suggestions before use.";
+  "Nuvio is an AI educational support companion. Nuvio does not diagnose, treat, cure, or replace doctors, therapists, speech therapy, occupational therapy, ABA, school services, clinical care, or emergency services. Nuvio provides supportive tools, education, routines, communication help, and skill-building guidance. Parents and caregivers should review AI suggestions before use.";
 
 export const TESS_CRISIS_DISCLAIMER =
-  "Tess is not an emergency service. If there is immediate danger, call emergency services or contact a trusted adult right now.";
+  "Nuvio is not an emergency service. If there is immediate danger, call emergency services or contact a trusted adult right now.";
 
 export const tessConversationModeSchema = z.enum([
   "text",

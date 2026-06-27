@@ -11,7 +11,7 @@ import { getSession } from "@/lib/auth/session";
 function publicAiError(error: unknown): string {
   const msg = error instanceof Error ? error.message : "Summary generation failed";
   if (/GEMINI|OPENAI|API_KEY|\.env|GoogleGenerativeAI/i.test(msg)) {
-    return "Tess AI is temporarily unavailable. Please try again later.";
+    return "Nuvio is temporarily unavailable. Please try again later.";
   }
   return msg;
 }
@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
     if (save) {
       const report = createLocalReport({
         childProfileId: profileId,
-        title: `Tess AI Weekly Summary — ${profile?.name ?? "Child"}`,
+        title: `Nuvio Weekly Summary — ${profile?.name ?? "Child"}`,
         body: text,
         periodStart: new Date(Date.now() - 7 * 86400000).toISOString().slice(0, 10),
         periodEnd: new Date().toISOString().slice(0, 10),

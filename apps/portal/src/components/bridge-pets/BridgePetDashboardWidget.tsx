@@ -61,16 +61,16 @@ export function BridgePetDashboardWidget() {
   }
 
   if (loading) {
-    return <section className="bridge-pet-dashboard-widget bridge-pet-dashboard-loading">Loading Bridge PETS...</section>;
+    return <section className="bridge-pet-dashboard-widget bridge-pet-dashboard-loading">Loading Nuvio Pet...</section>;
   }
 
   if (!selected) {
     return (
       <section className="bridge-pet-dashboard-widget">
         <div>
-          <p className="bridge-pets-kicker"><PawPrint className="h-4 w-4" /> Bridge PETS</p>
-          <h2>Choose a companion for daily support.</h2>
-          <p>Your companion starts at zero and grows only when you complete real check-ins, routines, goals, focus, and reset sessions.</p>
+          <p className="bridge-pets-kicker"><PawPrint className="h-4 w-4" /> Nuvio Pet</p>
+          <h2>Choose your Nuvio Pet for daily support.</h2>
+          <p>Nuvio Pet starts at zero and grows only when you complete real check-ins, routines, goals, focus, and reset sessions.</p>
         </div>
         <Link href="/bridge-pets" className="bridge-pets-primary-action">Choose companion</Link>
       </section>
@@ -86,7 +86,7 @@ export function BridgePetDashboardWidget() {
       <div className="bridge-pet-dashboard-main">
         {profile ? <BridgePetSprite pet={profile} size="lg" interactive mood={mood as never} /> : null}
         <div>
-          <p className="bridge-pets-kicker"><PawPrint className="h-4 w-4" /> Bridge PETS companion</p>
+          <p className="bridge-pets-kicker"><PawPrint className="h-4 w-4" /> Nuvio Pet</p>
           <h2>{selected.petName}</h2>
           <p>
             Stage: <strong>{selected.growthStage}</strong> · Level {selected.level} · Mood {selected.mood}

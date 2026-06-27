@@ -28,7 +28,7 @@ export const CHARACTER_STATUS: Record<TessCharacterState, string> = {
   listening: "I'm listening…",
   userSpeaking: "I hear you…",
   thinking: "Thinking…",
-  tessSpeaking: "Tess is speaking…",
+  tessSpeaking: "Nuvio is speaking…",
   happy: "I'm here with you",
   celebrating: "Nice work!",
   confused: "Hmm, let me think…",

@@ -75,10 +75,10 @@ export default function TessSettingsPage() {
     setSaved(true);
   };
 
-  if (loading || !settings) return <LoadingBlock label="Loading Tess settings…" />;
+  if (loading || !settings) return <LoadingBlock label="Loading Nuvio settings…" />;
 
   const toggles: { key: keyof Settings; label: string }[] = [
-    { key: "tessEnabled", label: "Enable Tess" },
+    { key: "tessEnabled", label: "Enable Nuvio" },
     { key: "voiceEnabled", label: "Enable voice" },
     { key: "speechToTextEnabled", label: "Speech-to-text" },
     { key: "textToSpeechEnabled", label: "Text-to-speech" },
@@ -99,9 +99,9 @@ export default function TessSettingsPage() {
   return (
     <main className="mx-auto max-w-2xl p-6">
       <Link href="/tess" className="mb-4 flex items-center gap-1 text-sm font-bold text-[var(--brand)]">
-        <ArrowLeft className="h-4 w-4" /> Back to Tess
+        <ArrowLeft className="h-4 w-4" /> Back to Nuvio
       </Link>
-      <h1 className="text-2xl font-extrabold">Tess Settings</h1>
+      <h1 className="text-2xl font-extrabold">Nuvio Settings</h1>
 
       <p className="mt-4 rounded-xl bg-[var(--tess-lavender,#e8e4f8)] p-4 text-xs leading-relaxed">{TESS_DISCLAIMER}</p>
       <p className="mt-2 rounded-xl bg-amber-50 p-3 text-xs text-amber-900">{TESS_CRISIS_DISCLAIMER}</p>

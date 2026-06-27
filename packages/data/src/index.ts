@@ -442,3 +442,5 @@ export * from "./production-admin-store";
 export * from "./companion-pets";
 export * from "./bridge-pets";
 export * from "./fan-gear";
+export * from "./nuvio-points";
+export * from "./stress-relief-activities";

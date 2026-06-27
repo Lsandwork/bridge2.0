@@ -44,14 +44,14 @@ export function TessDancePrompt({
         {!isContinuePrompt ? (
           <>
             <h2 id="tess-dance-title" className="tess-dance-modal__title">
-              Want to dance with Tess for a quick reset?
+              Want to dance with Nuvio for a quick reset?
             </h2>
             <p id="tess-dance-desc" className="tess-dance-modal__desc">
               Sometimes a tiny movement break helps. We can dance for 15 seconds, and you can stop anytime.
             </p>
             <div className="tess-dance-modal__actions">
               <button type="button" className="tess-dance-modal__btn tess-dance-modal__btn--primary" onClick={onStart}>
-                Yes, dance with Tess
+                Yes, dance with Nuvio
               </button>
               <button type="button" className="tess-dance-modal__btn" onClick={onDismiss}>
                 Not right now

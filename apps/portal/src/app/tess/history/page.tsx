@@ -42,14 +42,14 @@ export default function TessHistoryPage() {
   return (
     <main className="mx-auto max-w-5xl p-6">
       <Link href="/tess" className="mb-4 flex items-center gap-1 text-sm font-bold text-[var(--brand)]">
-        <ArrowLeft className="h-4 w-4" /> Back to Tess
+        <ArrowLeft className="h-4 w-4" /> Back to Nuvio
       </Link>
       <h1 className="text-2xl font-extrabold">Conversation History</h1>
 
       {loading ? <LoadingBlock label="Loading conversations…" /> : null}
 
       {!loading && conversations.length === 0 ? (
-        <EmptyBlock title="No conversations yet" description="Tess conversations will appear here." />
+        <EmptyBlock title="No conversations yet" description="Nuvio conversations will appear here." />
       ) : null}
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">

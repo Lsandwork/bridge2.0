@@ -55,7 +55,7 @@ export default function MySpaceTessRoutinePage() {
   return (
     <div className="ms-page ms-page-pad-bottom mx-auto max-w-lg px-4 py-6">
       <Link href="/my-space/tess" className="mb-4 flex items-center gap-1 text-sm font-bold text-[var(--ms-accent)]">
-        <ArrowLeft className="h-4 w-4" /> Tess
+        <ArrowLeft className="h-4 w-4" /> Nuvio
       </Link>
 
       <h1 className="text-xl font-extrabold">Routine helper</h1>

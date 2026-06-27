@@ -25,7 +25,7 @@ export default function MySpaceTessHomePage() {
         </div>
         <div>
           <h1 className="text-xl font-extrabold text-[var(--ms-text)]">Hi{activeProfile ? `, ${activeProfile.name}` : ""}!</h1>
-          <p className="text-sm text-[var(--ms-muted)]">Tess is here to help.</p>
+          <p className="text-sm text-[var(--ms-muted)]">Nuvio is here to help.</p>
         </div>
       </div>
 
@@ -35,10 +35,10 @@ export default function MySpaceTessHomePage() {
 
       <div className="mt-6 space-y-3">
         <Link href="/my-space/tess/chat?talk=1" className="tess-btn-large block w-full bg-[var(--ms-accent)] text-white">
-          Talk to Tess
+          Talk to Nuvio
         </Link>
         <Link href="/my-space/tess/chat" className="tess-btn-large block w-full border-2 border-[var(--ms-accent)] text-[var(--ms-accent)]">
-          Type to Tess
+          Type to Nuvio
         </Link>
         <Link
           href="/my-space/tess/chat?prompt=I%20need%20help"

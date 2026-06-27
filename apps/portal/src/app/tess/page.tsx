@@ -86,7 +86,7 @@ export default function TessDashboardPage() {
         <div className="tess-card p-5">
           <p className="text-xs font-bold uppercase text-[var(--text-tertiary)]">Quick start</p>
           <Link href={`/tess/chat?profile=${profileId}`} className="btn-primary mt-3 block text-center text-sm">
-            Open Tess Chat
+            Open Nuvio Chat
           </Link>
         </div>
       </div>

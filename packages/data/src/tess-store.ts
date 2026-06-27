@@ -244,7 +244,7 @@ const store: {
   promptVersions: [
     {
       id: "tp-global-1",
-      name: "Global Tess v1",
+      name: "Global Nuvio v1",
       roleScope: "global",
       systemPrompt: buildTessSystemPrompt("global"),
       safetyPrompt: "Safety-first educational companion.",
@@ -254,7 +254,7 @@ const store: {
     },
     {
       id: "tp-child-1",
-      name: "Child Tess v1",
+      name: "Child Nuvio v1",
       roleScope: "child",
       systemPrompt: buildTessSystemPrompt("child", { simpleLanguage: true }),
       safetyPrompt: "Child-safe responses only.",
@@ -264,7 +264,7 @@ const store: {
     },
     {
       id: "tp-parent-1",
-      name: "Parent Tess v1",
+      name: "Parent Nuvio v1",
       roleScope: "parent",
       systemPrompt: buildTessSystemPrompt("parent"),
       safetyPrompt: "Parent guidance without diagnosis.",
@@ -274,7 +274,7 @@ const store: {
     },
     {
       id: "tp-teen-1",
-      name: "Teen Tess v1",
+      name: "Teen Nuvio v1",
       roleScope: "teen",
       systemPrompt: buildTessSystemPrompt("teen", { teenAdultRespectful: true }),
       safetyPrompt: "Respectful teen mode.",
@@ -284,7 +284,7 @@ const store: {
     },
     {
       id: "tp-caregiver-1",
-      name: "Caregiver Tess v1",
+      name: "Caregiver Nuvio v1",
       roleScope: "caregiver",
       systemPrompt: buildTessSystemPrompt("caregiver"),
       safetyPrompt: "Caregiver scope limits.",
@@ -396,8 +396,8 @@ function seedTessData() {
     parentUserId: DEMO_USER,
     childProfileId: DEMO_CHILD,
     notificationType: "suggestion_pending",
-    title: "New Tess suggestion ready",
-    body: "Review a bedtime routine suggestion from Tess.",
+    title: "New Nuvio suggestion ready",
+    body: "Review a bedtime routine suggestion from Nuvio.",
     isRead: false,
     createdAt: daysAgo(0),
   });
@@ -488,7 +488,7 @@ export function createTessSuggestion(input: Omit<TessAiSuggestion, "id" | "creat
     childProfileId: input.childProfileId,
     conversationId: input.conversationId,
     notificationType: "suggestion_pending",
-    title: "Tess suggestion ready for review",
+    title: "Nuvio suggestion ready for review",
     body: input.title,
     isRead: false,
     createdAt: now(),

@@ -1,5 +1,6 @@
 import { createSupabaseAdminClient } from "./supabase-server";
 import { companionFanGearItems } from "./fan-gear";
+import { pointsForNuvioEvent } from "./nuvio-points";
 
 export type PetGrowthStage = "baby" | "little_buddy" | "teen_companion" | "adult_companion" | "master_companion";
 export type PetMood =
@@ -89,6 +90,16 @@ export type PetEventType =
   | "daily_streak"
   | "returning_after_hard_day"
   | "manual_celebrate"
+  | "task_complete"
+  | "social_story_complete"
+  | "exercise_complete"
+  | "play_with_nuvio"
+  | "talk_to_nuvio"
+  | "stress_relief_reset"
+  | "calm_activity_complete"
+  | "family_challenge_complete"
+  | "mystery_reward"
+  | "daily_reset_wheel"
   | "pet_created";
 
 export type PetState = {
@@ -164,6 +175,8 @@ function petScopeQuery<T extends { eq: (column: string, value: unknown) => T; is
 }
 
 export function xpForPetEvent(eventType: PetEventType): number {
+  const configured = pointsForNuvioEvent(eventType);
+  if (configured > 0) return configured;
   const map: Record<PetEventType, number> = {
     routine_complete: 20,
     goal_complete: 35,
@@ -175,6 +188,16 @@ export function xpForPetEvent(eventType: PetEventType): number {
     daily_streak: 25,
     returning_after_hard_day: 10,
     manual_celebrate: 5,
+    task_complete: 15,
+    social_story_complete: 15,
+    exercise_complete: 15,
+    play_with_nuvio: 10,
+    talk_to_nuvio: 10,
+    stress_relief_reset: 20,
+    calm_activity_complete: 15,
+    family_challenge_complete: 25,
+    mystery_reward: 30,
+    daily_reset_wheel: 20,
     pet_created: 0,
   };
   return map[eventType] ?? 0;
@@ -419,7 +442,7 @@ export async function awardCompanionPetXp(input: {
   const xpAwarded = xpForPetEvent(input.eventType);
   const key = eventSpamKey(input.userId, input.eventType, input.childProfileId);
   const last = localEvents.get(key) ?? 0;
-  if (Date.now() - last < 45_000 && input.eventType !== "manual_celebrate") {
+  if (Date.now() - last < 45_000 && input.eventType !== "manual_celebrate" && input.eventType !== "stress_relief_reset") {
     return { ok: false, reason: "rate_limited", xpAwarded: 0 };
   }
   localEvents.set(key, Date.now());

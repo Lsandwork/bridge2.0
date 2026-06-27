@@ -40,7 +40,7 @@ export default function AdminSettingsPage() {
         <p className="font-medium text-slate-900 dark:text-white">Infrastructure</p>
         <ul className="mt-2 list-disc space-y-1 pl-5">
           <li>Auth: Supabase Auth with role-based access</li>
-          <li>AI: Nuvio / Tess routes (configure in Vercel env)</li>
+          <li>AI: Nuvio routes (configure in Vercel env)</li>
           <li>Payments: Stripe, PayPal, Square via env vars</li>
           <li>Email: SMTP or Resend for notifications</li>
         </ul>

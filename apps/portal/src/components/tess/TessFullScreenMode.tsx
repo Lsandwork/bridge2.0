@@ -71,7 +71,7 @@ export function TessFullScreenMode({
           <span className="tess-fullscreen__avatar">
             <TessAnimatedCharacter state={characterState} size="sm" showWaves={false} enableIdleWave={false} />
           </span>
-          <span className="tess-fullscreen__name">Tess</span>
+          <span className="tess-fullscreen__name">Nuvio</span>
         </div>
         <div className="tess-fullscreen__header-controls">
           <TessViewModeToggle mode={viewMode} onChange={onViewModeChange} compact />
@@ -86,7 +86,7 @@ export function TessFullScreenMode({
             type="button"
             className="tess-fullscreen__companion"
             onClick={bumpActivity}
-            aria-label="Tess AI support companion"
+            aria-label="Nuvio support companion"
           >
             <TessAnimatedCharacter
               state={characterState}

@@ -75,10 +75,10 @@ export function LessonDetailClient({ course, lesson, lessonIndex }: Props) {
           <LessonPlanSections lesson={lesson} />
 
           <div className="mt-8 border-t border-stone-200 pt-6">
-            <p className="text-xs font-bold uppercase tracking-wide text-stone-500">Ask Tess about this article</p>
+            <p className="text-xs font-bold uppercase tracking-wide text-stone-500">Ask Nuvio about this article</p>
             <div className="mt-3 flex flex-wrap gap-2">
               {[
-                { label: "Ask Tess", prompt: `Explain this article in plain language: ${lesson.title}` },
+                { label: "Ask Nuvio", prompt: `Explain this article in plain language: ${lesson.title}` },
                 { label: "Simplify", prompt: `Simplify this article for busy parents: ${lesson.title}` },
                 { label: "Make exercise", prompt: `Turn this article into a practice exercise: ${lesson.title}` },
                 { label: "Make routine", prompt: `Turn this article into a daily routine: ${lesson.title}` },

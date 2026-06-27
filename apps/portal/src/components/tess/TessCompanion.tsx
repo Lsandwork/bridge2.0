@@ -22,7 +22,7 @@ export function TessCompanion({ state, motionPreset = "chat" }: Props) {
       <div
         className={`tess-companion tess-companion--${state} tess-companion--motion-${motionPreset} ${reducedMotion ? "tess-companion--reduced" : ""}`}
         style={reducedMotion ? undefined : getTessMotionCssVars(motionPreset)}
-        aria-label="Tess AI support companion"
+        aria-label="Nuvio support companion"
         role="img"
         data-tess-state={state}
         data-motion-preset={motionPreset}

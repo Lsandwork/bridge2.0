@@ -162,7 +162,7 @@ const clients: ClientProfile[] = [
       sensoryTriggers: ["Loud cafeterias", "Fluorescent flicker", "Unexpected schedule changes"],
       sensorySupports: ["Noise-canceling headphones", "Weighted lap pad", "Visual timer"],
       preferredActivities: ["Drawing", "Star Catcher game", "Outdoor walks"],
-      calmingStrategies: ["Deep pressure", "Quiet corner", "Breathing with Tess"],
+      calmingStrategies: ["Deep pressure", "Quiet corner", "Breathing with Nuvio"],
       socialPreferences: ["Small groups", "One friend at a time", "Advance notice for new people"],
       emergencyNotes: "May shut down before meltdown. Give space; do not force eye contact.",
       strengths: ["Visual memory", "Pattern recognition", "Kindness to younger kids"],

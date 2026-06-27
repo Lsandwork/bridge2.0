@@ -37,7 +37,7 @@ export default function ReportsPage() {
         {
           id: data.reportId,
           childProfileId: profileId,
-          title: `Tess AI Weekly Summary`,
+          title: `Nuvio Weekly Summary`,
           body: data.text,
           periodStart: "",
           periodEnd: "",

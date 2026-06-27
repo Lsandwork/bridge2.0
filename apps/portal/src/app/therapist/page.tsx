@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Activity, AlertTriangle, CalendarDays, ClipboardList, FileText, MessageSquare, Search, ShieldAlert, Sparkles, Users } from "lucide-react";
 import type { TherapistDashboardSnapshot } from "@family-support/data";
 import { LoadingBlock, ErrorBlock } from "@/components/StateBlock";
 import { useLanguage } from "@/components/LanguageProvider";
@@ -17,6 +18,8 @@ export default function TherapistDashboardPage() {
   const { t } = useLanguage();
   const [data, setData] = useState<TherapistDashboardSnapshot | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [query, setQuery] = useState("");
+  const [priorityFilter, setPriorityFilter] = useState("all");
 
   useEffect(() => {
     fetch("/api/therapist/dashboard")
@@ -34,12 +37,12 @@ export default function TherapistDashboardPage() {
   const { overview, actionCenter, clients, goals, recentBehaviors, patternInsights, messages, insurance, insuranceReadiness, trends } = data;
 
   const stats = [
-    { labelKey: "therapist.dashboard.stats.activeClients", value: overview.activeClients },
-    { labelKey: "therapist.dashboard.stats.sessionsThisWeek", value: overview.sessionsThisWeek },
-    { labelKey: "therapist.dashboard.stats.reauthsDue", value: overview.reauthorizationsDue },
-    { labelKey: "therapist.dashboard.stats.highPriority", value: overview.highPriorityAlerts },
-    { labelKey: "therapist.dashboard.stats.unreadMessages", value: overview.unreadParentMessages },
-    { labelKey: "therapist.dashboard.stats.goalsCompleted", value: overview.goalsCompletedThisMonth },
+    { label: "Today’s Sessions", value: overview.sessionsThisWeek, icon: CalendarDays, href: "/therapist/clients" },
+    { label: "Clients Assigned", value: overview.activeClients, icon: Users, href: "/therapist/clients" },
+    { label: "Pending Reviews", value: overview.reauthorizationsDue, icon: ClipboardList, href: "/therapist/documentation" },
+    { label: "Safety Alerts", value: overview.highPriorityAlerts, icon: ShieldAlert, href: "/safety-alerts" },
+    { label: "Messages", value: overview.unreadParentMessages, icon: MessageSquare, href: "/therapist/messages" },
+    { label: "Reports Due", value: overview.goalsCompletedThisMonth, icon: FileText, href: "/reports" },
   ] as const;
 
   const trendItems = [
@@ -53,25 +56,123 @@ export default function TherapistDashboardPage() {
     },
   ] as const;
 
+  const filteredClients = clients.filter((client) => {
+    const q = query.trim().toLowerCase();
+    const hasOpenAlert = actionCenter.some((action) => action.clientName === client.demographics.name);
+    const matchesQuery =
+      !q ||
+      client.demographics.name.toLowerCase().includes(q) ||
+      client.demographics.diagnosis.join(" ").toLowerCase().includes(q);
+    const matchesPriority =
+      priorityFilter === "all" ||
+      (priorityFilter === "alert" && hasOpenAlert) ||
+      (priorityFilter === "progress" && client.goalsProgress < 60);
+    return matchesQuery && matchesPriority;
+  });
+
+  const schedule = clients.slice(0, 4).map((client, index) => ({
+    id: `${client.id}-session`,
+    time: `${9 + index}:00 ${index < 3 ? "AM" : "PM"}`,
+    name: client.demographics.name,
+    detail: index % 2 === 0 ? "Caregiver note requested" : "Goal review + routine plan",
+  }));
+
   return (
-    <div className="mx-auto max-w-7xl space-y-8">
-      <section>
-        <h1 className="text-2xl font-extrabold">{t("therapist.dashboard.title")}</h1>
-        <p className="mt-1 text-sm text-[var(--th-muted)]">{t("therapist.dashboard.subtitle")}</p>
+    <div className="therapist-workspace mx-auto max-w-7xl space-y-8">
+      <section className="th-hero">
+        <div>
+          <p className="text-xs font-black uppercase tracking-[0.28em] text-teal-300">Care Team Workspace</p>
+          <h1 className="mt-3 text-3xl font-black text-white sm:text-5xl">Today’s clinical support command center</h1>
+          <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300">
+            Sessions, alerts, notes, reports, client progress, and Nuvio-generated reviews stay organized for human care-team approval.
+          </p>
+        </div>
+        <div className="th-hero-grid">
+          <span><strong>{overview.sessionsThisWeek}</strong> sessions</span>
+          <span><strong>{overview.highPriorityAlerts}</strong> urgent alerts</span>
+          <span><strong>{overview.reauthorizationsDue}</strong> pending reports</span>
+          <span><strong>{overview.unreadParentMessages}</strong> unread messages</span>
+        </div>
       </section>
 
       <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
         {stats.map((s) => (
-          <article key={s.labelKey} className="th-card p-4">
-            <p className="th-stat-label">{t(s.labelKey)}</p>
+          <Link key={s.label} href={s.href} className="th-card th-kpi-card p-4">
+            <s.icon className="h-5 w-5 text-teal-300" />
             <p className="th-stat-value">{s.value}</p>
-          </article>
+            <p className="th-stat-label">{s.label}</p>
+          </Link>
         ))}
+      </section>
+
+      <section className="grid gap-6 xl:grid-cols-[1.1fr_.9fr]">
+        <article className="th-card p-5">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-teal-300">Client Queue</p>
+              <h2 className="font-extrabold">Assigned clients and open plans</h2>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <label className="th-search">
+                <Search className="h-4 w-4" />
+                <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search clients" />
+              </label>
+              <select className="th-filter" value={priorityFilter} onChange={(event) => setPriorityFilter(event.target.value)}>
+                <option value="all">All</option>
+                <option value="alert">Alerts</option>
+                <option value="progress">Needs progress</option>
+              </select>
+            </div>
+          </div>
+          <div className="th-client-scroll mt-4 overflow-hidden rounded-2xl border border-white/10">
+            <div className="th-client-table">
+              <div className="th-client-head bg-white/5 px-4 py-3 text-[10px] font-black uppercase tracking-wider text-slate-400">
+                <span>Client</span><span>Pathway</span><span>Mood</span><span>Goal progress</span><span>Plan</span>
+              </div>
+              {filteredClients.map((client) => (
+                <div key={client.id} className="th-client-row border-t border-white/10 px-4 py-3 text-sm">
+                  <div>
+                    <p className="font-black text-white">{client.demographics.name}</p>
+                    <p className="text-xs text-slate-500">Last check-in: recent</p>
+                  </div>
+                  <p className="text-slate-300">{client.demographics.diagnosis[0] ?? "Support"}</p>
+                  <p className="font-bold text-teal-300">Steady</p>
+                  <div>
+                    <div className="th-bar-track"><div className="th-bar-fill" style={{ width: `${client.goalsProgress}%` }} /></div>
+                    <p className="mt-1 text-xs text-slate-400">{client.goalsProgress}%</p>
+                  </div>
+                  <Link href={`/therapist/clients/${client.id}`} className="rounded-full bg-teal-400 px-3 py-1.5 text-center text-xs font-black text-slate-950">Open</Link>
+                </div>
+              ))}
+            </div>
+          </div>
+        </article>
+
+        <article className="th-card p-5">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-amber-300">Today’s Schedule</p>
+          <h2 className="mt-1 font-extrabold">Sessions, notes, and requested reviews</h2>
+          <ul className="mt-4 space-y-2">
+            {schedule.map((item) => (
+              <li key={item.id} className="rounded-2xl border border-white/10 bg-black/20 p-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="font-black text-white">{item.name}</p>
+                    <p className="text-xs text-slate-400">{item.detail}</p>
+                  </div>
+                  <span className="text-xs font-black text-teal-300">{item.time}</span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </article>
       </section>
 
       <section className="grid gap-6 lg:grid-cols-2">
         <article className="th-card p-5">
-          <h2 className="font-extrabold">{t("therapist.dashboard.actionCenter")}</h2>
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="h-5 w-5 text-amber-300" />
+            <h2 className="font-extrabold">Action Center</h2>
+          </div>
           <ul className="mt-4 space-y-2">
             {actionCenter.map((a) => (
               <li key={a.id} className={`rounded-lg p-3 ${alertClass(a.level)}`}>
@@ -84,7 +185,11 @@ export default function TherapistDashboardPage() {
         </article>
 
         <article className="th-card p-5">
-          <h2 className="font-extrabold">{t("therapist.dashboard.insuranceReadiness")}</h2>
+          <div className="flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-teal-300" />
+            <h2 className="font-extrabold">Nuvio Review Center</h2>
+          </div>
+          <p className="mt-2 text-sm text-slate-400">Human review is required before recommendations, summaries, or safety-triggered reports are used in care decisions.</p>
           <div className="mt-4 space-y-3">
             <div>
               <div className="flex justify-between text-xs font-semibold">
@@ -111,15 +216,18 @@ export default function TherapistDashboardPage() {
               })}
             </p>
           </div>
-          <Link href="/therapist/insurance" className="mt-4 inline-block text-sm font-bold text-teal-400">
-            {t("therapist.dashboard.openInsurance")}
+          <Link href="/therapist/documentation" className="mt-4 inline-block text-sm font-bold text-teal-400">
+            Open review queue
           </Link>
         </article>
       </section>
 
       <section className="th-card p-5">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 className="font-extrabold">{t("therapist.dashboard.patterns")}</h2>
+          <div className="flex items-center gap-2">
+            <Activity className="h-5 w-5 text-teal-300" />
+            <h2 className="font-extrabold">Progress Trends</h2>
+          </div>
           <Link href="/therapist/behavior" className="text-sm font-bold text-teal-400">
             {t("therapist.dashboard.trendDashboard")}
           </Link>
@@ -198,27 +306,6 @@ export default function TherapistDashboardPage() {
             ))}
           </ul>
         </article>
-      </section>
-
-      <section className="th-card p-5">
-        <div className="flex items-center justify-between">
-          <h2 className="font-extrabold">{t("therapist.dashboard.clientsPassports")}</h2>
-          <Link href="/therapist/clients" className="text-sm font-bold text-teal-400">
-            {t("therapist.dashboard.manageClients")}
-          </Link>
-        </div>
-        <div className="mt-4 grid gap-4 lg:grid-cols-2">
-          {clients.map((c) => (
-            <Link key={c.id} href={`/therapist/clients/${c.id}`} className="rounded-xl border border-white/10 p-4 transition hover:border-teal-500/40">
-              <p className="font-extrabold">{c.demographics.name}</p>
-              <p className="text-xs text-slate-500">{c.demographics.diagnosis.join(" · ")}</p>
-              <p className="mt-2 text-xs text-slate-400 line-clamp-2">{c.passport.communicationStyle}</p>
-              <p className="mt-2 text-sm font-bold text-teal-400">
-                {t("therapist.dashboard.goalProgress", { pct: String(c.goalsProgress) })}
-              </p>
-            </Link>
-          ))}
-        </div>
       </section>
 
       <section className="grid gap-6 lg:grid-cols-2">
