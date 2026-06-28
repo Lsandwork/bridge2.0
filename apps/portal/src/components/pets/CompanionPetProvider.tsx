@@ -50,7 +50,7 @@ type ContextValue = {
 
 const CompanionPetContext = createContext<ContextValue | null>(null);
 
-const hiddenPrefixes = ["/login", "/onboarding", "/privacy", "/terms", "/safety", "/data-policy", "/change-password"];
+const hiddenPrefixes = ["/login", "/onboarding", "/privacy", "/terms", "/safety", "/data-policy", "/change-password", "/tess/chat", "/my-space/tess/chat"];
 
 export function CompanionPetProvider({ children }: { children: ReactNode }) {
   const { user, loading: authLoading } = useAuth();

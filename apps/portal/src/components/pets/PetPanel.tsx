@@ -41,7 +41,7 @@ export function PetPanel({ pet, onClose, onHide, onAwardXp, onEquip, onUpdate, o
     const activity = pickStressReliefActivity(Date.now() + pet.xp);
     setResetActivity(activity);
     await onUpdate({ mood: "overwhelmed_support" });
-    await onAwardXp("stress_relief_reset", {
+    await onAwardXp("stressed_out_reset", {
       source: activity.source,
       activityId: activity.id,
       activityTitle: activity.title,

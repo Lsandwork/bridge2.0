@@ -2,10 +2,7 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
-import { PARENT_QUICK_PROMPTS } from "@family-support/core";
-import { TessChat } from "@/components/tess/TessChat";
+import { NuvioPetCommandCenter } from "@/components/pets/NuvioPetCommandCenter";
 import { LoadingBlock } from "@/components/StateBlock";
 
 function TessChatPageInner() {
@@ -27,41 +24,19 @@ function TessChatPageInner() {
     if (!initialPrompt || startTalk) return;
     const timer = setTimeout(() => {
       const input = document.querySelector<HTMLInputElement>(".tess-chat input");
-      if (input) {
-        input.value = initialPrompt;
-        input.form?.requestSubmit();
-      }
+      if (input) input.focus();
     }, 500);
     return () => clearTimeout(timer);
   }, [initialPrompt, startTalk]);
 
   return (
-    <main className="mx-auto flex h-[calc(100vh-5rem)] max-w-4xl flex-col p-4">
-      <div className="mb-3 flex items-center justify-between gap-3">
-        <Link href="/tess" className="flex items-center gap-1 text-sm font-bold text-[var(--brand)]">
-          <ArrowLeft className="h-4 w-4" /> Nuvio
-        </Link>
-        <select
-          className="rounded-xl border px-3 py-2 text-sm"
-          value={profileId}
-          onChange={(e) => setProfileId(e.target.value)}
-        >
-          {profiles.map((p) => (
-            <option key={p.id} value={p.id}>{p.name}</option>
-          ))}
-        </select>
-      </div>
-      <div className="tess-card flex flex-1 flex-col overflow-hidden">
-        <TessChat
-          childProfileId={profileId}
-          quickActions={PARENT_QUICK_PROMPTS}
-          header="Nuvio — Parent Assistant"
-          mode="parent_assistant"
-          defaultInputMode={startTalk ? "talk" : "text"}
-          placeholder="Ask Nuvio about routines, social stories, exercises, or progress…"
-        />
-      </div>
-    </main>
+    <NuvioPetCommandCenter
+      profileId={profileId}
+      profiles={profiles}
+      onProfileChange={setProfileId}
+      initialPrompt={initialPrompt}
+      startTalk={startTalk}
+    />
   );
 }
 

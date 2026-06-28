@@ -2,11 +2,12 @@
 
 import { MessageSquare, Mic, MicOff, Send } from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
+import { useCompanionPet } from "@/components/pets/CompanionPetProvider";
+import { PetSprite } from "@/components/pets/PetSprite";
 import { TessCaption } from "./TessCaption";
 import { TessDanceHud } from "./TessDanceHud";
 import { TessDancePrompt } from "./TessDancePrompt";
 import { TessSafetySupport } from "./TessSafetySupport";
-import { TessAnimatedCharacter } from "./TessAnimatedCharacter";
 import { mapTessStateToCharacter } from "./tessCharacterState";
 import { TessModeToggle } from "./TessModeToggle";
 import { TessQuickHelpSheet } from "./TessQuickHelpSheet";
@@ -35,6 +36,7 @@ export function TessFullScreenMode({
   placeholder,
 }: Props) {
   const { t } = useLanguage();
+  const { state, awardXp } = useCompanionPet();
   const {
     tessState,
     inputMode,
@@ -69,7 +71,7 @@ export function TessFullScreenMode({
       <header className="tess-fullscreen__header">
         <div className="tess-fullscreen__brand">
           <span className="tess-fullscreen__avatar">
-            <TessAnimatedCharacter state={characterState} size="sm" showWaves={false} enableIdleWave={false} />
+            <PetSprite species={state?.pet?.species ?? "spark"} mood={characterState} size="sm" motionLevel={state?.pet?.settings.motionLevel} />
           </span>
           <span className="tess-fullscreen__name">Nuvio</span>
         </div>
@@ -88,14 +90,7 @@ export function TessFullScreenMode({
             onClick={bumpActivity}
             aria-label="Nuvio support companion"
           >
-            <TessAnimatedCharacter
-              state={characterState}
-              size="fullscreen"
-              showWaves
-              enableIdleWave={characterState === "idle" && !dance.isDancing}
-              audioLevel={audioLevel}
-              onInteract={bumpActivity}
-            />
+            <PetSprite species={state?.pet?.species ?? "spark"} mood={characterState} size="lg" motionLevel={state?.pet?.settings.motionLevel} />
           </button>
         </div>
 
@@ -122,6 +117,7 @@ export function TessFullScreenMode({
           className="tess-fullscreen__type-drawer"
           onSubmit={(e) => {
             e.preventDefault();
+            if (input.trim()) void awardXp("send_chat_message", { source: "nuvio_fullscreen" });
             void send(input);
           }}
         >
@@ -169,6 +165,7 @@ export function TessFullScreenMode({
             className={`tess-fullscreen__mic ${isRecording ? "tess-fullscreen__mic--active" : ""}`}
             onClick={() => {
               if (inputMode === "text") switchInputMode("talk");
+              if (!isRecording) void awardXp("voice_chat", { source: "nuvio_fullscreen" });
               handleMicToggle();
             }}
             disabled={loading}

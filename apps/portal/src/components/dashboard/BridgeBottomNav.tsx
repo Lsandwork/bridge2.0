@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useLanguage } from "@/components/LanguageProvider";
-import { TessIcon } from "@/components/tess/TessIcon";
+import { PetSprite } from "@/components/pets/PetSprite";
+import { useCompanionPet } from "@/components/pets/CompanionPetProvider";
 import { navItems } from "./dashboardMockData";
 
 function isNavActive(pathname: string, href: string) {
@@ -13,6 +14,7 @@ function isNavActive(pathname: string, href: string) {
 export function BridgeBottomNav() {
   const pathname = usePathname();
   const { t } = useLanguage();
+  const { state } = useCompanionPet();
 
   return (
     <nav className="bridge-bottom-nav" aria-label="My Space navigation">
@@ -27,7 +29,11 @@ export function BridgeBottomNav() {
           >
             <span className="bridge-bottom-nav__icon" aria-hidden>
               {item.useTessIcon ? (
-                <TessIcon size={22} decorative className="bridge-bottom-nav__tess-icon" />
+                <span className="inline-grid h-6 w-6 place-items-center overflow-visible">
+                  <span className="scale-[0.34]">
+                    <PetSprite species={state?.pet?.species ?? "spark"} mood={state?.pet?.mood ?? "idle"} size="sm" />
+                  </span>
+                </span>
               ) : (
                 item.icon
               )}

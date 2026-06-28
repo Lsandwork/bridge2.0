@@ -1,11 +1,18 @@
-export type PetGrowthStage = "baby" | "little_buddy" | "teen_companion" | "adult_companion" | "master_companion";
+export type PetGrowthStage =
+  | "baby"
+  | "little_buddy"
+  | "teen_companion"
+  | "adult_companion"
+  | "master_companion"
+  | "legendary";
 
 export const growthThresholds = [
   { stage: "baby" as const, min: 0, label: "Baby" },
-  { stage: "little_buddy" as const, min: 90, label: "Little Buddy" },
-  { stage: "teen_companion" as const, min: 300, label: "Teen Companion" },
-  { stage: "adult_companion" as const, min: 650, label: "Adult Companion" },
-  { stage: "master_companion" as const, min: 1200, label: "Master Companion" },
+  { stage: "little_buddy" as const, min: 90, label: "Young" },
+  { stage: "teen_companion" as const, min: 300, label: "Teen" },
+  { stage: "adult_companion" as const, min: 650, label: "Adult" },
+  { stage: "master_companion" as const, min: 1200, label: "Champion" },
+  { stage: "legendary" as const, min: 2200, label: "Legendary" },
 ];
 
 export function stageLabel(stage: string) {
@@ -13,7 +20,7 @@ export function stageLabel(stage: string) {
 }
 
 export function nextGrowthTarget(xp: number) {
-  return growthThresholds.find((item) => item.min > xp)?.min ?? 1500;
+  return growthThresholds.find((item) => item.min > xp)?.min ?? xp + 500;
 }
 
 export function currentGrowthFloor(xp: number) {

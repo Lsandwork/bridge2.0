@@ -11,10 +11,11 @@ import {
 } from "@family-support/core";
 import { useAuth } from "@/components/AuthProvider";
 import { useLanguage } from "@/components/LanguageProvider";
+import { PetSprite } from "@/components/pets/PetSprite";
+import { useCompanionPet } from "@/components/pets/CompanionPetProvider";
 import { isAdminRole } from "@family-support/data";
 import { useTessWidgetProfile } from "@/hooks/useTessWidgetProfile";
 import { TessChat } from "@/components/tess/TessChat";
-import { TessIcon } from "@/components/tess/TessIcon";
 import "./tess-bubble.css";
 
 const PUBLIC_ROUTES = new Set(["/", "/login", "/onboarding", "/onboarding/account"]);
@@ -51,6 +52,7 @@ export function TessAssistantBubble() {
   const pathname = usePathname();
   const { user, loading: authLoading } = useAuth();
   const { t } = useLanguage();
+  const { state: petState } = useCompanionPet();
   const { profiles, profileId, activeProfile, setProfileId, loading: profileLoading } =
     useTessWidgetProfile();
   const [open, setOpen] = useState(false);
@@ -192,7 +194,9 @@ export function TessAssistantBubble() {
         {open ? (
           <X className="h-6 w-6" aria-hidden />
         ) : (
-          <TessIcon size={30} decorative className="tess-bubble-fab__icon" />
+          <span className="scale-[0.52]">
+            <PetSprite species={petState?.pet?.species ?? "spark"} mood={petState?.pet?.mood ?? "idle"} size="sm" />
+          </span>
         )}
       </button>
     </div>

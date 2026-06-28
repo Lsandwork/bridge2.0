@@ -6,7 +6,8 @@ import { MessageCircle, Settings, History, ClipboardList, Sparkles } from "lucid
 import { PARENT_QUICK_PROMPTS } from "@family-support/core";
 import { LoadingBlock } from "@/components/StateBlock";
 import { useLanguage } from "@/components/LanguageProvider";
-import { TessIcon } from "@/components/tess/TessIcon";
+import { PetSprite } from "@/components/pets/PetSprite";
+import { useCompanionPet } from "@/components/pets/CompanionPetProvider";
 
 type Stats = {
   pendingSuggestions: number;
@@ -16,6 +17,7 @@ type Stats = {
 
 export default function TessDashboardPage() {
   const { t } = useLanguage();
+  const { state: petState } = useCompanionPet();
   const [profileId, setProfileId] = useState("");
   const [profiles, setProfiles] = useState<{ id: string; name: string }[]>([]);
   const [stats, setStats] = useState<Stats | null>(null);
@@ -46,7 +48,7 @@ export default function TessDashboardPage() {
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="flex items-center gap-4">
           <div className="tess-avatar">
-            <TessIcon size={44} decorative />
+            <PetSprite species={petState?.pet?.species ?? "spark"} mood={petState?.pet?.mood ?? "idle"} size="sm" />
           </div>
           <div>
             <h1 className="text-2xl font-extrabold text-[var(--text-primary)]">{t("tess.title")}</h1>

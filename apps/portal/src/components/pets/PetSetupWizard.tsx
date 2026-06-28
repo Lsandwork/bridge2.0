@@ -2,7 +2,8 @@
 
 import { useMemo, useState } from "react";
 import { Palette, Sparkles } from "lucide-react";
-import { starterPets, petPersonalities } from "@/lib/pets/petConfig";
+import { nuvioPetLineup } from "@/lib/pets/nuvioPetCatalog";
+import { petPersonalities } from "@/lib/pets/petConfig";
 import { PetSprite } from "./PetSprite";
 
 const supportStyles = ["gentle prompts", "quiet presence", "coach-like steps", "celebration first"];
@@ -20,8 +21,8 @@ export function PetSetupWizard({
   onSkip: () => void;
   compact?: boolean;
 }) {
-  const [name, setName] = useState("Nuvio Buddy");
-  const [species, setSpecies] = useState(starterPets[0].id);
+  const [name, setName] = useState("Spark");
+  const [species, setSpecies] = useState(nuvioPetLineup[0]?.slug ?? "spark");
   const [personality, setPersonality] = useState("gentle");
   const [customMode, setCustomMode] = useState(false);
   const [supportStyle, setSupportStyle] = useState(supportStyles[0]);
@@ -29,14 +30,14 @@ export function PetSetupWizard({
   const [colorTheme, setColorTheme] = useState(colorThemes[0]);
   const [bodyType, setBodyType] = useState(bodyTypes[0]);
   const [busy, setBusy] = useState(false);
-  const selected = useMemo(() => starterPets.find((pet) => pet.id === species) ?? starterPets[0], [species]);
+  const selected = useMemo(() => nuvioPetLineup.find((pet) => pet.slug === species) ?? nuvioPetLineup[0], [species]);
 
   async function createSurprise() {
-    const randomPet = starterPets[Math.floor(Math.random() * starterPets.length)] ?? starterPets[0];
+    const randomPet = nuvioPetLineup[Math.floor(Math.random() * nuvioPetLineup.length)] ?? nuvioPetLineup[0];
     const randomPersonality = petPersonalities[Math.floor(Math.random() * petPersonalities.length)] ?? "gentle";
-    setSpecies(randomPet.id);
+    setSpecies(randomPet.slug);
     setPersonality(randomPersonality);
-    await create({ name: name || randomPet.name, species: randomPet.id, personality: randomPersonality });
+    await create({ name: name || randomPet.name, species: randomPet.slug, personality: randomPersonality });
   }
 
   async function create(input: PetSetupInput = {
@@ -62,7 +63,7 @@ export function PetSetupWizard({
   return (
     <div className={`pet-setup ${compact ? "pet-setup--compact" : ""}`} role="dialog" aria-label="Choose your Nuvio companion">
       <div className="pet-setup__hero">
-        <PetSprite species={selected.id} mood="happy" size="md" />
+        <PetSprite species={selected?.slug} mood="happy" size="md" />
         <div>
           <p className="pet-kicker">Nuvio Companion Pets</p>
           <h2>Choose your companion</h2>
@@ -76,14 +77,14 @@ export function PetSetupWizard({
       </label>
 
       <div className="pet-setup__grid" aria-label="Pet options">
-        {starterPets.map((pet) => (
+        {nuvioPetLineup.map((pet) => (
           <button
-            key={pet.id}
+            key={pet.slug}
             type="button"
-            className={pet.id === species ? "is-selected" : ""}
-            onClick={() => setSpecies(pet.id)}
+            className={pet.slug === species ? "is-selected" : ""}
+            onClick={() => setSpecies(pet.slug)}
           >
-            <span>{pet.emoji}</span>
+            <PetSprite species={pet.slug} mood="idle" size="sm" />
             {pet.name}
           </button>
         ))}

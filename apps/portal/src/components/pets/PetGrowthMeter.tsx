@@ -16,8 +16,8 @@ export function PetGrowthMeter({ xp, stage, level }: { xp: number; stage: string
         <span className="pet-growth__bar" style={{ width: `${percent}%` }} />
       </div>
       <div className="pet-growth__row pet-growth__row--muted">
-        <span>{xp} XP</span>
-        <span>{target >= 1500 ? "Master path" : `${Math.max(0, target - xp)} XP to next stage`}</span>
+        <span>{xp} lifetime points</span>
+        <span>{Math.max(0, target - xp)} points to next level path</span>
       </div>
     </div>
   );

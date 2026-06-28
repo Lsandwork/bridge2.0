@@ -2,7 +2,8 @@
 
 import { Volume2 } from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
-import { TessAnimatedCharacter } from "./TessAnimatedCharacter";
+import { useCompanionPet } from "@/components/pets/CompanionPetProvider";
+import { PetSprite } from "@/components/pets/PetSprite";
 import { mapTessStateToCharacter } from "./tessCharacterState";
 import { TessDanceHud } from "./TessDanceHud";
 import { TessDancePrompt } from "./TessDancePrompt";
@@ -39,6 +40,7 @@ export function TessChatMode({
   placeholder,
 }: Props) {
   const { t } = useLanguage();
+  const { state, awardXp } = useCompanionPet();
   const {
     messages,
     input,
@@ -73,7 +75,7 @@ export function TessChatMode({
         <header className="tess-chat-header">
           <div className="tess-chat-header__profile">
             <div className="tess-chat-header__avatar">
-              <TessAnimatedCharacter state={characterState} size="sm" showWaves={false} audioLevel={audioLevel} />
+              <PetSprite species={state?.pet?.species ?? "spark"} mood={characterState} size="sm" motionLevel={state?.pet?.settings.motionLevel} />
             </div>
             <div className="min-w-0">
               <p className="tess-chat-header__name">
@@ -98,7 +100,7 @@ export function TessChatMode({
           <div key={m.id} className={`tess-msg-row ${m.role === "user" ? "tess-msg-row--user" : ""}`}>
             {m.role === "assistant" ? (
               <span className="tess-msg-avatar">
-                <TessAnimatedCharacter state="idle" size="sm" showWaves={false} enableIdleWave={false} />
+                <PetSprite species={state?.pet?.species ?? "spark"} mood="idle" size="sm" motionLevel={state?.pet?.settings.motionLevel} />
               </span>
             ) : null}
             <div className={m.role === "user" ? "max-w-[88%]" : "max-w-full flex-1"}>
@@ -172,8 +174,14 @@ export function TessChatMode({
           setInput(v);
           if (v.trim()) bumpActivity();
         }}
-        onSend={() => void send(input)}
-        onMicToggle={handleMicToggle}
+        onSend={() => {
+          if (input.trim()) void awardXp("send_chat_message", { source: "nuvio_chat" });
+          void send(input);
+        }}
+        onMicToggle={() => {
+          if (!isRecording) void awardXp("voice_chat", { source: "nuvio_chat" });
+          handleMicToggle();
+        }}
         placeholder={placeholder}
       />
 

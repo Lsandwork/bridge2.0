@@ -38,6 +38,22 @@ const eventTypes = new Set<PetEventType>([
   "mystery_reward",
   "daily_reset_wheel",
   "pet_created",
+  "open_nuvio_pet",
+  "send_chat_message",
+  "voice_chat",
+  "ask_advice",
+  "complete_nuvio_suggestion",
+  "stressed_out_reset",
+  "play_interaction",
+  "breathing_exercise",
+  "journal_prompt",
+  "gratitude_prompt",
+  "confidence_challenge",
+  "redeem_reward",
+  "routine_completed",
+  "task_completed",
+  "goal_completed",
+  "care_team_approved_milestone",
 ]);
 
 async function canUseProfile(session: { id: string; role: string }, profileId?: string | null) {
@@ -82,12 +98,12 @@ export async function POST(request: Request) {
 
   switch (action) {
     case "create": {
-      const species = String(body.species ?? "star_pup");
+      const species = String(body.species ?? "spark");
       const pet = await createCompanionPet({
         userId: session.id,
         childProfileId: profileId,
-        name: String(body.name ?? "Nuvio Buddy").slice(0, 40),
-        species: starterPetSpecies.includes(species as never) ? species : "star_pup",
+        name: String(body.name ?? "Spark").slice(0, 40),
+        species: starterPetSpecies.includes(species as never) ? species : "spark",
         personality: String(body.personality ?? "gentle").slice(0, 40),
         settings: body.settings ?? {},
       });

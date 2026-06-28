@@ -5,6 +5,8 @@ import { TessIcon } from "./TessIcon";
 import { TessCharacterFace } from "./TessCharacterFace";
 import { TessVoiceWaves } from "./TessVoiceWaves";
 import type { TessCharacterIntensity, TessCharacterSize, TessCharacterState } from "./tessCharacterState";
+import { PetSprite } from "@/components/pets/PetSprite";
+import { useCompanionPet } from "@/components/pets/CompanionPetProvider";
 import { useBlink } from "@/hooks/useBlink";
 import { useIdleWave } from "@/hooks/useIdleWave";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
@@ -211,6 +213,26 @@ function TessAnimatedCharacterInner({
 /** State-aware adaptive companion — animated Tess character with personalized interaction cues. */
 export function TessAnimatedCharacter(props: TessAnimatedCharacterProps) {
   const size = props.size ?? "md";
+  const { state } = useCompanionPet();
+  const petSize = size === "fullscreen" || size === "xl" ? "lg" : size;
+  if (state?.pet) {
+    return (
+      <span
+        className={`inline-grid place-items-center ${props.className ?? ""}`.trim()}
+        role="img"
+        aria-label="Nuvio companion pet"
+        onClick={props.onInteract}
+      >
+        <PetSprite
+          species={state.pet.species}
+          mood={props.state ?? state.pet.mood}
+          outfit={state.pet.activeOutfit}
+          size={petSize}
+          motionLevel={state.pet.settings.motionLevel}
+        />
+      </span>
+    );
+  }
   return (
     <TessCharacterErrorBoundary size={size} className={props.className}>
       <TessAnimatedCharacterInner {...props} />

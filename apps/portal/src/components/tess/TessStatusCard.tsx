@@ -1,9 +1,10 @@
 "use client";
 
 import { useLanguage } from "@/components/LanguageProvider";
+import { PetSprite } from "@/components/pets/PetSprite";
+import { useCompanionPet } from "@/components/pets/CompanionPetProvider";
 import type { TessState } from "./tessAnimationState";
 import { getTessStatusCopy } from "./tessAnimationState";
-import { TessAnimatedCharacter } from "./TessAnimatedCharacter";
 import { mapTessStateToCharacter } from "./tessCharacterState";
 
 type Props = {
@@ -21,9 +22,10 @@ export function TessStatusCard({
   onCompanionTap,
   hasError,
   isDancing = false,
-  audioLevel = 0,
+  audioLevel: _audioLevel = 0,
 }: Props) {
   const { t } = useLanguage();
+  const { state: petState } = useCompanionPet();
   const copy = getTessStatusCopy(state, userName, t);
   const characterState = mapTessStateToCharacter(state, hasError, { isDancing });
 
@@ -39,13 +41,11 @@ export function TessStatusCard({
         onClick={onCompanionTap}
         aria-label="Nuvio support companion"
       >
-        <TessAnimatedCharacter
-          state={characterState}
+        <PetSprite
+          species={petState?.pet?.species ?? "spark"}
+          mood={characterState}
           size="md"
-          showWaves
-          enableIdleWave={state === "idle" && !isDancing}
-          audioLevel={audioLevel}
-          onInteract={onCompanionTap}
+          motionLevel={petState?.pet?.settings.motionLevel}
         />
       </button>
     </div>

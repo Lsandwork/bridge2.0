@@ -36,7 +36,7 @@ describe("Nuvio Companion Pets", () => {
     const first = await createCompanionPet({
       userId,
       name: "First Buddy",
-      species: "star_pup",
+      species: "spark",
       personality: "gentle",
     });
     await awardCompanionPetXp({ userId, eventType: "manual_celebrate" });
@@ -64,7 +64,7 @@ describe("Nuvio Companion Pets", () => {
 
   it("unlocks eligible items by XP and event rules", async () => {
     const userId = `pet-user-${Date.now()}-unlock`;
-    await createCompanionPet({ userId, name: "Unlock Buddy", species: "star_pup", personality: "gentle" });
+    await createCompanionPet({ userId, name: "Unlock Spark", species: "spark", personality: "gentle" });
     const unlocked = await unlockEligiblePetItems(userId, 350, "goal_complete");
     const ids = unlocked.map((item) => "itemId" in item ? item.itemId : item.id);
 

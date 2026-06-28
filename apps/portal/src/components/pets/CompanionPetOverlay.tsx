@@ -183,7 +183,10 @@ export function CompanionPetOverlay() {
         type="button"
         className={`pet-float ${dragging ? "pet-float--dragging" : ""} ${released ? "pet-float--released" : ""}`}
         onClick={() => {
-          if (!dragMoved) setOpen((value) => !value);
+          if (!dragMoved) {
+            setOpen((value) => !value);
+            if (!open) void awardXp("open_nuvio_pet", { source: "floating_bubble" });
+          }
         }}
         onPointerDown={startDrag}
         onPointerMove={moveDrag}
@@ -192,8 +195,9 @@ export function CompanionPetOverlay() {
         aria-label={open ? "Close Nuvio companion panel" : "Open Nuvio companion panel"}
       >
         <PetSprite species={pet.species} mood={pet.mood} outfit={pet.activeOutfit} size="md" motionLevel={pet.settings.motionLevel} />
-        <span className="pet-float__name">{pet.name}</span>
-        {open ? <Minimize2 className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
+        <span className="pet-float__chevron" aria-hidden>
+          {open ? <Minimize2 className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
+        </span>
       </button>
     </div>
   );

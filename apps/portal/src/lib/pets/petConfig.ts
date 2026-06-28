@@ -1,14 +1,15 @@
 export const starterPets = [
-  { id: "star_pup", name: "Star Pup", emoji: "🐶", colors: ["#7c3aed", "#c4b5fd"], supportTone: "cheerful" },
-  { id: "calm_cat", name: "Calm Cat", emoji: "🐱", colors: ["#0f766e", "#99f6e4"], supportTone: "calm" },
-  { id: "brave_bear", name: "Brave Bear", emoji: "🐻", colors: ["#92400e", "#fde68a"], supportTone: "brave" },
-  { id: "robot_buddy", name: "Robot Buddy", emoji: "🤖", colors: ["#334155", "#93c5fd"], supportTone: "coach-like" },
-  { id: "dragon_sprout", name: "Dragon Sprout", emoji: "🐲", colors: ["#15803d", "#bbf7d0"], supportTone: "playful" },
-  { id: "turtle_guide", name: "Turtle Guide", emoji: "🐢", colors: ["#166534", "#86efac"], supportTone: "quiet" },
-  { id: "fox_helper", name: "Fox Helper", emoji: "🦊", colors: ["#ea580c", "#fed7aa"], supportTone: "focus" },
-  { id: "cloud_friend", name: "Cloud Friend", emoji: "☁️", colors: ["#38bdf8", "#e0f2fe"], supportTone: "gentle" },
-  { id: "service_pup", name: "Service Pup", emoji: "🦮", colors: ["#1d4ed8", "#bfdbfe"], supportTone: "steady" },
-  { id: "space_critter", name: "Space Critter", emoji: "🛸", colors: ["#4c1d95", "#ddd6fe"], supportTone: "adventure" },
+  { id: "spark", name: "Spark", emoji: "✨", colors: ["#f97316", "#facc15"], supportTone: "motivating" },
+  { id: "tide", name: "Tide", emoji: "💧", colors: ["#0ea5e9", "#67e8f9"], supportTone: "calm" },
+  { id: "nova", name: "Nova", emoji: "🌟", colors: ["#7c3aed", "#c4b5fd"], supportTone: "creative" },
+  { id: "ranger", name: "Ranger", emoji: "⛰️", colors: ["#3f6212", "#bef264"], supportTone: "ready-for-action" },
+  { id: "focus", name: "Focus", emoji: "🎯", colors: ["#0284c7", "#7dd3fc"], supportTone: "attention support" },
+  { id: "zip", name: "Zip", emoji: "⚡", colors: ["#ea580c", "#fdba74"], supportTone: "routine support" },
+  { id: "echo", name: "Echo", emoji: "🎵", colors: ["#9333ea", "#d8b4fe"], supportTone: "creative expression" },
+  { id: "atlas", name: "Atlas", emoji: "🧭", colors: ["#111827", "#f59e0b"], supportTone: "adult goals" },
+  { id: "luna", name: "Luna", emoji: "🌙", colors: ["#8b5cf6", "#f0abfc"], supportTone: "calm reset" },
+  { id: "rocket", name: "Rocket", emoji: "🚀", colors: ["#dc2626", "#fb7185"], supportTone: "follow-through" },
+  { id: "sage", name: "Sage", emoji: "🍃", colors: ["#365314", "#bef264"], supportTone: "steady guide" },
 ];
 
 export const petPersonalities = [

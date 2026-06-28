@@ -2,12 +2,14 @@ import { createSupabaseAdminClient } from "./supabase-server";
 import { companionFanGearItems } from "./fan-gear";
 import { pointsForNuvioEvent } from "./nuvio-points";
 
-export type PetGrowthStage = "baby" | "little_buddy" | "teen_companion" | "adult_companion" | "master_companion";
+export type PetGrowthStage = "baby" | "little_buddy" | "teen_companion" | "adult_companion" | "master_companion" | "legendary";
 export type PetMood =
   | "idle"
   | "happy"
   | "encouraging"
   | "thinking"
+  | "talking"
+  | "listening"
   | "celebrating"
   | "waiting"
   | "sleeping"
@@ -100,7 +102,23 @@ export type PetEventType =
   | "family_challenge_complete"
   | "mystery_reward"
   | "daily_reset_wheel"
-  | "pet_created";
+  | "pet_created"
+  | "open_nuvio_pet"
+  | "send_chat_message"
+  | "voice_chat"
+  | "ask_advice"
+  | "complete_nuvio_suggestion"
+  | "stressed_out_reset"
+  | "play_interaction"
+  | "breathing_exercise"
+  | "journal_prompt"
+  | "gratitude_prompt"
+  | "confidence_challenge"
+  | "redeem_reward"
+  | "routine_completed"
+  | "task_completed"
+  | "goal_completed"
+  | "care_team_approved_milestone";
 
 export type PetState = {
   pet: CompanionPet | null;
@@ -117,16 +135,17 @@ export type PetState = {
 };
 
 export const starterPetSpecies = [
-  "star_pup",
-  "calm_cat",
-  "brave_bear",
-  "robot_buddy",
-  "dragon_sprout",
-  "turtle_guide",
-  "fox_helper",
-  "cloud_friend",
-  "service_pup",
-  "space_critter",
+  "spark",
+  "tide",
+  "nova",
+  "ranger",
+  "focus",
+  "zip",
+  "echo",
+  "atlas",
+  "luna",
+  "rocket",
+  "sage",
 ] as const;
 
 const defaultSettings: PetSettings = {
@@ -177,7 +196,7 @@ function petScopeQuery<T extends { eq: (column: string, value: unknown) => T; is
 export function xpForPetEvent(eventType: PetEventType): number {
   const configured = pointsForNuvioEvent(eventType);
   if (configured > 0) return configured;
-  const map: Record<PetEventType, number> = {
+  const map: Partial<Record<PetEventType, number>> = {
     routine_complete: 20,
     goal_complete: 35,
     emotional_regulation: 15,
@@ -208,6 +227,7 @@ export function calculatePetLevel(xp: number): number {
 }
 
 export function calculatePetGrowthStage(xp: number): PetGrowthStage {
+  if (xp >= 2200) return "legendary";
   if (xp >= 1200) return "master_companion";
   if (xp >= 650) return "adult_companion";
   if (xp >= 300) return "teen_companion";
@@ -394,7 +414,7 @@ export async function createCompanionPet(input: {
   const payload = {
     user_id: input.userId,
     child_profile_id: input.childProfileId ?? null,
-    name: input.name.trim() || "Nuvio Buddy",
+    name: input.name.trim() || "Spark",
     species: input.species,
     personality: input.personality,
     growth_stage: "baby",
@@ -442,7 +462,12 @@ export async function awardCompanionPetXp(input: {
   const xpAwarded = xpForPetEvent(input.eventType);
   const key = eventSpamKey(input.userId, input.eventType, input.childProfileId);
   const last = localEvents.get(key) ?? 0;
-  if (Date.now() - last < 45_000 && input.eventType !== "manual_celebrate" && input.eventType !== "stress_relief_reset") {
+  if (
+    Date.now() - last < 45_000 &&
+    input.eventType !== "manual_celebrate" &&
+    input.eventType !== "stress_relief_reset" &&
+    input.eventType !== "stressed_out_reset"
+  ) {
     return { ok: false, reason: "rate_limited", xpAwarded: 0 };
   }
   localEvents.set(key, Date.now());
@@ -451,8 +476,8 @@ export async function awardCompanionPetXp(input: {
   const pet = current.pet ?? (await createCompanionPet({
     userId: input.userId,
     childProfileId: input.childProfileId,
-    name: "Nuvio Buddy",
-    species: "star_pup",
+    name: "Spark",
+    species: "spark",
     personality: "gentle",
   }));
   const nextXp = pet.xp + xpAwarded;

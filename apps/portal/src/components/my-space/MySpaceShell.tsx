@@ -10,7 +10,8 @@ import { BridgeHeader } from "@/components/dashboard/BridgeHeader";
 import { AccessibilityToggles } from "@/components/dashboard/AccessibilityToggles";
 import { BridgeBottomNav } from "@/components/dashboard/BridgeBottomNav";
 import { navItems } from "@/components/dashboard/dashboardMockData";
-import { TessIcon } from "@/components/tess/TessIcon";
+import { PetSprite } from "@/components/pets/PetSprite";
+import { useCompanionPet } from "@/components/pets/CompanionPetProvider";
 
 function isNavActive(pathname: string, href: string) {
   return pathname === href || (href !== "/my-space" && pathname.startsWith(href));
@@ -19,6 +20,7 @@ function isNavActive(pathname: string, href: string) {
 export function MySpaceShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { t } = useLanguage();
+  const { state } = useCompanionPet();
   const { user } = useAuth();
   const { activeProfile, setActiveProfileId, lowStimulation, setLowStimulation, highContrast, setHighContrast } =
     useProfile();
@@ -71,7 +73,11 @@ export function MySpaceShell({ children }: { children: React.ReactNode }) {
                   >
                     <span className="ms-top-nav__icon" aria-hidden>
                       {item.useTessIcon ? (
-                        <TessIcon size={22} decorative className="ms-top-nav__tess-icon" />
+                        <span className="inline-grid h-6 w-6 place-items-center overflow-visible">
+                          <span className="scale-[0.34]">
+                            <PetSprite species={state?.pet?.species ?? "spark"} mood={state?.pet?.mood ?? "idle"} size="sm" />
+                          </span>
+                        </span>
                       ) : (
                         item.icon
                       )}

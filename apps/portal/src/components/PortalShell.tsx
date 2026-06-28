@@ -26,7 +26,8 @@ import {
 import { useAuth } from "@/components/AuthProvider";
 import { useLanguage } from "@/components/LanguageProvider";
 import { isAdminRole } from "@family-support/data";
-import { TessNavIcon } from "@/components/tess/TessIcon";
+import { PetSprite } from "@/components/pets/PetSprite";
+import { useCompanionPet } from "@/components/pets/CompanionPetProvider";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { NotificationBell } from "@/components/NotificationBell";
 import { SignOutButton } from "@/components/SignOutButton";
@@ -63,9 +64,20 @@ const contentNav: NavItem[] = [
 
 const toolsNav: NavItem[] = [
   { href: "/care-team", labelKey: "parent.nav.careTeam", icon: UsersRound },
-  { href: "/tess", labelKey: "parent.nav.tessAssistant", icon: TessNavIcon },
+  { href: "/tess/chat", labelKey: "parent.nav.tessAssistant", icon: NuvioPetNavIcon },
   { href: "/settings", labelKey: "parent.nav.settings", icon: Settings },
 ];
+
+function NuvioPetNavIcon({ className }: { className?: string }) {
+  const { state } = useCompanionPet();
+  return (
+    <span className={`grid h-5 w-5 place-items-center overflow-visible ${className ?? ""}`.trim()} aria-hidden>
+      <span className="scale-[0.34]">
+        <PetSprite species={state?.pet?.species ?? "spark"} mood={state?.pet?.mood ?? "idle"} size="sm" />
+      </span>
+    </span>
+  );
+}
 
 function BridgeLogo() {
   const { t } = useLanguage();
